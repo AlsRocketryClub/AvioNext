@@ -143,7 +143,7 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_0 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58; i++) {
 				LED_PWM_Data_0[i] = 0;
 			}
 			break;
@@ -157,7 +157,7 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_1 * 24; i < (NUM_LEDS_1 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58; i++) {
 				LED_PWM_Data_1[i] = 0;
 			}
 			break;
@@ -171,7 +171,7 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_2 * 24; i < (NUM_LEDS_2 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58; i++) {
 				LED_PWM_Data_0[i] = 0;
 			}
 			break;
@@ -185,7 +185,7 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_3 * 24; i < (NUM_LEDS_3 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58; i++) {
 				LED_PWM_Data_3[i] = 0;
 			}
 			break;

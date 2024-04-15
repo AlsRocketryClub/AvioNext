@@ -453,8 +453,8 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_0 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
- 80006d2:	2378      	movs	r3, #120	; 0x78
+			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58; i++) {
+ 80006d2:	2380      	movs	r3, #128	; 0x80
  80006d4:	62bb      	str	r3, [r7, #40]	; 0x28
  80006d6:	e007      	b.n	80006e8 <setLEDs+0xd8>
 				LED_PWM_Data_0[i] = 0;
@@ -462,12 +462,12 @@ void setLEDs(void) {
  80006da:	6abb      	ldr	r3, [r7, #40]	; 0x28
  80006dc:	2100      	movs	r1, #0
  80006de:	f842 1023 	str.w	r1, [r2, r3, lsl #2]
-			for (int i = NUM_LEDS_0 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58; i++) {
  80006e2:	6abb      	ldr	r3, [r7, #40]	; 0x28
  80006e4:	3301      	adds	r3, #1
  80006e6:	62bb      	str	r3, [r7, #40]	; 0x28
  80006e8:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 80006ea:	2ba9      	cmp	r3, #169	; 0xa9
+ 80006ea:	2bb1      	cmp	r3, #177	; 0xb1
  80006ec:	ddf4      	ble.n	80006d8 <setLEDs+0xc8>
 			}
 			break;
@@ -553,8 +553,8 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_1 * 24; i < (NUM_LEDS_1 * 24) + 50; i++) {
- 8000782:	2378      	movs	r3, #120	; 0x78
+			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58; i++) {
+ 8000782:	2380      	movs	r3, #128	; 0x80
  8000784:	61fb      	str	r3, [r7, #28]
  8000786:	e007      	b.n	8000798 <setLEDs+0x188>
 				LED_PWM_Data_1[i] = 0;
@@ -562,12 +562,12 @@ void setLEDs(void) {
  800078a:	69fb      	ldr	r3, [r7, #28]
  800078c:	2100      	movs	r1, #0
  800078e:	f842 1023 	str.w	r1, [r2, r3, lsl #2]
-			for (int i = NUM_LEDS_1 * 24; i < (NUM_LEDS_1 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58; i++) {
  8000792:	69fb      	ldr	r3, [r7, #28]
  8000794:	3301      	adds	r3, #1
  8000796:	61fb      	str	r3, [r7, #28]
  8000798:	69fb      	ldr	r3, [r7, #28]
- 800079a:	2ba9      	cmp	r3, #169	; 0xa9
+ 800079a:	2bb1      	cmp	r3, #177	; 0xb1
  800079c:	ddf4      	ble.n	8000788 <setLEDs+0x178>
 			}
 			break;
@@ -653,8 +653,8 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_2 * 24; i < (NUM_LEDS_2 * 24) + 50; i++) {
- 8000832:	2330      	movs	r3, #48	; 0x30
+			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58; i++) {
+ 8000832:	2338      	movs	r3, #56	; 0x38
  8000834:	613b      	str	r3, [r7, #16]
  8000836:	e007      	b.n	8000848 <setLEDs+0x238>
 				LED_PWM_Data_0[i] = 0;
@@ -662,12 +662,12 @@ void setLEDs(void) {
  800083a:	693b      	ldr	r3, [r7, #16]
  800083c:	2100      	movs	r1, #0
  800083e:	f842 1023 	str.w	r1, [r2, r3, lsl #2]
-			for (int i = NUM_LEDS_2 * 24; i < (NUM_LEDS_2 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58; i++) {
  8000842:	693b      	ldr	r3, [r7, #16]
  8000844:	3301      	adds	r3, #1
  8000846:	613b      	str	r3, [r7, #16]
  8000848:	693b      	ldr	r3, [r7, #16]
- 800084a:	2b61      	cmp	r3, #97	; 0x61
+ 800084a:	2b69      	cmp	r3, #105	; 0x69
  800084c:	ddf4      	ble.n	8000838 <setLEDs+0x228>
 			}
 			break;
@@ -759,8 +759,8 @@ void setLEDs(void) {
 					}
 				}
 			}
-			for (int i = NUM_LEDS_3 * 24; i < (NUM_LEDS_3 * 24) + 50; i++) {
- 80008fa:	2330      	movs	r3, #48	; 0x30
+			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58; i++) {
+ 80008fa:	2338      	movs	r3, #56	; 0x38
  80008fc:	607b      	str	r3, [r7, #4]
  80008fe:	e007      	b.n	8000910 <setLEDs+0x300>
 				LED_PWM_Data_3[i] = 0;
@@ -768,12 +768,12 @@ void setLEDs(void) {
  8000902:	687b      	ldr	r3, [r7, #4]
  8000904:	2100      	movs	r1, #0
  8000906:	f842 1023 	str.w	r1, [r2, r3, lsl #2]
-			for (int i = NUM_LEDS_3 * 24; i < (NUM_LEDS_3 * 24) + 50; i++) {
+			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58; i++) {
  800090a:	687b      	ldr	r3, [r7, #4]
  800090c:	3301      	adds	r3, #1
  800090e:	607b      	str	r3, [r7, #4]
  8000910:	687b      	ldr	r3, [r7, #4]
- 8000912:	2b61      	cmp	r3, #97	; 0x61
+ 8000912:	2b69      	cmp	r3, #105	; 0x69
  8000914:	ddf4      	ble.n	8000900 <setLEDs+0x2f0>
 			}
 			break;
