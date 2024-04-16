@@ -54,23 +54,6 @@ const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
 		{ 0, 4 }  //LED13: BATT
 
 };
-const int LED_length=27+4+4+5+27;
-const int LED_heights_mm[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3] = {
-		0, //LED0: CAN
-		0, //LED1: GPS
-		0, //LED2: LoRA
-		5, //LED3: SD Card
-		5+27, //LED4: HG1
-		4+5+27, //LED5: LG1
-		4+4+5+27, //LED6: BAR1
-		2+5+27, //LED7: ARM
-		4+4+5+27, //LED8: HG2
-		4+5+27, //LED9: LG2
-		5+27, //LED10: BAR1
-		10+4+4+5+27, //LED11: REG1
-		10+4+4+5+27, //LED12: REG2
-		27+4+4+5+27  //LED13: BATT
-};
 const int LED_num_max=6;
 const int LED_order[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3] = {
 		0, //LED0: CAN
@@ -376,7 +359,11 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
-
+	const int MAX = 155;
+	const double SPEED = 1.0/2000;
+	const double r_offset = 0;
+	const double g_offset = 1;
+	const double b_offset = 2;
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
@@ -384,25 +371,15 @@ int main(void)
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
 		for(int i = 0; i < 14; i++){
-			/*
-			LED_Color_Data[i][0] = 0;
-			LED_Color_Data[i][1] = 0;
-			LED_Color_Data[i][2] = 100;
-			*/
-			const int MAX = 155;
-			const double SPEED = 2000;
+
 			int time = HAL_GetTick();
-			double height_offset = LED_order[i]*1.0/LED_num_max;//LED_heights_mm[i]*4.0/LED_length;
-			double color_offset = time/SPEED + height_offset;
-			const double r_offset = 0;
-			const double g_offset = 1;
-			const double b_offset = 2;
+			double height_offset = LED_order[i]*1.0/LED_num_max;
+			double color_offset = time*SPEED + height_offset;
+
 			LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
 			LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
 			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
 		}
-		//LED_Color_Data[4][1] = 0;
-		//LED_Color_Data[7][2] = 0;
 		setLEDs();
 		HAL_Delay(10);
     /* USER CODE END WHILE */
