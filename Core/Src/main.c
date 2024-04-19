@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -112,8 +113,6 @@ DMA_HandleTypeDef hdma_tim5_ch4;
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart6;
 
-PCD_HandleTypeDef hpcd_USB_OTG_HS;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -124,19 +123,18 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_UART4_Init(void);
-static void MX_USB_OTG_HS_PCD_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_FDCAN3_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_ADC3_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -288,12 +286,7 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	//TIM2->CCR3= 0;
 	datasentflag = 1;
 }
-/* USER CODE END 0 */
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 
 //this function looks like this: /\_/\_/\_/\_
 //so it's triangles with spaces between them
@@ -315,6 +308,80 @@ double triangle_space(double x)
 	}
 }
 
+uint8_t LG2_Read_Register(uint8_t addr){
+	uint8_t reg_value;
+	addr |= (1<<7);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
+
+	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+
+	return reg_value;
+}
+
+void LG2_Write_Register(uint8_t addr, uint8_t data){
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
+	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+
+}
+
+float LG2_Get_Gyro_X(){
+	uint8_t Gyro_L = LG2_Read_Register(0x22);
+	uint8_t Gyro_H = LG2_Read_Register(0x23);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (((float)Gyro) / 32768) * 250;
+
+	return omega;
+}
+
+float LG2_Get_Gyro_Y(){
+	uint8_t Gyro_L = LG2_Read_Register(0x24);
+	uint8_t Gyro_H = LG2_Read_Register(0x25);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (((float)Gyro) / 32768) * 250;
+
+	return omega;
+}
+
+float LG2_Get_Gyro_Z(){
+	uint8_t Gyro_L = LG2_Read_Register(0x26);
+	uint8_t Gyro_H = LG2_Read_Register(0x27);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (((float)Gyro) / 32768) * 4000;
+
+	return omega;
+}
+
+int16_t LG2_Get_Acc_X(){
+	uint8_t Acc_L = LG2_Read_Register(0x28);
+	uint8_t Acc_H = LG2_Read_Register(0x29);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+	return Acc;
+}
+
+int16_t LG2_Get_Acc_Y(){
+	uint8_t Acc_L = LG2_Read_Register(0x2A);
+	uint8_t Acc_H = LG2_Read_Register(0x2B);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+	return Acc;
+}
+
+int16_t LG2_Get_Acc_Z(){
+	uint8_t Acc_L = LG2_Read_Register(0x2C);
+	uint8_t Acc_H = LG2_Read_Register(0x2D);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+	return Acc;
+}
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -344,26 +411,41 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_UART4_Init();
-  MX_USB_OTG_HS_PCD_Init();
   MX_SPI3_Init();
   MX_FDCAN3_Init();
   MX_USART6_UART_Init();
   MX_ADC1_Init();
   MX_TIM4_Init();
   MX_ADC3_Init();
-  MX_SPI1_Init();
   MX_SPI2_Init();
   MX_I2C2_Init();
   MX_TIM2_Init();
   MX_TIM5_Init();
   MX_TIM3_Init();
+  MX_USB_DEVICE_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  /* USER CODE END 2 */
-	const int MAX = 155;
-	const double SPEED = 1.0/2000;
+	const int MAX = 80;
+	const double SPEED = 4.0/2000;
 	const double r_offset = 0;
 	const double g_offset = 1;
 	const double b_offset = 2;
+
+	LG2_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
+	LG2_Write_Register(0x11, 0b00110001); //Gyroscope setup - CTRL2_G
+	LG2_Write_Register(0x13, 0b00000100); //disables I2C - CTRL4_C
+	float rotZ = 0;
+	uint32_t lastTime = 0;
+
+	float calOmegaZ = 0;;
+	HAL_Delay(2000);
+	for(int i = 0; i < 200; i++){
+		calOmegaZ += LG2_Get_Gyro_Z();
+		HAL_Delay(40);
+	}
+	calOmegaZ /= 200;
+  /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
@@ -381,6 +463,18 @@ int main(void)
 			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
 		}
 		setLEDs();
+
+		uint8_t* data_gyro[100];
+		float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
+
+		float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
+		rotZ += omegaZ * timeElapsed;
+
+		lastTime = HAL_GetTick();
+		int16_t accZ = LG2_Get_Acc_X();
+		sprintf( data_gyro,  "%d    %d   %d    %d\n", (int)accZ, (int)(1000 *rotZ), (int)lastTime, (int)(1000 * rotZ / lastTime));
+		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
 		HAL_Delay(10);
     /* USER CODE END WHILE */
 
@@ -730,11 +824,11 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -778,11 +872,11 @@ static void MX_SPI2_Init(void)
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1152,42 +1246,6 @@ static void MX_USART6_UART_Init(void)
 }
 
 /**
-  * @brief USB_OTG_HS Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USB_OTG_HS_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_OTG_HS_Init 0 */
-
-  /* USER CODE END USB_OTG_HS_Init 0 */
-
-  /* USER CODE BEGIN USB_OTG_HS_Init 1 */
-
-  /* USER CODE END USB_OTG_HS_Init 1 */
-  hpcd_USB_OTG_HS.Instance = USB_OTG_HS;
-  hpcd_USB_OTG_HS.Init.dev_endpoints = 9;
-  hpcd_USB_OTG_HS.Init.speed = PCD_SPEED_FULL;
-  hpcd_USB_OTG_HS.Init.dma_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.phy_itface = USB_OTG_EMBEDDED_PHY;
-  hpcd_USB_OTG_HS.Init.Sof_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.low_power_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.lpm_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.vbus_sensing_enable = DISABLE;
-  hpcd_USB_OTG_HS.Init.use_dedicated_ep1 = DISABLE;
-  hpcd_USB_OTG_HS.Init.use_external_vbus = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_OTG_HS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_OTG_HS_Init 2 */
-
-  /* USER CODE END USB_OTG_HS_Init 2 */
-
-}
-
-/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -1243,6 +1301,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PE2 */
@@ -1258,6 +1322,26 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PD8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PG2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;
