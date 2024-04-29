@@ -22,7 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "LoRA"
+#include "add.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -141,7 +142,31 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 volatile int datasentflag = 0;
+
+
+void setServo(int servoNum, float angle){
+
+	uint16_t timerVal =(int)( 500 + (500 * (angle/180)));
+	switch (servoNum) {
+		case 1:
+			TIM4->CCR4 = timerVal;
+			break;
+		case 2:
+			TIM4->CCR3 = timerVal;
+			break;
+		case 3:
+			TIM4->CCR2 = timerVal;
+			break;
+		case 4:
+			TIM4->CCR1 = timerVal;
+			break;
+
+		default:
+			break;
+	}
+}
 
 void setLEDs(void) {
 	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3; i++) {
@@ -215,69 +240,6 @@ void setLEDs(void) {
 }
 
 
-
-
-//void setLEDs2(void) {
-//	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3; i++) {
-//		for (int j = 0; j < 3; j++) {
-//			for (int n = 0; n < 8; n++) {
-//				if (LED_Color_Data[i][j] & (128 >> n)) {
-//					LED_PWM_Data_Combined[n + (8 * j) + (24 * LEDS_lookup[i][1])][LEDS_lookup[i][0]] = 60;
-//				} else {
-//					LED_PWM_Data_Combined[n + (8 * j) + (24 * LEDS_lookup[i][1])][LEDS_lookup[i][0]] = 30;
-//				}
-//			}
-//		}
-//		for (int i = NUM_LEDS_0 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
-//			LED_PWM_Data_Combined[i][0] = 0;
-//		}
-//		for (int i = NUM_LEDS_1 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
-//			LED_PWM_Data_Combined[i][1] = 0;
-//		}
-//		for (int i = NUM_LEDS_2 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
-//			LED_PWM_Data_Combined[i][2] = 0;
-//		}
-//		for (int i = NUM_LEDS_3 * 24; i < (NUM_LEDS_0 * 24) + 50; i++) {
-//			LED_PWM_Data_Combined[i][3] = 0;
-//		}
-//	}
-//	uint32_t* ptr1 = &LED_PWM_Data_Combined[0][0];
-//	uint32_t* ptr2 = &LED_PWM_Data_Combined[0][1];
-//	uint32_t* ptr3 = &LED_PWM_Data_Combined[0][2];
-//	uint32_t* ptr4 = &LED_PWM_Data_Combined[0][3];
-//
-//	HAL_TIM_PWM_Start_DMA(&htim5, TIM_CHANNEL_4, ptr1, (NUM_LEDS_0 * 24) + 50); //DMA for LEDS 0
-//	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, ptr2, (NUM_LEDS_1 * 24) + 50); //DMA for LEDS 1
-//	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_2, ptr3, (NUM_LEDS_2 * 24) + 50); //DMA for LEDS 2
-//	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, ptr4, (NUM_LEDS_3 * 24) + 50); //DMA for LEDS 3
-//
-//}
-
-//void setLED2(void) {
-//	//HAL_TIM_PWM_Stop(&htim2, TIM_CHANNEL_3);
-//
-//	uint32_t pwmData[(24 * NUM_LEDS_1) + 50];
-//	for (int j = 0; j < NUM_LEDS_1; j++) {
-//		for (int i = 0; i < 3; i++) {
-//			for (int n = 0; n < 8; n++) {
-//				if (LED_Data_2[j][i] & (128 >> n)) {
-//					pwmData[n + (8 * i) + (24 * j)] = 60;
-//				} else {
-//					pwmData[n + (8 * i) + 24 * j] = 30;
-//				}
-//
-//			}
-//		}
-//	}
-//	for (int i = NUM_LEDS_1 * 24; i < (NUM_LEDS_1 * 24) + 50; i++) {
-//		pwmData[i] = 0;
-//	}
-//	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, pwmData, 74);
-//	while (!datasentflag) {
-//	};
-//	datasentflag = 0;
-//}
-
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	//HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_3);
 	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -329,12 +291,51 @@ void LG2_Write_Register(uint8_t addr, uint8_t data){
 
 }
 
+uint8_t HG2_Read_Register(uint8_t addr){
+	uint8_t reg_value;
+	addr |= (1<<7);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+
+	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+
+	return reg_value;
+}
+uint8_t HG2_Acc[6];
+void HG2_Get_Acc(){
+	uint8_t addr = 0x08 | (1<<7);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[0], 1, 100);
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[1], 1, 100);
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[2], 1, 100);
+
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[3], 1, 100);
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[4], 1, 100);
+	HAL_SPI_Receive(&hspi2, &HG2_Acc[5], 1, 100);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+
+
+
+
+}
+
+
+void HG2_Write_Register(uint8_t addr, uint8_t data){
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+
+}
+
 float LG2_Get_Gyro_X(){
 	uint8_t Gyro_L = LG2_Read_Register(0x22);
 	uint8_t Gyro_H = LG2_Read_Register(0x23);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32768) * 250;
-
+	float omega = (((float)Gyro) / 32767) * 250;
 	return omega;
 }
 
@@ -342,7 +343,7 @@ float LG2_Get_Gyro_Y(){
 	uint8_t Gyro_L = LG2_Read_Register(0x24);
 	uint8_t Gyro_H = LG2_Read_Register(0x25);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32768) * 250;
+	float omega = (((float)Gyro) / 32767) * 250;
 
 	return omega;
 }
@@ -351,30 +352,57 @@ float LG2_Get_Gyro_Z(){
 	uint8_t Gyro_L = LG2_Read_Register(0x26);
 	uint8_t Gyro_H = LG2_Read_Register(0x27);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32768) * 4000;
+	float omega = (((float)Gyro) / 32767) * 250;
 
 	return omega;
 }
 
-int16_t LG2_Get_Acc_X(){
+float LG2_Get_Acc_X(){
 	uint8_t Acc_L = LG2_Read_Register(0x28);
 	uint8_t Acc_H = LG2_Read_Register(0x29);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-	return Acc;
+
+	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	return AccSI;
 }
 
-int16_t LG2_Get_Acc_Y(){
+float LG2_Get_Acc_Y(){
 	uint8_t Acc_L = LG2_Read_Register(0x2A);
 	uint8_t Acc_H = LG2_Read_Register(0x2B);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-	return Acc;
+
+	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	return AccSI;
 }
 
-int16_t LG2_Get_Acc_Z(){
+float LG2_Get_Acc_Z(){
 	uint8_t Acc_L = LG2_Read_Register(0x2C);
 	uint8_t Acc_H = LG2_Read_Register(0x2D);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-	return Acc;
+
+	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	return AccSI;
+}
+
+uint8_t LoRA_Read_Redister(uint8_t addr){
+	uint8_t reg_value;
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
+
+	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
+	HAL_SPI_Receive(&hspi3, &reg_value, 1, 100);
+
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+
+	return reg_value;
+}
+
+void LoRA_Write_Register(uint8_t addr, uint8_t data){
+	addr |= (1<<7);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
+	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
+	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+
 }
 /* USER CODE END 0 */
 
@@ -425,25 +453,74 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-	const int MAX = 80;
-	const double SPEED = 4.0/2000;
+
+	const int MAX = 50;
+	const double SPEED = 2.0/2000;
 	const double r_offset = 0;
 	const double g_offset = 1;
 	const double b_offset = 2;
 
 	LG2_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
-	LG2_Write_Register(0x11, 0b00110001); //Gyroscope setup - CTRL2_G
+	LG2_Write_Register(0x11, 0b00110000); //Gyroscope setup - CTRL2_G
 	LG2_Write_Register(0x13, 0b00000100); //disables I2C - CTRL4_C
+
+	HAL_Delay(3000);
+	HG2_Write_Register(0x1C, 0b10111111);
+	HAL_Delay(2);
+
+	HG2_Write_Register(0x1B, 0b01011000);
+	HG2_Write_Register(0x1B, 0b11011000);
+
 	float rotZ = 0;
 	uint32_t lastTime = 0;
 
-	float calOmegaZ = 0;;
-	HAL_Delay(2000);
-	for(int i = 0; i < 200; i++){
+	float calOmegaX = 0;
+	float calOmegaY = 0;
+	float calOmegaZ = 0;
+	//HAL_Delay(2000);
+	for(int i = 0; i < 500; i++){
+		calOmegaX += LG2_Get_Gyro_X();
+		calOmegaY += LG2_Get_Gyro_Y();
 		calOmegaZ += LG2_Get_Gyro_Z();
-		HAL_Delay(40);
+
+		//HAL_Delay(20);
 	}
-	calOmegaZ /= 200;
+	calOmegaX /= 500;
+	calOmegaY /= 500;
+	calOmegaZ /= 500;
+
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
+	HAL_Delay(200);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 0);
+	HAL_Delay(200);
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
+	HAL_Delay(50);
+//	while(1){
+//	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+//	LoRA_Write_Register(REG_MODEM_CONFIG_1, LoRA_Read_Redister(REG_MODEM_CONFIG_1) & 0xfe);
+//
+//	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+//	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
+//
+//
+//	LoRA_Write_Register(REG_FIFO, "A");
+//
+//
+//	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+//    LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
+//	}
+
+
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+
+    setServo(1, 90);
+    setServo(2, 180);
+    setServo(3, 0);
+    setServo(4, 45);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -467,15 +544,30 @@ int main(void)
 		uint8_t* data_gyro[100];
 		float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
 
-		float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
-		rotZ += omegaZ * timeElapsed;
+		//float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
+		//rotZ += omegaZ * timeElapsed;
+
+		//int16_t accZ = LG2_Get_Acc_X();
+
+		//HG2_Get_Acc();
+		//int16_t AccX = (int16_t)(HG2_Acc[1] << 8) | HG2_Acc[0];
+		float AccX = LG2_Get_Acc_X();
+		float AccY = LG2_Get_Acc_Y();
+		float AccZ = LG2_Get_Acc_Z();
+
+		float GyroX = LG2_Get_Gyro_X() - calOmegaX;
+		float GyroY = LG2_Get_Gyro_Y() - calOmegaY;
+		float GyroZ = LG2_Get_Gyro_Z() - calOmegaZ;
 
 		lastTime = HAL_GetTick();
-		int16_t accZ = LG2_Get_Acc_X();
-		sprintf( data_gyro,  "%d    %d   %d    %d\n", (int)accZ, (int)(1000 *rotZ), (int)lastTime, (int)(1000 * rotZ / lastTime));
+
+		int a = add(2, 5);
+
+		sprintf(data_gyro, "%d\n", a);
+		//sprintf( data_gyro,  "%d,%d,%d,%d\n", (int)(GyroX*1000), (int)(GyroY*1000), (int)(GyroZ*1000), lastTime);
 		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 
-		HAL_Delay(10);
+		HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -920,11 +1012,11 @@ static void MX_SPI3_Init(void)
   hspi3.Instance = SPI3;
   hspi3.Init.Mode = SPI_MODE_MASTER;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi3.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1070,9 +1162,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 0;
+  htim4.Init.Prescaler = 144 - 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 90;
+  htim4.Init.Period = 9999;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
@@ -1089,7 +1181,19 @@ static void MX_TIM4_Init(void)
   sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1298,13 +1402,16 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_0, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_RESET);
@@ -1316,28 +1423,29 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA1 PA2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2;
+  /*Configure GPIO pins : PA1 PA2 PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC4 */
-  GPIO_InitStruct.Pin = GPIO_PIN_4;
+  /*Configure GPIO pins : PC4 PC5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC5 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  /*Configure GPIO pin : PB1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PD8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  /*Configure GPIO pins : PD8 PD9 PD0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_0;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

@@ -1,3 +1,4 @@
+"./Core/Src/add.o"
 "./Core/Src/ism330dhcx.o"
 "./Core/Src/ism330dhcx_reg.o"
 "./Core/Src/main.o"
