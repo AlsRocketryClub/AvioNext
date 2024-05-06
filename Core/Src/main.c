@@ -573,7 +573,9 @@ int main(void)
     
         int btr = MAX_M10s_bytesToRead(&hi2c2);
         if (btr == -1) Error_Handler();
-        MAX_M10s_poll(&hi2c2);
+        for (int i = 0; i < btr; i++)
+            MAX_M10s_poll(&hi2c2);
+        MAX_M10S_parse();
 
     /*
 		sprintf(data_gyro, "%d\n", a);

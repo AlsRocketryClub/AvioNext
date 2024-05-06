@@ -73,7 +73,7 @@ typedef struct {
 int MAX_M10s_init(I2C_HandleTypeDef* i2c);
 int MAX_M10s_deinit(I2C_HandleTypeDef* i2c);
 int MAX_M10s_reset(I2C_HandleTypeDef* i2c);
-//GPRMC_t MAX_M10S_read(I2C_HandleTypeDef* i2c);
+void MAX_M10S_parse();
 
 bool MAX_M10s_check_if_exists(I2C_HandleTypeDef* i2c);
 void MAX_M10s_poll(I2C_HandleTypeDef* i2c);

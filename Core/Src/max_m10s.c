@@ -30,7 +30,7 @@ int MAX_M10s_reset(I2C_HandleTypeDef* i2c) {}
 
 bool bankSel = 0;
 char rb[2][MAX_M10S_RING_BUFFER_SIZE/2] = {0};
-uint16_t checksum[2] = {0};
+uint8_t checksum[2] = {0};
 
 bool packetInProgress = false;
 bool packetComplete = false;
@@ -40,9 +40,12 @@ int writeHead = 0;
 
 uint8_t byte = 0;
 
-GPRMC_t MAX_M10S_read(I2C_HandleTypeDef* i2c) {
-    HAL_I2C_Master_Receive(i2c, MAX_M10S_I2C_ADDR, rb[bankSel], 65, 10000); // @TODO(m1cha1s): Change to a DMA or Interrupt.
-    return (GPRMC_t){0};
+void MAX_M10S_parse() {
+    if (packetComplete) {
+        bankSel = !bankSel;
+        packetComplete = false;
+    }
+    return 0;
 }
 
 // This checks if MAX M10s is on the I2C bus, and returs true if so.
@@ -65,8 +68,14 @@ int MAX_M10s_bytesToRead(I2C_HandleTypeDef* i2c) {
 }
 
 void MAX_M10s_poll(I2C_HandleTypeDef* i2c) {
-    HAL_I2C_Master_Receive(i2c, MAX_M10S_I2C_ADDR, &byte, 1, 10000);
+    HAL_I2C_Mem_Read(i2c, MAX_M10S_I2C_ADDR, 0xFF, 1, &byte, 1, 10000);
     MAX_M10s_irq_handler(i2c);
+}
+
+uint8_t hexToBin(char hex) {
+    if (hex >= 0x30 && hex < 0x3A) return hex - 0x30;
+    if (hex >= 0x40 && hex < 0x47) return hex - 55;
+    return 0;
 }
 
 void MAX_M10s_irq_handler(I2C_HandleTypeDef* i2c) {
@@ -86,6 +95,11 @@ void MAX_M10s_irq_handler(I2C_HandleTypeDef* i2c) {
         }
     }
     
+    if (byte == '$') {
+        //invalidPacket[bankSel] = true;
+        return; // Skip redundant '$', if this doesn't work right, uncoment the line above.
+    }
+    
     if (packetComplete) {
         return; // Discard byte... The previous message has not been parsed yet...
     }
@@ -101,10 +115,13 @@ void MAX_M10s_irq_handler(I2C_HandleTypeDef* i2c) {
         packetInProgress = false;
         
         // Validate the checksum.
-        // ___=
-        // ^^
         
-        if (*(uint16_t*)(&rb[bankSel][writeHead-3]) != checksum) {
+        uint8_t a = hexToBin(rb[bankSel][writeHead-3]);
+        uint8_t b = hexToBin(rb[bankSel][writeHead-2]);
+        
+        uint8_t msgChk = (a<<4)|b;
+        
+        if (msgChk != checksum[bankSel]) {
             invalidPacket[bankSel] = true;
         }
     }
