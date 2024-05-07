@@ -2,7 +2,7 @@
  * max_m10s.h
  *
  *  Created on: Apr 30, 2024
- *      Author: msule
+ *      Author: m1cha1s
  */
 
 #ifndef INC_MAX_M10S_H_
@@ -19,9 +19,6 @@
 #define UBX_SYNCH_1 0x62
 #define UBX_CLASS_CFG 0x06
 #define UBX_CFG_PRT 0x00
-
-// FIXME(m1cha1s): Uncoment this before launch!!!
-// #define GPS_CHECKSUM_EN
 
 typedef struct {
     uint8_t cls;
@@ -67,7 +64,7 @@ typedef struct {
     double og_speed; // In knots(why???)
     double og_course; // Course in degrees
     GPS_date_t date;
-    // TODO(m1cha1s): There is also magentic variation 
+    // @TODO: There is also magentic variation 
 } GPRMC_t;
 
 int MAX_M10s_init(I2C_HandleTypeDef* i2c);
