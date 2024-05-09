@@ -2,9 +2,7 @@
 
 ===============================================================================
 
-@NOTE: This code is in heavy development, it is currently in a *NON* functional state.
-                   When it will work a pull request will be created :).
-                   Also it looks horrible I know, but it's not done yet.
+@NOTE: This code should work, if any bugs are found ask m1cha1s for a fix.
 @NOTE: Apparently max NMEA message length, including <CR><LF>, is 82 bytes. 
        Possibly reduce read buffer to save ram.
 
