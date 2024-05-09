@@ -18,6 +18,7 @@
 
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -27,7 +28,7 @@
 
 
 // @NOTE: Documentation: https://www.sparkfun.com/datasheets/GPS/NMEA%20Reference%20Manual-Rev2.1-Dec07.pdf
-const char msgsOff[][] = {
+const char* msgsOff[] = {
     "$PSRF103,00,01,00,01*25\r\n",
     "$PSRF103,01,01,00,01*24\r\n",
     "$PSRF103,02,01,00,01*27\r\n",
@@ -60,7 +61,7 @@ bool MAX_M10s_msgsOff(I2C_HandleTypeDef* i2c) {
     size_t i = 0;
     bool ok = false;
     do {
-        char* msg = msgsOff[i];
+        const char* msg = msgsOff[i];
         ok = HAL_OK == HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)msg, strlen(msg), 100000000);
         i++;
         if (!msgsOff[i]) break;
@@ -71,10 +72,10 @@ bool MAX_M10s_msgsOff(I2C_HandleTypeDef* i2c) {
 bool MAX_M10s_init(I2C_HandleTypeDef* i2c) {
     if (!MAX_M10s_check_if_exists(i2c)) return false; // @INFO: We don't see the GPS.
     
-    if (!MAX_M10s_msgsOff(i2c)) return false; // @INFO: We failed to send the messages.
+    if (MAX_M10s_msgsOff(i2c)) return false; // @INFO: We failed to send the messages.
     
     // @INFO: Enable the G*RMC NMEA message.
-    return HAL_OK == HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)enRMCMsg, strlen(enRMCMsg), 100000000);
+    return HAL_OK != HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)enRMCMsg, strlen(enRMCMsg), 100000000);
 }
 
 inline bool MAX_M10s_reset(I2C_HandleTypeDef* i2c) { return MAX_M10s_init(i2c); }
@@ -89,20 +90,22 @@ void MAX_M10S_parse() {
 
     char status = 'V';
     
-    sscanf(msg, "$G%*cRMC,%s,%c,%s,%c,%s,%c,%f,%f,%s", 
-        &grmc.UTCtime,
+    for (int i = 0; i < strlen(msg); i++) {
+    	if (msg[i]==',') msg[i]=' ';
+    }
+
+    sscanf(msg, "$%*s %s %c %s %c %s %c %f %f %s",
+        grmc.UTCtime,
         &status,
-        &grmc.lat,
+        grmc.lat,
         &grmc.nsInd,
-        &grmc.lon,
+        grmc.lon,
         &grmc.ewInd,
         &grmc.sog,
         &grmc.cog,
-        &grmc.date);
+        grmc.date);
         
     grmc.status = status=='A';
-    
-    return 0;
 }
 
 inline NMEA_RMC MAX_M10s_getRMC() { return grmc; }

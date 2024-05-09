@@ -16,19 +16,19 @@
 #define MAX_M10S_RING_BUFFER_SIZE 1024
 
 typedef struct {
-    char* UTCtime;
+    char UTCtime[12];
     bool status;
-    char* lat;
+    char lat[12];
     char nsInd;
-    char* lon;
+    char lon[12];
     char ewInd;
     float sog;
     float cog;
-    char* date;
+    char date[12];
 } NMEA_RMC;
 
-int MAX_M10s_init(I2C_HandleTypeDef* i2c);
-int MAX_M10s_reset(I2C_HandleTypeDef* i2c);
+bool MAX_M10s_init(I2C_HandleTypeDef* i2c);
+bool MAX_M10s_reset(I2C_HandleTypeDef* i2c);
 void MAX_M10S_parse();
 NMEA_RMC MAX_M10s_getRMC();
 
