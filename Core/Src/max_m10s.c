@@ -27,7 +27,22 @@
 
 
 // @NOTE: Documentation: https://www.sparkfun.com/datasheets/GPS/NMEA%20Reference%20Manual-Rev2.1-Dec07.pdf
-const char initMsg[] = "$PSRF103,00,01,00,01*25\r\n";
+const char msgsOff[][] = {
+    "$PSRF103,00,01,00,01*25\r\n",
+    "$PSRF103,01,01,00,01*24\r\n",
+    "$PSRF103,02,01,00,01*27\r\n",
+    "$PSRF103,03,01,00,01*26\r\n",
+    "$PSRF103,04,01,00,01*21\r\n",
+    "$PSRF103,05,01,00,01*20\r\n",
+    "$PSRF103,06,01,00,01*23\r\n",
+    "$PSRF103,07,01,00,01*22\r\n",
+    "$PSRF103,08,01,00,01*2D\r\n",
+    NULL,
+};
+
+const char enRMCMsg[] = "$PSRF103,04,01,01,01*20\r\n";
+
+NMEA_RMC grmc = {0};
 
 bool bankSel = 0;
 char rb[2][MAX_M10S_RING_BUFFER_SIZE/2] = {0};
@@ -41,24 +56,56 @@ int writeHead = 0;
 
 uint8_t byte = 0;
 
+bool MAX_M10s_msgsOff(I2C_HandleTypeDef* i2c) {
+    size_t i = 0;
+    bool ok = false;
+    do {
+        char* msg = msgsOff[i];
+        ok = HAL_OK == HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)msg, strlen(msg), 100000000);
+        i++;
+        if (!msgsOff[i]) break;
+    } while(ok);
+    return ok;
+}
 
 bool MAX_M10s_init(I2C_HandleTypeDef* i2c) {
     if (!MAX_M10s_check_if_exists(i2c)) return false; // @INFO: We don't see the GPS.
-    HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)initMsg, sizeof(initMsg), 100000000);
-    return true;
+    
+    if (!MAX_M10s_msgsOff(i2c)) return false; // @INFO: We failed to send the messages.
+    
+    // @INFO: Enable the G*RMC NMEA message.
+    return HAL_OK == HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)enRMCMsg, strlen(enRMCMsg), 100000000);
 }
 
-bool MAX_M10s_deinit(I2C_HandleTypeDef* i2c) {}
-
-bool MAX_M10s_reset(I2C_HandleTypeDef* i2c) {}
+inline bool MAX_M10s_reset(I2C_HandleTypeDef* i2c) { return MAX_M10s_init(i2c); }
 
 void MAX_M10S_parse() {
     if (packetComplete) {
         bankSel = !bankSel;
         packetComplete = false;
     }
+    
+    char* msg = rb[!bankSel];
+
+    char status = 'V';
+    
+    sscanf(msg, "$G%*cRMC,%s,%c,%s,%c,%s,%c,%f,%f,%s", 
+        &grmc.UTCtime,
+        &status,
+        &grmc.lat,
+        &grmc.nsInd,
+        &grmc.lon,
+        &grmc.ewInd,
+        &grmc.sog,
+        &grmc.cog,
+        &grmc.date);
+        
+    grmc.status = status=='A';
+    
     return 0;
 }
+
+inline NMEA_RMC MAX_M10s_getRMC() { return grmc; }
 
 // @NOTE: This checks if MAX M10s is on the I2C bus, and returs true if so.
 //        It works on my(m1cha1s) dev board so...

@@ -15,10 +15,22 @@
 #define MAX_M10S_I2C_ADDR 0x84
 #define MAX_M10S_RING_BUFFER_SIZE 1024
 
+typedef struct {
+    char* UTCtime;
+    bool status;
+    char* lat;
+    char nsInd;
+    char* lon;
+    char ewInd;
+    float sog;
+    float cog;
+    char* date;
+} NMEA_RMC;
+
 int MAX_M10s_init(I2C_HandleTypeDef* i2c);
-int MAX_M10s_deinit(I2C_HandleTypeDef* i2c);
 int MAX_M10s_reset(I2C_HandleTypeDef* i2c);
 void MAX_M10S_parse();
+NMEA_RMC MAX_M10s_getRMC();
 
 bool MAX_M10s_check_if_exists(I2C_HandleTypeDef* i2c);
 void MAX_M10s_poll(I2C_HandleTypeDef* i2c);
