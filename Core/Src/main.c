@@ -18,12 +18,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "fatfs.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "LoRA"
-#include "add.h"
+#include "AvioNEXT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -82,6 +83,12 @@ uint32_t LED_PWM_Data_3[(NUM_LEDS_3 * 24) + 58];
 uint32_t LED_PWM_Data_Combined[(5 * 24) + 50][4];
 
 uint32_t LED_Color_Data[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][3];
+
+
+uint16_t DMA_data;
+
+uint16_t read_Data;
+;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -92,10 +99,14 @@ uint32_t LED_Color_Data[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][3];
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc3;
+DMA_HandleTypeDef hdma_adc1;
+DMA_HandleTypeDef hdma_adc3;
 
 FDCAN_HandleTypeDef hfdcan3;
 
 I2C_HandleTypeDef hi2c2;
+
+SD_HandleTypeDef hsd2;
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
@@ -123,7 +134,6 @@ void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_UART4_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_FDCAN3_Init(void);
 static void MX_USART6_UART_Init(void);
@@ -136,6 +146,8 @@ static void MX_TIM2_Init(void);
 static void MX_TIM5_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_UART4_Init(void);
+static void MX_SDMMC2_SD_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -148,7 +160,7 @@ volatile int datasentflag = 0;
 
 void setServo(int servoNum, float angle){
 
-	uint16_t timerVal =(int)( 500 + (500 * (angle/180)));
+	uint16_t timerVal =(int)( 3333 + (3333 * (angle/180)));
 	switch (servoNum) {
 		case 1:
 			TIM4->CCR4 = timerVal;
@@ -157,7 +169,7 @@ void setServo(int servoNum, float angle){
 			TIM4->CCR3 = timerVal;
 			break;
 		case 3:
-			TIM4->CCR2 = timerVal;
+			TIM4->CCR2 = 3333;
 			break;
 		case 4:
 			TIM4->CCR1 = timerVal;
@@ -240,16 +252,6 @@ void setLEDs(void) {
 }
 
 
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
-	//HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_3);
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-
-	//HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
-	//TIM2->CCR3= 0;
-	datasentflag = 1;
-}
-
-
 //this function looks like this: /\_/\_/\_/\_
 //so it's triangles with spaces between them
 double triangle_space(double x)
@@ -270,121 +272,9 @@ double triangle_space(double x)
 	}
 }
 
-uint8_t LG2_Read_Register(uint8_t addr){
-	uint8_t reg_value;
-	addr |= (1<<7);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
-
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
-
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
-
-	return reg_value;
-}
-
-void LG2_Write_Register(uint8_t addr, uint8_t data){
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
-
-}
-
-uint8_t HG2_Read_Register(uint8_t addr){
-	uint8_t reg_value;
-	addr |= (1<<7);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
-
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
-
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
-
-	return reg_value;
-}
-uint8_t HG2_Acc[6];
-void HG2_Get_Acc(){
-	uint8_t addr = 0x08 | (1<<7);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[0], 1, 100);
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[1], 1, 100);
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[2], 1, 100);
-
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[3], 1, 100);
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[4], 1, 100);
-	HAL_SPI_Receive(&hspi2, &HG2_Acc[5], 1, 100);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
 
 
-
-
-}
-
-
-void HG2_Write_Register(uint8_t addr, uint8_t data){
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
-
-}
-
-float LG2_Get_Gyro_X(){
-	uint8_t Gyro_L = LG2_Read_Register(0x22);
-	uint8_t Gyro_H = LG2_Read_Register(0x23);
-	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32767) * 250;
-	return omega;
-}
-
-float LG2_Get_Gyro_Y(){
-	uint8_t Gyro_L = LG2_Read_Register(0x24);
-	uint8_t Gyro_H = LG2_Read_Register(0x25);
-	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32767) * 250;
-
-	return omega;
-}
-
-float LG2_Get_Gyro_Z(){
-	uint8_t Gyro_L = LG2_Read_Register(0x26);
-	uint8_t Gyro_H = LG2_Read_Register(0x27);
-	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32767) * 250;
-
-	return omega;
-}
-
-float LG2_Get_Acc_X(){
-	uint8_t Acc_L = LG2_Read_Register(0x28);
-	uint8_t Acc_H = LG2_Read_Register(0x29);
-	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
-	return AccSI;
-}
-
-float LG2_Get_Acc_Y(){
-	uint8_t Acc_L = LG2_Read_Register(0x2A);
-	uint8_t Acc_H = LG2_Read_Register(0x2B);
-	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
-	return AccSI;
-}
-
-float LG2_Get_Acc_Z(){
-	uint8_t Acc_L = LG2_Read_Register(0x2C);
-	uint8_t Acc_H = LG2_Read_Register(0x2D);
-	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
-
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
-	return AccSI;
-}
-
-uint8_t LoRA_Read_Redister(uint8_t addr){
+uint8_t LoRA_Read_Register(uint8_t addr){
 	uint8_t reg_value;
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
 
@@ -404,6 +294,165 @@ void LoRA_Write_Register(uint8_t addr, uint8_t data){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
 
 }
+
+
+void LoRA_sleep(void){
+	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+}
+
+void LoRA_set_frequency(long frequency){
+	uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+
+	LoRA_Write_Register(REG_FRF_MSB, (uint8_t)(frf >> 16));
+	LoRA_Write_Register(REG_FRF_MID, (uint8_t)(frf >> 8));
+	LoRA_Write_Register(REG_FRF_LSB, (uint8_t)(frf >> 0));
+}
+
+void LoRA_idle(){
+	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+}
+
+void LoRA_setOCP(uint8_t mA){
+	  uint8_t ocpTrim = 27;
+
+	  if (mA <= 120) {
+	    ocpTrim = (mA - 45) / 5;
+	  } else if (mA <=240) {
+	    ocpTrim = (mA + 30) / 10;
+	  }
+
+	  LoRA_Write_Register(REG_OCP, 0x20 | (0x1F & ocpTrim));
+}
+
+void LoRA_setTxPower(int level){
+    // PA BOOST
+    if (level > 17) {
+      if (level > 20) {
+        level = 20;
+      }
+
+      // subtract 3 from level, so 18 - 20 maps to 15 - 17
+      level -= 3;
+
+      // High Power +20 dBm Operation (Semtech SX1276/77/78/79 5.4.3.)
+      LoRA_Write_Register(REG_PA_DAC, 0x87);
+      LoRA_setOCP(140);
+    } else {
+      if (level < 2) {
+        level = 2;
+      }
+      //Default value PA_HF/LF or +17dBm
+      LoRA_Write_Register(REG_PA_DAC, 0x84);
+      LoRA_setOCP(100);
+    }
+
+    LoRA_Write_Register(REG_PA_CONFIG, PA_BOOST | (level - 2));
+}
+
+void LoRA_explicit_header_mode(){
+	LoRA_Write_Register(REG_MODEM_CONFIG_1, LoRA_Read_Register(REG_MODEM_CONFIG_1) & 0xFE);
+}
+
+void LoRA_begin(long frequency){
+	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+
+	LoRA_sleep();
+	LoRA_set_frequency(868000000);
+
+	LoRA_Write_Register(REG_FIFO_RX_BASE_ADDR, 0);
+	LoRA_Write_Register(REG_FIFO_TX_BASE_ADDR, 0);
+
+	LoRA_Write_Register(REG_LNA, LoRA_Read_Register(REG_LNA) | 0x03); //LNA settings
+
+	LoRA_Write_Register(REG_MODEM_CONFIG_3, 0x04);
+
+	LoRA_setTxPower(17);
+
+}
+
+
+void LoRA_beginPacket(){
+	LoRA_explicit_header_mode();
+
+	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
+}
+
+void LoRA_endPacket(){
+	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+
+	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
+
+	}
+
+	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
+
+}
+
+
+int LoRA_parsePacket(){
+	int packetLenght = 0;
+	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+
+	LoRA_explicit_header_mode();
+
+	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
+
+	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
+		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+		LoRA_idle();
+	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+	}
+	return packetLenght;
+
+}
+
+void LoRA_sendPacket(char * data){
+    LoRA_beginPacket();
+    for(int i = 0; i < strlen(data); i++){
+    	LoRA_Write_Register(REG_FIFO, data[i]);
+    }
+    LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
+    LoRA_endPacket();
+}
+
+int write_EEPROM(uint32_t address, uint8_t data){
+	if(address > 0x1FFFF){
+		return -1;
+	}
+
+	uint8_t writeAddress = (uint8_t)(0b10100000 | ((address >> 16) & 0b11111110));
+
+	uint16_t memAddr = (uint16_t)address;
+
+	HAL_I2C_Mem_Write(&hi2c2, writeAddress, memAddr, I2C_MEMADD_SIZE_16BIT, &data, 1, 100);
+	return 0;
+}
+
+uint8_t read_EEPROM(uint32_t address){
+	if(address > 0x1FFFF){
+		return -1;
+	}
+	uint8_t writeAddress = (uint8_t)(0b10100001 | ((address >> 16)));
+
+	uint16_t memAddr = (uint16_t)address;
+
+
+	uint8_t data;
+	HAL_I2C_Mem_Read(&hi2c2, writeAddress, memAddr, 2, &data, 1, 100);
+	return data;
+}
+
+int mount_SD(){
+	int status = f_mount(&SDFatFS, (TCHAR const*)SDPath, 0);
+	return status;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -413,7 +462,10 @@ void LoRA_Write_Register(uint8_t addr, uint8_t data){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	FRESULT res; /* FatFs function common result code */
+	uint32_t byteswritten, bytesread; /* File write/read counts */
+	uint8_t wtext[] = "STM32 FATFS works great!"; /* File write buffer */
+	uint8_t rtext[_MAX_SS];/* File read buffer */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -438,7 +490,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_UART4_Init();
   MX_SPI3_Init();
   MX_FDCAN3_Init();
   MX_USART6_UART_Init();
@@ -452,6 +503,9 @@ int main(void)
   MX_TIM3_Init();
   MX_USB_DEVICE_Init();
   MX_SPI1_Init();
+  MX_UART4_Init();
+  MX_FATFS_Init();
+  MX_SDMMC2_SD_Init();
   /* USER CODE BEGIN 2 */
 
 	const int MAX = 50;
@@ -494,21 +548,11 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 0);
 	HAL_Delay(200);
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
-	HAL_Delay(50);
-//	while(1){
-//	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
-//	LoRA_Write_Register(REG_MODEM_CONFIG_1, LoRA_Read_Redister(REG_MODEM_CONFIG_1) & 0xfe);
-//
-//	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-//	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
-//
-//
-//	LoRA_Write_Register(REG_FIFO, "A");
-//
-//
-//	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
-//    LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
-//	}
+	HAL_Delay(200);
+
+
+	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
+	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
 
 
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
@@ -521,27 +565,76 @@ int main(void)
     setServo(3, 0);
     setServo(4, 45);
 
+    LoRA_begin(868000000);
+
+    //HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+
+	char data_gyro[100];
+//    sprintf( data_gyro,  "Start\n");
+//    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+//
+//    if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
+//    	{
+//    	Error_Handler();
+//
+//    	}
+//    	else
+//    	{
+//    		if(f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, rtext, sizeof(rtext)) != FR_OK)
+//
+//    	    {
+//    			Error_Handler();
+//    	    }
+//    		else
+//    		{
+//    			//Open file for writing (Create)
+//    			if(f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+//    			{
+//    				Error_Handler();
+//    			}
+//    			else
+//    			{
+//
+//    				//Write to the text file
+//    				res = f_write(&SDFile, wtext, strlen((char *)wtext), (void *)&byteswritten);
+//    				if((byteswritten == 0) || (res != FR_OK))
+//    				{
+//
+//    					Error_Handler();
+//    				}
+//    				else
+//    				{
+//
+//    					f_close(&SDFile);
+//    				}
+//    			}
+//    		}
+//    	}
+//    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
+
+
+	int receiving = 0;
+	char LoRA_to_send[100];
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 	while (1) {
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
-		for(int i = 0; i < 14; i++){
+//		for(int i = 0; i < 14; i++){
+//
+//			int time = HAL_GetTick();
+//			double height_offset = LED_order[i]*1.0/LED_num_max;
+//			double color_offset = time*SPEED + height_offset;
+//
+//			LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
+//			LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
+//			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
+//		}
 
-			int time = HAL_GetTick();
-			double height_offset = LED_order[i]*1.0/LED_num_max;
-			double color_offset = time*SPEED + height_offset;
-
-			LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
-			LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
-			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
-		}
-		setLEDs();
-
-		uint8_t* data_gyro[100];
 		float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
 
 		//float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
@@ -551,23 +644,96 @@ int main(void)
 
 		//HG2_Get_Acc();
 		//int16_t AccX = (int16_t)(HG2_Acc[1] << 8) | HG2_Acc[0];
-		float AccX = LG2_Get_Acc_X();
-		float AccY = LG2_Get_Acc_Y();
-		float AccZ = LG2_Get_Acc_Z();
+		//float AccX = LG2_Get_Acc_X();
+		//float AccY = LG2_Get_Acc_Y();
+		//float AccZ = LG2_Get_Acc_Z();
 
-		float GyroX = LG2_Get_Gyro_X() - calOmegaX;
-		float GyroY = LG2_Get_Gyro_Y() - calOmegaY;
-		float GyroZ = LG2_Get_Gyro_Z() - calOmegaZ;
+		//float GyroX = LG2_Get_Gyro_X() - calOmegaX;
+		//float GyroY = LG2_Get_Gyro_Y() - calOmegaY;
+		//float GyroZ = LG2_Get_Gyro_Z() - calOmegaZ;
 
 		lastTime = HAL_GetTick();
 
-		int a = add(2, 5);
+//		int packetLenght = LoRA_parsePacket();
+//		if(packetLenght > 0){
+//			for(int i = 0; i < packetLenght; i++){
+//				data_gyro[i] = LoRA_Read_Register(0x00);
+//			}
+//		    CDC_Transmit_HS(data_gyro, strlen(packetLenght));
+//
+//		}
 
-		sprintf(data_gyro, "%d\n", a);
-		//sprintf( data_gyro,  "%d,%d,%d,%d\n", (int)(GyroX*1000), (int)(GyroY*1000), (int)(GyroZ*1000), lastTime);
-		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+		//write_EEPROM(1, 1);
 
-		HAL_Delay(1000);
+	     // Start ADC Conversion
+		//HAL_Delay(100);
+		int packet_lenght = LoRA_parsePacket();
+		char LoRA_data[50];
+		if(packet_lenght){
+			for(int i = 0; i < packet_lenght; i++){
+				LoRA_data[i] = LoRA_Read_Register(0x00);
+			}
+			LoRA_data[packet_lenght] = '\0';
+			//LoRA_data[packet_lenght+1] = '';
+			char data_gyro[50];
+		    //sprintf( data_gyro,  "%d   %d\n", strlen(LoRA_data), packet_lenght);
+		    //CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+			CDC_Transmit_HS(LoRA_data, packet_lenght);
+
+		    if(strcmp(LoRA_data, "ARM") == 0){
+
+		    	LED_Color_Data[7][0] = 0;
+		    	LED_Color_Data[7][1] = 255;
+		    	LED_Color_Data[7][2] = 0;
+		    	setLEDs();
+		    	LoRA_sendPacket("ARM SUCCESS");
+		    }
+		    if(strcmp(LoRA_data, "DISARM") == 0){
+		    	LED_Color_Data[7][0] = 255;
+		    	LED_Color_Data[7][1] = 0;
+		    	LED_Color_Data[7][2] = 0;
+		    	setLEDs();
+		    	LoRA_sendPacket("DISARM SUCCESS");
+		    }
+		    if(strcmp(LoRA_data, "CONT") == 0){
+
+		    	char cont_str[150];
+		    	uint8_t CONTS[8];
+		    	CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+		    	CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+		    	CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+		    	CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+		    	CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+		    	CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+		    	CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+		    	CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+
+	    		char message[100];
+		    	for(int i=0; i<8; i++)
+		    	{
+		    		if(CONTS[i])
+		    		{
+		    			sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+		    		}
+		    		else
+		    		{
+		    			sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+		    		}
+
+		    		LoRA_sendPacket(message);
+		    		HAL_Delay(100);
+		    	}
+
+
+
+		    }
+		}
+
+		//uint8_t data = read_EEPROM(1);
+	    //sprintf( data_gyro,  "%d\n", DMA_data);
+
+		//HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -606,9 +772,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 18;
+  RCC_OscInitStruct.PLL.PLLN = 12;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 3;
+  RCC_OscInitStruct.PLL.PLLQ = 12;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -627,11 +793,11 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -688,7 +854,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV256;
   hadc1.Init.Resolution = ADC_RESOLUTION_16B;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
@@ -719,7 +885,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_16CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -755,7 +921,7 @@ static void MX_ADC3_Init(void)
   /** Common config
   */
   hadc3.Instance = ADC3;
-  hadc3.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc3.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV256;
   hadc3.Init.Resolution = ADC_RESOLUTION_12B;
   hadc3.Init.DataAlign = ADC3_DATAALIGN_RIGHT;
   hadc3.Init.ScanConvMode = ADC_SCAN_DISABLE;
@@ -766,7 +932,7 @@ static void MX_ADC3_Init(void)
   hadc3.Init.DiscontinuousConvMode = DISABLE;
   hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc3.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc3.Init.DMAContinuousRequests = DISABLE;
+  hadc3.Init.DMAContinuousRequests = ENABLE;
   hadc3.Init.SamplingMode = ADC_SAMPLING_MODE_NORMAL;
   hadc3.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;
   hadc3.Init.Overrun = ADC_OVR_DATA_PRESERVED;
@@ -779,7 +945,7 @@ static void MX_ADC3_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC3_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -865,7 +1031,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x00808CD2;
+  hi2c2.Init.Timing = 0x20303E5D;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -894,6 +1060,33 @@ static void MX_I2C2_Init(void)
   /* USER CODE BEGIN I2C2_Init 2 */
 
   /* USER CODE END I2C2_Init 2 */
+
+}
+
+/**
+  * @brief SDMMC2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SDMMC2_SD_Init(void)
+{
+
+  /* USER CODE BEGIN SDMMC2_Init 0 */
+
+  /* USER CODE END SDMMC2_Init 0 */
+
+  /* USER CODE BEGIN SDMMC2_Init 1 */
+
+  /* USER CODE END SDMMC2_Init 1 */
+  hsd2.Instance = SDMMC2;
+  hsd2.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
+  hsd2.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
+  hsd2.Init.BusWide = SDMMC_BUS_WIDE_4B;
+  hsd2.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
+  hsd2.Init.ClockDiv = 0;
+  /* USER CODE BEGIN SDMMC2_Init 2 */
+
+  /* USER CODE END SDMMC2_Init 2 */
 
 }
 
@@ -1162,7 +1355,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 144 - 1;
+  htim4.Init.Prescaler = 22;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 9999;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1357,6 +1550,7 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
+  __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
   /* DMA1_Stream0_IRQn interrupt configuration */
@@ -1374,6 +1568,12 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+  /* DMA2_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
 }
 
@@ -1395,11 +1595,11 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2|PYRO6_Pin|PYRO7_Pin|PYRO8_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_15, GPIO_PIN_RESET);
@@ -1408,16 +1608,19 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOF, PYRO2_Pin|PYRO3_Pin|PYRO4_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, PYRO5_Pin|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_0, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin : PE2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
+  /*Configure GPIO pins : PE2 PYRO6_Pin PYRO7_Pin PYRO8_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|PYRO6_Pin|PYRO7_Pin|PYRO8_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1437,12 +1640,50 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PB1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pin : PYRO1_Pin */
+  GPIO_InitStruct.Pin = PYRO1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(PYRO1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CONT1_Pin */
+  GPIO_InitStruct.Pin = CONT1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(CONT1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PYRO2_Pin PYRO3_Pin PYRO4_Pin */
+  GPIO_InitStruct.Pin = PYRO2_Pin|PYRO3_Pin|PYRO4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : CONT2_Pin CONT3_Pin */
+  GPIO_InitStruct.Pin = CONT2_Pin|CONT3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CONT4_Pin */
+  GPIO_InitStruct.Pin = CONT4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(CONT4_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PYRO5_Pin PG2 PG3 */
+  GPIO_InitStruct.Pin = PYRO5_Pin|GPIO_PIN_2|GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : CONT5_Pin CONT6_Pin CONT7_Pin CONT8_Pin */
+  GPIO_InitStruct.Pin = CONT5_Pin|CONT6_Pin|CONT7_Pin|CONT8_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PD8 PD9 PD0 */
   GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_0;
@@ -1451,12 +1692,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PG2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  /*Configure GPIO pin : Servo_ARM_CHECK_Pin */
+  GPIO_InitStruct.Pin = Servo_ARM_CHECK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+  HAL_GPIO_Init(Servo_ARM_CHECK_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA8 */
   GPIO_InitStruct.Pin = GPIO_PIN_8;
@@ -1466,20 +1706,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD6 PD7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF11_SDMMC2;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
 
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	DMA_data = read_Data;
+	char data_gyro[100];
+    sprintf( data_gyro,  "a\n");
+    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+}
 /* USER CODE END 4 */
 
 /**
