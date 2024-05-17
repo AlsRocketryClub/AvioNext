@@ -769,6 +769,40 @@ int main(void)
 
 
 		    }
+        
+
+        if(strcmp(LoRa_data, "STATIC_FIRE") == 0)
+        {
+          if(ARMED)
+          {
+            LoRA_sendPacket("PYRO 1 FIRED");
+            //HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 1);
+            int packet_lenght = LoRA_parsePacket();
+            char LoRA_data[50];
+            int logging = 1;
+            while(logging)
+            {
+              if(packet_lenght)
+              {
+                //get data
+                //last_packet = HAL_GetTick();
+                for(int i = 0; i < packet_lenght; i++){
+                  LoRA_data[i] = LoRA_Read_Register(0x00);
+                }
+                LoRA_data[packet_lenght] = '\0';
+                if(strcmp(LoRa_data, "STOP") == 0)              
+                {
+                  logging=0;
+                }
+              }
+              LoRA_sendPacket("Fake data: 21231, 99999");
+            }
+
+          }
+
+        }
+
+
 		    int channel_num;
 		    char fire_data[50];
 		    sscanf(LoRA_data, "%s %d", fire_data, &channel_num);
