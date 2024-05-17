@@ -160,7 +160,7 @@ volatile int datasentflag = 0;
 
 void setServo(int servoNum, float angle){
 
-	uint16_t timerVal =(int)( 3333 + (3333 * (angle/180)));
+	uint16_t timerVal =(int)( 3000 + (4000 * (angle/180)));
 	switch (servoNum) {
 		case 1:
 			TIM4->CCR4 = timerVal;
@@ -169,7 +169,7 @@ void setServo(int servoNum, float angle){
 			TIM4->CCR3 = timerVal;
 			break;
 		case 3:
-			TIM4->CCR2 = 3333;
+			TIM4->CCR2 = timerVal;
 			break;
 		case 4:
 			TIM4->CCR1 = timerVal;
@@ -613,8 +613,9 @@ int main(void)
 //    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
 
 
-	int receiving = 0;
-	char LoRA_to_send[100];
+	int connected = 0;
+	long last_packet = 0;
+	int ARMED = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -667,9 +668,55 @@ int main(void)
 
 	     // Start ADC Conversion
 		//HAL_Delay(100);
+		if(HAL_GetTick() - last_packet > 1000){
+			connected = 0;
+		}
+
+		if(connected){
+			LED_Color_Data[2][0] = 255;
+			LED_Color_Data[2][1] = 0;
+			LED_Color_Data[2][2] = 0;
+		}else{
+			LED_Color_Data[2][0] = 120;
+			LED_Color_Data[2][1] = 255;
+			LED_Color_Data[2][2] = 0;
+		}
+
+		if(!ARMED){
+			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
+			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+
+			HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
+			HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
+			HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
+			HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
+
+			HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
+			HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
+			HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
+			HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
+
+			LED_Color_Data[7][0] = 255;
+			LED_Color_Data[7][1] = 0;
+			LED_Color_Data[7][2] = 0;
+			setLEDs();
+		}else{
+
+			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
+			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+
+			LED_Color_Data[7][0] = 0;
+			LED_Color_Data[7][1] = 255;
+			LED_Color_Data[7][2] = 0;
+			setLEDs();
+		}
+
 		int packet_lenght = LoRA_parsePacket();
 		char LoRA_data[50];
 		if(packet_lenght){
+			connected = 1;
+			last_packet = HAL_GetTick();
 			for(int i = 0; i < packet_lenght; i++){
 				LoRA_data[i] = LoRA_Read_Register(0x00);
 			}
@@ -679,21 +726,15 @@ int main(void)
 		    //sprintf( data_gyro,  "%d   %d\n", strlen(LoRA_data), packet_lenght);
 		    //CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 
-			CDC_Transmit_HS(LoRA_data, packet_lenght);
+			//CDC_Transmit_HS(LoRA_data, packet_lenght);
 
 		    if(strcmp(LoRA_data, "ARM") == 0){
-
-		    	LED_Color_Data[7][0] = 0;
-		    	LED_Color_Data[7][1] = 255;
-		    	LED_Color_Data[7][2] = 0;
+		    	ARMED = 1;
 		    	setLEDs();
 		    	LoRA_sendPacket("ARM SUCCESS");
 		    }
 		    if(strcmp(LoRA_data, "DISARM") == 0){
-		    	LED_Color_Data[7][0] = 255;
-		    	LED_Color_Data[7][1] = 0;
-		    	LED_Color_Data[7][2] = 0;
-		    	setLEDs();
+		    	ARMED = 0;
 		    	LoRA_sendPacket("DISARM SUCCESS");
 		    }
 		    if(strcmp(LoRA_data, "CONT") == 0){
@@ -728,7 +769,51 @@ int main(void)
 
 
 		    }
+		    int channel_num;
+		    char fire_data[50];
+		    sscanf(LoRA_data, "%s %d", fire_data, &channel_num);
+		    if(strcmp(fire_data, "FIRE") == 0){
+		    	if(ARMED){
+					switch (channel_num) {
+						case 1:
+				    		LoRA_sendPacket("PYRO 1 FIRED");
+
+							HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 1);
+							break;
+						case 2:
+							HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 1);
+							break;
+						case 3:
+							HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 1);
+							break;
+						case 4:
+							HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 1);
+							break;
+
+						case 5:
+							HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 1);
+							break;
+						case 6:
+							HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 1);
+							break;
+						case 7:
+							HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 1);
+							break;
+						case 8:
+							HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 1);
+							break;
+						default:
+							break;
+					}
+		    	}else{
+		    		LoRA_sendPacket("CANNOT FIRE, BOARD NOT ARMED");
+		    	}
+		    }
 		}
+		setServo(1, 0);
+		HAL_Delay(2000);
+		setServo(1, 180);
+		HAL_Delay(2000);
 
 		//uint8_t data = read_EEPROM(1);
 	    //sprintf( data_gyro,  "%d\n", DMA_data);
@@ -1355,7 +1440,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 22;
+  htim4.Init.Prescaler = 28;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 9999;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1602,7 +1687,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2|PYRO6_Pin|PYRO7_Pin|PYRO8_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, ARM1_Pin|ARM2_Pin|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1626,8 +1711,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA1 PA2 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_15;
+  /*Configure GPIO pins : ARM1_Pin ARM2_Pin PA15 */
+  GPIO_InitStruct.Pin = ARM1_Pin|ARM2_Pin|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
