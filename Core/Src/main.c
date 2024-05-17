@@ -357,6 +357,11 @@ void LoRA_begin(long frequency){
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
 
+	uint8_t version = LoRA_Read_Register(REG_VERSION);
+    char data_debug[100];
+	sprintf( data_debug,  "%x\n", version);
+	CDC_Transmit_HS(data_debug, strlen(data_debug));
+
 	LoRA_sleep();
 	LoRA_set_frequency(868000000);
 
@@ -715,6 +720,8 @@ int main(void)
 		int packet_lenght = LoRA_parsePacket();
 		char LoRA_data[50];
 		if(packet_lenght){
+
+
 			connected = 1;
 			last_packet = HAL_GetTick();
 			for(int i = 0; i < packet_lenght; i++){
@@ -771,26 +778,31 @@ int main(void)
 		    }
         
 
-        if(strcmp(LoRa_data, "STATIC_FIRE") == 0)
+        if(strcmp(LoRA_data, "STATIC_FIRE") == 0)
         {
           if(ARMED)
           {
             LoRA_sendPacket("PYRO 1 FIRED");
             //HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 1);
-            int packet_lenght = LoRA_parsePacket();
             char LoRA_data[50];
             int logging = 1;
             while(logging)
             {
+            	int packet_lenght;
+            	long startTime = HAL_GetTick();
+            	while( HAL_GetTick() - startTime < 10){
+            		packet_lenght = LoRA_parsePacket();
+                	HAL_Delay(0.1);
+            }
               if(packet_lenght)
               {
-                //get data
+                //flush data from buffer
                 //last_packet = HAL_GetTick();
                 for(int i = 0; i < packet_lenght; i++){
                   LoRA_data[i] = LoRA_Read_Register(0x00);
                 }
                 LoRA_data[packet_lenght] = '\0';
-                if(strcmp(LoRa_data, "STOP") == 0)              
+                if(strcmp(LoRA_data, "STOP") == 0)
                 {
                   logging=0;
                 }
@@ -844,10 +856,7 @@ int main(void)
 		    	}
 		    }
 		}
-		setServo(1, 0);
-		HAL_Delay(2000);
-		setServo(1, 180);
-		HAL_Delay(2000);
+
 
 		//uint8_t data = read_EEPROM(1);
 	    //sprintf( data_gyro,  "%d\n", DMA_data);
