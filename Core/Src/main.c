@@ -25,6 +25,12 @@
 /* USER CODE BEGIN Includes */
 #include "LoRA"
 #include "AvioNEXT.h"
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,6 +94,22 @@ uint32_t LED_Color_Data[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][3];
 uint16_t DMA_data;
 
 uint16_t read_Data;
+
+
+
+
+
+typedef struct{
+    int nu_rows;
+    int nu_col;
+    double *data;
+}matrix;
+
+matrix create_matrix(int rows, int collums, double * data);
+void matr_Mult(matrix *rm, matrix *v, matrix *rs);
+void axis_angle_rot(matrix *axis,double angle, matrix *result);
+void normalize(matrix* matrix);
+
 ;
 /* USER CODE END PD */
 
@@ -458,6 +480,114 @@ int mount_SD(){
 	return status;
 }
 
+
+
+
+
+
+
+
+
+
+void matr_Mult( matrix *rm, matrix *v, matrix *rs) {
+    rs->nu_rows=rm->nu_rows;
+    rs->nu_col=v->nu_col;
+    double current =0;
+    for (int i = 0; i < rm->nu_rows; i++) {
+        for (int j = 0; j < v->nu_col; j++) {
+            current = 0;
+            for (int k = 0; k < rm->nu_col; k++) {
+                current += rm->data[i*rm->nu_col+k] * v->data[k*v->nu_col+j];
+            }
+            rs->data[i*(v->nu_col)+j]=current;
+
+        }
+    }
+}
+
+matrix create_matrix(int rows, int collums, double * data)
+{
+    matrix result;
+    result.nu_rows=rows;
+    result.nu_col=collums;
+    result.data=data;
+    return result;
+}
+
+void axis_angle_rot(matrix *axis,double angle, matrix *result)
+{
+  double cos_val = cosf(angle);
+  double sin_val = sinf(angle);
+  result->nu_col=3;
+  result->nu_rows=3;
+
+
+  result->data[0] = cos_val + axis->data[0] * axis->data[0] * (1 - cos_val);
+  result->data[1] = axis->data[0] * axis->data[1] * (1 - cos_val) - axis->data[2] * sin_val;
+  result->data[2] = axis->data[0] * axis->data[2] * (1 - cos_val) + axis->data[1] * sin_val;
+  result->data[3] = axis->data[1] * axis->data[0] * (1 - cos_val) + axis->data[2] * sin_val;
+  result->data[4] = cos_val + axis->data[1] * axis->data[1] * (1 - cos_val);
+  result->data[5] = axis->data[1] * axis->data[2] * (1 - cos_val) - axis->data[0] * sin_val;
+  result->data[6] = axis->data[2] * axis->data[0] * (1 - cos_val) - axis->data[1] * sin_val;
+  result->data[7] = axis->data[2] * axis->data[1] * (1 - cos_val) + axis->data[0] * sin_val;
+  result->data[8] = cos_val + axis->data[2] * axis->data[2] * (1 - cos_val);
+}
+
+void normalize(matrix* matrix)
+{
+    double length=0;
+    for(int i =0; i<matrix->nu_col;i++)
+    {
+        length+=pow(matrix->data[i],2);
+    }
+    length=sqrt(length);
+    for(int i =0; i<matrix->nu_col;i++)
+    {
+        matrix->data[i]=matrix->data[i]/length;
+    }
+}
+
+void assign_data(matrix* one, matrix*two)
+{
+    for(int i=0; i<one->nu_col*one->nu_rows;i++)
+    {
+        one->data[i]=two->data[i];
+    }
+}
+void rotate(double*x,double*y,double*z,matrix*current_matrix,double*angular_change)
+{
+   double xr[3];
+   double yr[3];
+   double zr[3];
+   double currentr[9];
+   double rotated[9];
+   matrix rotated_matr=create_matrix(3,3,&rotated);
+   matrix currentr_matrix = create_matrix(3,3,&currentr);
+   matrix x_matr = create_matrix(1,3,x);
+   matrix y_matr = create_matrix(1,3,y);
+   matrix z_matr = create_matrix(1,3,z);
+   matrix xr_matr = create_matrix(1,3,&xr);
+   matrix yr_matr = create_matrix(1,3,&yr);
+   matrix zr_matr = create_matrix(1,3,&zr);
+   matr_Mult(&x_matr,current_matrix,&xr_matr);
+   matr_Mult(&y_matr,current_matrix,&yr_matr);
+   matr_Mult(&z_matr,current_matrix,&zr_matr);
+   normalize(&xr_matr);
+   normalize(&yr_matr);
+   normalize(&zr_matr);
+
+   axis_angle_rot(&x_matr,angular_change[0],&rotated_matr);
+   matr_Mult(current_matrix,&rotated_matr,&currentr_matrix);
+   axis_angle_rot(&y_matr,angular_change[1],&rotated_matr);
+   matr_Mult(&currentr_matrix,&rotated_matr,current_matrix);
+   axis_angle_rot(&z_matr,angular_change[2],&rotated_matr);
+   matr_Mult(current_matrix,&rotated_matr,&currentr_matrix);
+   assign_data(current_matrix,&currentr_matrix);
+   assign_data(&x_matr,&xr_matr);
+   assign_data(&y_matr,&yr_matr);
+   assign_data(&z_matr,&zr_matr);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -531,7 +661,7 @@ int main(void)
 	HG2_Write_Register(0x1B, 0b11011000);
 
 	float rotZ = 0;
-	uint32_t lastTime = 0;
+	//uint32_t lastTime = 0;
 
 	float calOmegaX = 0;
 	float calOmegaY = 0;
@@ -573,6 +703,15 @@ int main(void)
     LoRA_begin(868000000);
 
     //HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
+
+    double angular_change[3]={0,0,0};
+    double current[9] = {1,0,0,0,1,0,0,0,1};
+    double x[3]= {1,0,0};
+    double y[3]= {0,1,0};
+    double z[3]= {0,0,1};
+    matrix current_matrix = create_matrix(3,3,&current);
+
+
 
 	char data_gyro[100];
 //    sprintf( data_gyro,  "Start\n");
@@ -621,12 +760,50 @@ int main(void)
 	int connected = 0;
 	long last_packet = 0;
 	int ARMED = 0;
+	long lastTime = HAL_GetTick();
+	long lastPrint = HAL_GetTick();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 	while (1) {
+//		   long currentTime = HAL_GetTick();
+//		   double GyroX = ((3.1415 * LG2_Get_Gyro_X()) / 180000) * (currentTime - lastTime);
+//		   double GyroY = ((3.1415 * LG2_Get_Gyro_Y()) / 180000) * (currentTime - lastTime);
+//		   double GyroZ = ((3.1415 * LG2_Get_Gyro_Z()) / 180000) * (currentTime - lastTime);
+//		   lastTime = HAL_GetTick();
+//
+//
+//
+//
+//		   for(int i = 0; i < 10; i++){
+//			   angular_change[0]= 0.1;
+//			   angular_change[1]= 0.1;
+//			   angular_change[2]= 0.1;
+//			   rotate(&x,&y,&z,&current_matrix,&angular_change);
+//		   }
+//		   while(1){
+//		   char data_debug[500];
+//		   sprintf(data_debug, "%f,%f,%f;%f,%f,%f;%f,%f,%f\n", current_matrix.data[0], current_matrix.data[1], current_matrix.data[2], current_matrix.data[3], current_matrix.data[4], current_matrix.data[5], current_matrix.data[6], current_matrix.data[7], current_matrix.data[8]);
+//		   //sprintf(data_debug, "%f  %f  %f\n", GyroX, GyroY, GyroZ);
+//		   CDC_Transmit_HS(data_debug, strlen(data_debug));
+//		   HAL_Delay(100);
+//		   }
+//
+//
+//		   if(HAL_GetTick() - lastPrint > 10){
+//			   char data_debug[500];
+//			   sprintf(data_debug, "%f,%f,%f;%f,%f,%f;%f,%f,%f\n", current_matrix.data[0], current_matrix.data[1], current_matrix.data[2], current_matrix.data[3], current_matrix.data[4], current_matrix.data[5], current_matrix.data[6], current_matrix.data[7], current_matrix.data[8]);
+//			   //sprintf(data_debug, "%f  %f  %f\n", GyroX, GyroY, GyroZ);
+//			   CDC_Transmit_HS(data_debug, strlen(data_debug));
+//
+//			   lastPrint = HAL_GetTick();
+//		   }
+
+
+		   //HAL_Delay(10);
+
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
@@ -776,7 +953,7 @@ int main(void)
 
 
 		    }
-        
+
 
         if(strcmp(LoRA_data, "STATIC_FIRE") == 0)
         {
@@ -809,7 +986,6 @@ int main(void)
               }
               LoRA_sendPacket("Fake data: 21231, 99999");
             }
-
           }
 
         }

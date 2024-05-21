@@ -67,7 +67,7 @@ float LG2_Get_Gyro_X(){
 	uint8_t Gyro_L = LG2_Read_Register(0x22);
 	uint8_t Gyro_H = LG2_Read_Register(0x23);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32767) * 250;
+	float omega = (((float)Gyro) / 32767.0) * 250.0;
 	return omega;
 }
 
@@ -75,7 +75,7 @@ float LG2_Get_Gyro_Y(){
 	uint8_t Gyro_L = LG2_Read_Register(0x24);
 	uint8_t Gyro_H = LG2_Read_Register(0x25);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (((float)Gyro) / 32767) * 250;
+	float omega = (((float)Gyro) / 32767.0) * 250.0;
 
 	return omega;
 }
