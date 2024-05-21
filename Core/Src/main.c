@@ -458,6 +458,69 @@ int mount_SD(){
 	return status;
 }
 
+int disarm(char* state)
+{
+  HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
+  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+
+  HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
+  HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
+  HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
+  HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
+
+  HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
+  HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
+  HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
+  HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
+
+  LED_Color_Data[7][0] = 255;
+  LED_Color_Data[7][1] = 0;
+  LED_Color_Data[7][2] = 0;
+  setLEDs();
+
+  strcpy(state,"DISARMED");
+  return 0;
+}
+
+int arm(char* sate)
+{
+  HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
+  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+
+  strcpy(state,"ARMED");
+  LED_Color_Data[7][0] = 0;
+  LED_Color_Data[7][1] = 255;
+  LED_Color_Data[7][2] = 0;
+  setLEDs();
+  return 0;
+}
+
+uint32_t currentPacketID=0;
+int recv_packet(char* LorA_data, int max_length)
+{
+  int packet_lenght = LoRA_parsePacket();
+  if(max_length < packet_lenght)
+  {
+    return 0;
+  }
+  if(packet_lenght){
+    int min = fmin(packet_lenght, max_length-1);
+    for(int i = 0; i < min; i++){
+      LoRA_data[i] = LoRA_Read_Register(0x00);
+    }
+    LoRA_data[min] = '\0';
+    return min;
+  }
+  else{
+    return 0;
+  }
+}
+
+int send_packet(char* LoRA_data, int max_length)
+{
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -626,7 +689,88 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
+
+  char state[50] = "DISARMED";
+  char command[50];
+  char acknowledge[50];
+  char packet[50];
+  char sendMessage[50];
+  int last = 0;
+  int packetId;
+  int command_recieved = 0;
+
 	while (1) {
+    if(recv_checked_command(packet, 50))
+    {
+      //to do check crc
+      sscanf("%d|%s", packetId, command);
+      if(packetID == currentPacketID)
+      {
+        //acknowledge
+        sprintf(acknowledge, "%d|%s", currentPacketID, command);
+        LoRA_sendPacket(acknowledge);
+
+        currentPacketID++;
+
+        
+        if(strcmp(state, "DISARMED") == 0)
+        {
+          if(strcmp(command, "ARM"))
+          {
+            if(arm(state))
+            {
+              sprintf(sendMessage, "%d|%s", currentPacketID, "ARM SUCCESS");
+              LoRA_sendPacket(sendMessage);
+            }
+            else
+            {
+              //success
+            }
+          }
+          else if(strcmp(command, "DISARM"))
+          {
+            //
+          }
+        }
+        else if(strcmp(state, "ARMED") == 0)
+        {
+          if(strcmp(command, "DISARM"))
+          {
+            if(disarm(state))
+            {
+              //not success
+            }
+            else
+            {
+              //success
+            }
+
+          }
+        }
+        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
+        {
+          if(strcmp(command, "STOP"))
+          {
+            strcpy(state,"ARMED");
+          }
+        }
+        else
+        {
+
+        }
+      }
+      else if (packetID == currentPacketID-1)
+      {
+        //send previous acknowledge
+        LoRA_sendPacket(acknowledge);
+      }
+      else
+      {
+        //send async error
+      }
+    }
+
+
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
@@ -772,8 +916,6 @@ int main(void)
 		    		LoRA_sendPacket(message);
 		    		HAL_Delay(100);
 		    	}
-
-
 
 		    }
         
