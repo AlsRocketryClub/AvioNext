@@ -496,30 +496,48 @@ int arm(char* sate)
   return 0;
 }
 
-uint32_t currentPacketID=0;
-int recv_packet(char* LorA_data, int max_length)
+int recv_packet(char* LoRA_data, int max_length)
 {
-  int packet_lenght = LoRA_parsePacket();
-  if(max_length < packet_lenght)
+  int packet_length = LoRA_parsePacket();
+  if(max_length-1 < packet_length) //-1 for the null terminator
   {
     return 0;
   }
   if(packet_lenght){
-    int min = fmin(packet_lenght, max_length-1);
-    for(int i = 0; i < min; i++){
+    for(int i = 0; i < packet_length; i++){
       LoRA_data[i] = LoRA_Read_Register(0x00);
     }
-    LoRA_data[min] = '\0';
-    return min;
+    LoRA_data[packet_length] = '\0';
+    return packet_length;
   }
   else{
     return 0;
   }
 }
 
-int send_packet(char* LoRA_data, int max_length)
+void reliable_send_packet(char* LoRA_data)
 {
+  uint16_t length = strlen(LoRA_data)+1; //+1 for the \0
+  char acknowledge[length]; 
+  LoRA_sendPacket(LoRA_data);
+  while(1)
+  {
+    
+    if(recv_packet(acknowledge, length))
+    {
+      //cehck crc
+      if(strcmp(acknowledge, LoRA_data) != 0)
+      {
+        LoRA_sendPacket(LoRA_data);
+      }
+      else
+      {
+        break;
+      }
+    }
 
+    //delay
+  }
 }
 /* USER CODE END 0 */
 
@@ -693,48 +711,99 @@ int main(void)
   char state[50] = "DISARMED";
   char command[50];
   char acknowledge[50];
-  char packet[50];
+  char recv_packet[50];
+  char response_packet[50];
   char sendMessage[50];
   int last = 0;
   int packetId;
-  int command_recieved = 0;
+  char communication_state = "RECIEVING";
 
 	while (1) {
-    if(recv_checked_command(packet, 50))
+    if(strcmp(communication_state,"RECIEVING") == 0)
     {
-      //to do check crc
-      sscanf("%d|%s", packetId, command);
-      if(packetID == currentPacketID)
+      if(recv_packet(recv_packet, 50))
       {
-        //acknowledge
-        sprintf(acknowledge, "%d|%s", currentPacketID, command);
-        LoRA_sendPacket(acknowledge);
-
-        currentPacketID++;
-
-        
+        //if crc then:
+        //send acknowledge
+        //{
+        strcpy(command, recv_packet);
+        LoRA_sendPacket(recv_packet);
+        strcpy(communication_state,"WAITING FOR PRIVILIGE");
+        //}
+      }
+      else
+      {
+        //give up MASTER
+        LoRA_sendPacket("$");
+      }
+    }
+    else if(strcmp(communication_state,"WAITING FOR PRIVILIGE") == 0)
+    {
+      if(recv_packet(recv_packet, 50))
+      {
+        //if crc then:
+        //{
+          if(strcmp(recv_packet, "$") == 0)
+          {
+            strcpy(communication_state,"MASTER");
+          }
+          else
+          {
+            //send acknowledge again
+            LoRA_sendPacket(recv_packet);
+          }
+        //}
+      }     
+    }
+    else if(strcmp(communication_state,"MASTER") == 0)
+    {
         if(strcmp(state, "DISARMED") == 0)
         {
-          if(strcmp(command, "ARM"))
+          if(strcmp(command, "ARM") == 0)
           {
-            if(arm(state))
+            if(!arm(state))
             {
-              sprintf(sendMessage, "%d|%s", currentPacketID, "ARM SUCCESS");
-              LoRA_sendPacket(sendMessage);
+              reliable_send_packet("ARM SUCCESS");
             }
             else
             {
-              //success
+              reliable_send_packet("ARM UNSUCCESSFUL");
             }
           }
-          else if(strcmp(command, "DISARM"))
+          else if(strcmp(command, "DISARM") == 0)
           {
-            //
+            reliable_send_packet("ALREADY DISARMED");
+          }
+          else if(strcmp(command, "CONT") == 0)
+          {
+            uint8_t CONTS[8];
+            CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+            CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+            CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+            CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+            CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+            CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+            CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+            CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+
+            char message[100];
+            for(int i=0; i<8; i++)
+            {
+              if(CONTS[i])
+              {
+                sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+              }
+              else
+              {
+                sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+              }
+
+              reliable_send_packet(message);
           }
         }
         else if(strcmp(state, "ARMED") == 0)
         {
-          if(strcmp(command, "DISARM"))
+          if(strcmp(command, "DISARM") == 0)
           {
             if(disarm(state))
             {
@@ -749,7 +818,7 @@ int main(void)
         }
         else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
         {
-          if(strcmp(command, "STOP"))
+          if(strcmp(command, "STOP") == 0)
           {
             strcpy(state,"ARMED");
           }
@@ -759,15 +828,8 @@ int main(void)
 
         }
       }
-      else if (packetID == currentPacketID-1)
-      {
-        //send previous acknowledge
-        LoRA_sendPacket(acknowledge);
-      }
-      else
-      {
-        //send async error
-      }
+
+      strcpy(communication_state,"RECIEVING");
     }
 
 
@@ -817,6 +879,7 @@ int main(void)
 
 	     // Start ADC Conversion
 		//HAL_Delay(100);
+    /*
 		if(HAL_GetTick() - last_packet > 1000){
 			connected = 0;
 		}
@@ -829,36 +892,6 @@ int main(void)
 			LED_Color_Data[2][0] = 120;
 			LED_Color_Data[2][1] = 255;
 			LED_Color_Data[2][2] = 0;
-		}
-
-		if(!ARMED){
-			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
-
-			HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
-			HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
-			HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
-			HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
-
-			HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
-			HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
-			HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
-			HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
-
-			LED_Color_Data[7][0] = 255;
-			LED_Color_Data[7][1] = 0;
-			LED_Color_Data[7][2] = 0;
-			setLEDs();
-		}else{
-
-			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
-			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
-
-
-			LED_Color_Data[7][0] = 0;
-			LED_Color_Data[7][1] = 255;
-			LED_Color_Data[7][2] = 0;
-			setLEDs();
 		}
 
 		int packet_lenght = LoRA_parsePacket();
@@ -890,7 +923,6 @@ int main(void)
 		    }
 		    if(strcmp(LoRA_data, "CONT") == 0){
 
-		    	char cont_str[150];
 		    	uint8_t CONTS[8];
 		    	CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
 		    	CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
@@ -998,7 +1030,7 @@ int main(void)
 		    	}
 		    }
 		}
-
+    */
 
 		//uint8_t data = read_EEPROM(1);
 	    //sprintf( data_gyro,  "%d\n", DMA_data);
