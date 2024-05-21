@@ -731,6 +731,7 @@ int main(void)
   int last = 0;
   int packetId;
   char communication_state[50] = "RECIEVING";
+  int isReceived = 0;
 
 	while (1) {
 
@@ -738,10 +739,8 @@ int main(void)
     if(strcmp(communication_state,"RECIEVING") == 0)
     {
 
-      if(recv_packet(recieved_packet, 50))
+      if(isReceived)
       {
-    	  LoRA_sendPacket("hello");
-
         //if crc then:
         //send acknowledge
         //{
@@ -754,106 +753,120 @@ int main(void)
       {
         //give up MASTER
         LoRA_sendPacket("$");
-        HAL_Delay(1000);
-        LoRA_parsePacket();
+        isReceived = 0;
+        for(int i = 0; i < 1000; i++){
+        	if(recv_packet(recieved_packet, 50)){
+        		isReceived = 1;
+        	}
+        	HAL_Delay(1);
+        }
+        //LoRA_parsePacket();
         //char gotten[50];
         //sprintf(gotten,"gotten: %d",LoRA_parsePacket());
         //LoRA_sendPacket(gotten);
-		HAL_Delay(1000);
+		//HAL_Delay(1000);
       }
     }
     else if(strcmp(communication_state,"WAITING FOR PRIVILIGE") == 0)
     {
       if(recv_packet(recieved_packet, 50))
       {
+          LoRA_sendPacket("Recived packet");
+
         //if crc then:
         //{
           if(strcmp(recieved_packet, "$") == 0)
           {
+
             strcpy(communication_state,"MASTER");
           }
           else
           {
+              LoRA_sendPacket("Received not $");
+
             //send acknowledge again
             strcpy(command, recieved_packet);
-            LoRA_sendPacket(recieved_packet);
+
           }
         //}
       }     
     }
     else if(strcmp(communication_state,"MASTER") == 0)
     {
-        if(strcmp(state, "DISARMED") == 0)
-        {
-          if(strcmp(command, "ARM") == 0)
-          {
-            if(!arm(state))
-            {
-              reliable_send_packet("ARM SUCCESS");
-            }
-            else
-            {
-              reliable_send_packet("ARM UNSUCCESSFUL");
-            }
-          }
-          else if(strcmp(command, "DISARM") == 0)
-          {
-            reliable_send_packet("ALREADY DISARMED");
-          }
-          else if(strcmp(command, "CONT") == 0)
-          {
-            uint8_t CONTS[8];
-            CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
-            CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
-            CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
-            CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
-            CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
-            CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
-            CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
-            CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
-
-            char message[100];
-            for(int i=0; i<8; i++)
-            {
-              if(CONTS[i])
-              {
-                sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
-              }
-              else
-              {
-                sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
-              }
-
-              reliable_send_packet(message);
-          }
-        }
-        else if(strcmp(state, "ARMED") == 0)
-        {
-          if(strcmp(command, "DISARM") == 0)
-          {
-            if(disarm(state))
-            {
-              //not success
-            }
-            else
-            {
-              //success
-            }
-
-          }
-        }
-        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
-        {
-          if(strcmp(command, "STOP") == 0)
-          {
-            strcpy(state,"ARMED");
-          }
-        }
-        else
-        {
-
-        }
-      }
+    	HAL_Delay(10);
+    	LoRA_sendPacket("MASTER");
+//
+//        if(strcmp(state, "DISARMED") == 0)
+//        {
+//          if(strcmp(command, "ARM") == 0)
+//          {
+//            if(!arm(state))
+//            {
+//              reliable_send_packet("ARM SUCCESS");
+//            }
+//            else
+//            {
+//              reliable_send_packet("ARM UNSUCCESSFUL");
+//            }
+//          }
+//          else if(strcmp(command, "DISARM") == 0)
+//          {
+//            reliable_send_packet("ALREADY DISARMED");
+//          }
+//          else if(strcmp(command, "CONT") == 0)
+//          {
+//            uint8_t CONTS[8];
+//            CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+//            CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+//            CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+//            CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+//            CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+//            CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+//            CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+//            CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+//
+//            char message[100];
+//            for(int i=0; i<8; i++)
+//            {
+//              if(CONTS[i])
+//              {
+//                sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+//              }
+//              else
+//              {
+//                sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+//              }
+//
+//              reliable_send_packet(message);
+//          }
+//        }
+//        else if(strcmp(state, "ARMED") == 0)
+//        {
+//          if(strcmp(command, "DISARM") == 0)
+//          {
+//            if(disarm(state))
+//            {
+//              //not success
+//            }
+//            else
+//            {
+//              //success
+//            }
+//
+//          }
+//        }
+//        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
+//        {
+//          if(strcmp(command, "STOP") == 0)
+//          {
+//            strcpy(state,"ARMED");
+//          }
+//        }
+//        else
+//        {
+//
+//        }
+//      }
 
       strcpy(communication_state,"RECIEVING");
     }
