@@ -393,6 +393,20 @@ void LoRA_endPacket(){
 
 	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
 
+	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+
+	LoRA_explicit_header_mode();
+
+	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
+
+	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+		LoRA_idle();
+	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+	}
 }
 
 
@@ -482,7 +496,7 @@ int disarm(char* state)
   return 0;
 }
 
-int arm(char* sate)
+int arm(char* state)
 {
   HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
   HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
@@ -503,7 +517,7 @@ int recv_packet(char* LoRA_data, int max_length)
   {
     return 0;
   }
-  if(packet_lenght){
+  if(packet_length){
     for(int i = 0; i < packet_length; i++){
       LoRA_data[i] = LoRA_Read_Register(0x00);
     }
@@ -711,23 +725,28 @@ int main(void)
   char state[50] = "DISARMED";
   char command[50];
   char acknowledge[50];
-  char recv_packet[50];
+  char recieved_packet[50];
   char response_packet[50];
   char sendMessage[50];
   int last = 0;
   int packetId;
-  char communication_state = "RECIEVING";
+  char communication_state[50] = "RECIEVING";
 
 	while (1) {
+
+
     if(strcmp(communication_state,"RECIEVING") == 0)
     {
-      if(recv_packet(recv_packet, 50))
+
+      if(recv_packet(recieved_packet, 50))
       {
+    	  LoRA_sendPacket("hello");
+
         //if crc then:
         //send acknowledge
         //{
-        strcpy(command, recv_packet);
-        LoRA_sendPacket(recv_packet);
+        strcpy(command, recieved_packet);
+        LoRA_sendPacket(recieved_packet);
         strcpy(communication_state,"WAITING FOR PRIVILIGE");
         //}
       }
@@ -735,22 +754,29 @@ int main(void)
       {
         //give up MASTER
         LoRA_sendPacket("$");
+        HAL_Delay(1000);
+        LoRA_parsePacket();
+        //char gotten[50];
+        //sprintf(gotten,"gotten: %d",LoRA_parsePacket());
+        //LoRA_sendPacket(gotten);
+		HAL_Delay(1000);
       }
     }
     else if(strcmp(communication_state,"WAITING FOR PRIVILIGE") == 0)
     {
-      if(recv_packet(recv_packet, 50))
+      if(recv_packet(recieved_packet, 50))
       {
         //if crc then:
         //{
-          if(strcmp(recv_packet, "$") == 0)
+          if(strcmp(recieved_packet, "$") == 0)
           {
             strcpy(communication_state,"MASTER");
           }
           else
           {
             //send acknowledge again
-            LoRA_sendPacket(recv_packet);
+            strcpy(command, recieved_packet);
+            LoRA_sendPacket(recieved_packet);
           }
         //}
       }     
