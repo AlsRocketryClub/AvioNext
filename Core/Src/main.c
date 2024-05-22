@@ -553,6 +553,34 @@ void reliable_send_packet(char* LoRA_data)
     //delay
   }
 }
+
+void pyro_continuity_check()
+{
+	uint8_t CONTS[8];
+	CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+	CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+	CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+	CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+	CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+	CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+	CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+	CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+
+	char message[100];
+	for(int i=0; i<8; i++)
+	{
+		if(CONTS[i])
+		{
+			sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+		}
+		else
+		{
+			sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+		}
+
+		reliable_send_packet(message);
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -796,30 +824,7 @@ while (1) {
         	}
         	else if(strcmp(command, "CONT") == 0)
         	{
-        		uint8_t CONTS[8];
-        		CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
-        		CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
-        		CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
-        		CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
-        		CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
-        		CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
-        		CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
-        		CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
-
-        		char message[100];
-        		for(int i=0; i<8; i++)
-        		{
-        			if(CONTS[i])
-        			{
-        				sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
-        			}
-        			else
-        			{
-        				sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
-        			}
-
-        			reliable_send_packet(message);
-        		}
+        		pyro_continuity_check();
         	}
         }
         else if(strcmp(state, "ARMED") == 0)
@@ -835,6 +840,14 @@ while (1) {
             	reliable_send_packet("DISARM UNSUCCESSFUL");
             }
           }
+          else if(strcmp(command, "CONT") == 0)
+          {
+        	  pyro_continuity_check();
+          }
+          else if(strcmp(command, "STATIC_FIRE") == 0)
+          {
+        	  strcpy(state,"STATIC_FIRE_LOGGING");
+          }
         }
         else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
         {
@@ -842,13 +855,14 @@ while (1) {
           {
             strcpy(state,"ARMED");
           }
+          LoRA_sendPacket("Fake data: 21231, 99999");
         }
-       else
-       {
-    	   LoRA_sendPacket(state);
-    	   HAL_Delay(10);
+        else
+        {
+        	LoRA_sendPacket(state);
+        	HAL_Delay(10);
         	reliable_send_packet("PANIC! FLIGHT COMPUTER IS NOT IN ANY VALID STATE.");
-       }
+        }
 
       strcpy(communication_state,"RECIEVING");
     }
