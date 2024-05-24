@@ -517,7 +517,6 @@ int main(void)
   if (MAX_M10s_init(&hi2c2)) Error_Handler();
 
   //MAX_M10S_init(&hi2c2);
-/*
 	const int MAX = 50;
 	const double SPEED = 2.0/2000;
 	const double r_offset = 0;
@@ -680,7 +679,6 @@ int main(void)
 		lastTime = HAL_GetTick();
 
 		int a = add(2, 5);
-    */
     
         int btr = MAX_M10s_bytesToRead(&hi2c2);
         if (btr == -1) Error_Handler();
