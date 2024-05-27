@@ -38,6 +38,10 @@
 #define NUM_LEDS_1 5
 #define NUM_LEDS_2 2
 #define NUM_LEDS_3 2
+#define usbBufferLen 256
+
+uint8_t usbDataBuffer[usbBufferLen];
+uint32_t usbBytesReady = 0;
 
 //first coordinate defines on which string the LED is positioned, second determines the position
 const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
@@ -750,42 +754,25 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 
-  char state[50] = "DISARMED";
+  char state[50] = "MASTER";
   char command[50];
   char acknowledge[50];
+  char previous_packet[50];
   char recieved_packet[50];
   char response_packet[50];
   char sendMessage[50];
   int last = 0;
   int packetId;
-  char communication_state[50] = "RECIEVING";
+  char communication_state[50] = "MASTER";
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
 while (1) {
 
-    if(strcmp(communication_state,"RECIEVING") == 0)
+    if(strcmp(communication_state,"RECIEVING WITH ACKNOWLEDGE") == 0)
     {
       if(recv_packet(recieved_packet, 50))
       {
-        //if crc then:
-        //send acknowledge
-        //{
-        strcpy(command, recieved_packet);
-        LoRA_sendPacket(recieved_packet);
-        strcpy(communication_state,"WAITING FOR PRIVILIGE");
-        //}
-      }
-      else if(HAL_GetTick()-previousTime > 1000)
-      {
-    	previousTime = HAL_GetTick();
-        //give up MASTER
-        LoRA_sendPacket("$");
-      }
-    }
-    else if(strcmp(communication_state,"WAITING FOR PRIVILIGE") == 0)
-    {
-      if(recv_packet(recieved_packet, 50))
-      {
+        previousTime = HAL_GetTick();
         //if crc then:
         //{
           if(strcmp(recieved_packet, "$") == 0)
@@ -793,78 +780,59 @@ while (1) {
 
             strcpy(communication_state,"MASTER");
           }
-          else
+          else if(strcmp(recieved_packet, previous_packet))
           {
             //send acknowledge again
-            strcpy(command, recieved_packet);
             LoRA_sendPacket(recieved_packet);
-
+          }
+          else
+          {
+            strcpy(previous_packet, recieved_packet);
+            LoRA_sendPacket(recieved_packet);
+            CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
           }
         //}
-      }     
+      }
+      else if(HAL_GetTick()-previousTime > 1000)
+      {
+        previousTime = HAL_GetTick();
+        //give up MASTER
+        LoRA_sendPacket("$");
+      }
+    }
+    else if(strcmp(communication_state,"RECIEVING WITHOUT ACKNOWLEDGE") == 0)
+    {
+      if(recv_packet(recieved_packet, 50))
+      {
+        previousTime = HAL_GetTick();
+        //if crc then:
+        //{
+          if(strcmp(recieved_packet, "$") == 0)
+          {
+            strcpy(communication_state,"MASTER");
+          }
+          else
+          {
+            strcpy(previous_packet, recieved_packet);
+            
+            CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
+          }
+        //}
+      }
+      else if(HAL_GetTick()-previousTime > 1000)
+      {
+        previousTime = HAL_GetTick();
+        //give up MASTER
+        LoRA_sendPacket("$");
+      } 
     }
     else if(strcmp(communication_state,"MASTER") == 0)
     {
-        if(strcmp(state, "DISARMED") == 0)
-        {
-        	if(strcmp(command, "ARM") == 0)
-        	{
-        		if(!arm(state))
-        		{
-        			reliable_send_packet("ARM SUCCESS");
-        		}
-        		else
-        		{
-        			reliable_send_packet("ARM UNSUCCESSFUL");
-        		}
-        	}
-        	else if(strcmp(command, "DISARM") == 0)
-        	{
-        		reliable_send_packet("ALREADY DISARMED");
-        	}
-        	else if(strcmp(command, "CONT") == 0)
-        	{
-        		pyro_continuity_check();
-        	}
-        }
-        else if(strcmp(state, "ARMED") == 0)
-        {
-          if(strcmp(command, "DISARM") == 0)
-          {
-            if(!disarm(state))
-            {
-            	reliable_send_packet("DISARM SUCCESS");
-            }
-            else
-            {
-            	reliable_send_packet("DISARM UNSUCCESSFUL");
-            }
-          }
-          else if(strcmp(command, "CONT") == 0)
-          {
-        	  pyro_continuity_check();
-          }
-          else if(strcmp(command, "STATIC_FIRE") == 0)
-          {
-        	  strcpy(state,"STATIC_FIRE_LOGGING");
-          }
-        }
-        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
-        {
-          if(strcmp(command, "STOP") == 0)
-          {
-            strcpy(state,"ARMED");
-          }
-          LoRA_sendPacket("Fake data: 21231, 99999");
-        }
-        else
-        {
-        	LoRA_sendPacket(state);
-        	HAL_Delay(10);
-        	reliable_send_packet("PANIC! FLIGHT COMPUTER IS NOT IN ANY VALID STATE.");
-        }
-
-      strcpy(communication_state,"RECIEVING");
+      //get input
+      char input[50];
+      reliable_send_packet(input)
+      
+      strcpy(communication_state,"RECIEVING WITH ACKNOWLEDGE");
     }
 
 
