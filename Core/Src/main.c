@@ -117,6 +117,7 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim13;
 DMA_HandleTypeDef hdma_tim2_ch3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 DMA_HandleTypeDef hdma_tim3_ch1;
@@ -149,6 +150,7 @@ static void MX_TIM3_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
+static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -459,6 +461,104 @@ int mount_SD(){
 	return status;
 }
 
+<<<<<<< Updated upstream
+=======
+int disarm(char* state)
+{
+  HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
+  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+
+  HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
+  HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
+  HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
+  HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
+
+  HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
+  HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
+  HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
+  HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
+
+  LED_Color_Data[7][0] = 255;
+  LED_Color_Data[7][1] = 0;
+  LED_Color_Data[7][2] = 0;
+  setLEDs();
+
+  strcpy(state,"DISARMED");
+  return 0;
+}
+
+int arm(char* state)
+{
+  HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
+  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+
+  strcpy(state,"ARMED");
+  LED_Color_Data[7][0] = 0;
+  LED_Color_Data[7][1] = 255;
+  LED_Color_Data[7][2] = 0;
+  setLEDs();
+  return 0;
+}
+
+int recv_packet(char* LoRA_data, int max_length)
+{
+  int packet_length = LoRA_parsePacket();
+  if(max_length-1 < packet_length) //-1 for the null terminator
+  {
+    return 0;
+  }
+  if(packet_length){
+    for(int i = 0; i < packet_length; i++){
+      LoRA_data[i] = LoRA_Read_Register(0x00);
+    }
+    LoRA_data[packet_length] = '\0';
+    return packet_length;
+  }
+  else{
+    return 0;
+  }
+}
+
+void reliable_send_packet(char* LoRA_data)
+{
+  uint16_t length = strlen(LoRA_data)+1; //+1 for the \0
+  char acknowledge[length]; 
+  LoRA_sendPacket(LoRA_data);
+  while(1)
+  {
+    
+    if(recv_packet(acknowledge, length))
+    {
+      //cehck crc
+      if(strcmp(acknowledge, LoRA_data) != 0)
+      {
+        LoRA_sendPacket(LoRA_data);
+      }
+      else
+      {
+        break;
+      }
+    }
+
+    //delay
+  }
+}
+
+double x[4];
+
+
+void multiplyQuat(double r[4], double s[4]) {
+  float temp[4];
+  temp[0] = r[0] * s[0] - r[1] * s[1] - r[2] * s[2] - r[3] * s[3];
+  temp[1] = r[0] * s[1] + r[1] * s[0] - r[2] * s[3] + r[3] * s[2];
+  temp[2] = r[0] * s[2] + r[1] * s[3] + r[2] * s[0] - r[3] * s[1];
+  temp[3] = r[0] * s[3] - r[1] * s[2] + r[2] * s[1] + r[3] * s[0];
+  for (int i = 0; i < 4; i++) {
+    x[i] = temp[i];
+  }
+}
+>>>>>>> Stashed changes
 /* USER CODE END 0 */
 
 /**
@@ -468,6 +568,8 @@ int mount_SD(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+
 	FRESULT res; /* FatFs function common result code */
 	uint32_t byteswritten, bytesread; /* File write/read counts */
 	uint8_t wtext[] = "STM32 FATFS works great!"; /* File write buffer */
@@ -512,6 +614,7 @@ int main(void)
   MX_UART4_Init();
   MX_FATFS_Init();
   MX_SDMMC2_SD_Init();
+  MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
   if (MAX_M10s_init(&hi2c2)) Error_Handler();
@@ -524,8 +627,8 @@ int main(void)
 	const double b_offset = 2;
 
 	LG2_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
-	LG2_Write_Register(0x11, 0b00110000); //Gyroscope setup - CTRL2_G
-	LG2_Write_Register(0x13, 0b00000100); //disables I2C - CTRL4_C
+	LG2_Write_Register(0x11, 0b01101000); //Gyroscope setup - CTRL2_G
+	LG2_Write_Register(0x13, 0b00001100); //disables I2C - CTRL4_C
 
 	HAL_Delay(3000);
 	HG2_Write_Register(0x1C, 0b10111111);
@@ -540,11 +643,13 @@ int main(void)
 	float calOmegaX = 0;
 	float calOmegaY = 0;
 	float calOmegaZ = 0;
-	//HAL_Delay(2000);
+	HAL_Delay(2000);
 	for(int i = 0; i < 500; i++){
+		if(LG2_Read_Register(0x1E) | (1 << 1)){
 		calOmegaX += LG2_Get_Gyro_X();
 		calOmegaY += LG2_Get_Gyro_Y();
 		calOmegaZ += LG2_Get_Gyro_Z();
+		}
 
 		//HAL_Delay(20);
 	}
@@ -630,7 +735,211 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
+<<<<<<< Updated upstream
 	while (1) {
+=======
+
+  char state[50] = "DISARMED";
+  char command[50];
+  char acknowledge[50];
+  char recieved_packet[50];
+  char response_packet[50];
+  char sendMessage[50];
+  int last = 0;
+  int packetId;
+  char communication_state[50] = "RECIEVING";
+  int isReceived = 0;
+
+
+ x[0] = 0;
+ x[1] = 1;
+ x[2] = 0;
+ x[3] = 0;
+  double rotQuaternion[4];
+  uint16_t lastMeasure = 0;
+  rotQuaternion[0] = 1;
+
+  HAL_TIM_Base_Start(&htim13);
+  TIM13->CNT = 0;
+  double elapsedTime = 0;
+  int counter = 0;
+  while(1){
+	  float Gx;
+	  float Gy;
+	  float Gz;
+	  if(LG2_Read_Register(0x1E) & (1 << 1)){
+		  elapsedTime = (TIM13->CNT / 1000.0);
+		  TIM13->CNT = 0;
+		  Gx = LG2_Get_Gyro_X();
+		  Gy= LG2_Get_Gyro_Y();
+		  Gz = LG2_Get_Gyro_Z();
+		  rotQuaternion[1] = (Gx - calOmegaX) * (3.1415 / 360000) * elapsedTime;
+		  rotQuaternion[2] = (Gy- calOmegaY) * (3.1415 / 360000) * elapsedTime;
+		  rotQuaternion[3] = (Gz - calOmegaZ) * (3.1415 / 360000) * elapsedTime;
+		  rotQuaternion[0] = sqrt(1 - (rotQuaternion[1]*rotQuaternion[1]) - (rotQuaternion[2]*rotQuaternion[2])- (rotQuaternion[3]*rotQuaternion[3]));
+		  counter++;
+		  lastMeasure = HAL_GetTick();
+		  multiplyQuat(rotQuaternion, x);
+		  rotQuaternion[1] = - rotQuaternion[1];
+		  rotQuaternion[2] = - rotQuaternion[2];
+		  rotQuaternion[3] = - rotQuaternion[3];
+		  multiplyQuat(x, rotQuaternion);
+
+
+	  }
+	  if(counter > 50){
+		counter = 0;
+		float pitch = 180*(asin(x[3])/ 3.1415);
+		//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
+		char data_gyro[50];
+	    sprintf( data_gyro, "%f, %f, %f, %f\n",pitch, x[1], x[2], x[3]);
+	    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+	  }
+
+  }
+
+
+
+	while (1) {
+
+
+    if(strcmp(communication_state,"RECIEVING") == 0)
+    {
+
+      if(isReceived)
+      {
+        //if crc then:
+        //send acknowledge
+        //{
+        strcpy(command, recieved_packet);
+        LoRA_sendPacket(recieved_packet);
+        strcpy(communication_state,"WAITING FOR PRIVILIGE");
+        //}
+      }
+      else
+      {
+        //give up MASTER
+        LoRA_sendPacket("$");
+        isReceived = 0;
+        for(int i = 0; i < 1000; i++){
+        	if(recv_packet(recieved_packet, 50)){
+        		isReceived = 1;
+        	}
+        	HAL_Delay(1);
+        }
+        //LoRA_parsePacket();
+        //char gotten[50];
+        //sprintf(gotten,"gotten: %d",LoRA_parsePacket());
+        //LoRA_sendPacket(gotten);
+		//HAL_Delay(1000);
+      }
+    }
+    else if(strcmp(communication_state,"WAITING FOR PRIVILIGE") == 0)
+    {
+      if(recv_packet(recieved_packet, 50))
+      {
+          LoRA_sendPacket("Recived packet");
+
+        //if crc then:
+        //{
+          if(strcmp(recieved_packet, "$") == 0)
+          {
+
+            strcpy(communication_state,"MASTER");
+          }
+          else
+          {
+              LoRA_sendPacket("Received not $");
+
+            //send acknowledge again
+            strcpy(command, recieved_packet);
+
+          }
+        //}
+      }     
+    }
+    else if(strcmp(communication_state,"MASTER") == 0)
+    {
+
+    	LoRA_sendPacket("MASTER");
+    	strcpy(communication_state,"RECIEVING");
+//        if(strcmp(state, "DISARMED") == 0)
+//        {
+//          if(strcmp(command, "ARM") == 0)
+//          {
+//            if(!arm(state))
+//            {
+//              reliable_send_packet("ARM SUCCESS");
+//            }
+//            else
+//            {
+//              reliable_send_packet("ARM UNSUCCESSFUL");
+//            }
+//          }
+//          else if(strcmp(command, "DISARM") == 0)
+//          {
+//            reliable_send_packet("ALREADY DISARMED");
+//          }
+//          else if(strcmp(command, "CONT") == 0)
+//          {
+//            uint8_t CONTS[8];
+//            CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+//            CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+//            CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+//            CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+//            CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+//            CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+//            CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+//            CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+//
+//            char message[100];
+//            for(int i=0; i<8; i++)
+//            {
+//              if(CONTS[i])
+//              {
+//                sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+//              }
+//              else
+//              {
+//                sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+//              }
+//
+//              reliable_send_packet(message);
+//          }
+//        }
+//        else if(strcmp(state, "ARMED") == 0)
+//        {
+//          if(strcmp(command, "DISARM") == 0)
+//          {
+//            if(disarm(state))
+//            {
+//              //not success
+//            }
+//            else
+//            {
+//              //success
+//            }
+//
+//          }
+//        }
+//        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
+//        {
+//          if(strcmp(command, "STOP") == 0)
+//          {
+//            strcpy(state,"ARMED");
+//          }
+//        }
+//        else
+//        {
+//
+//        }
+//      }
+
+
+    }
+
+
+>>>>>>> Stashed changes
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
@@ -1605,6 +1914,37 @@ static void MX_TIM5_Init(void)
 
   /* USER CODE END TIM5_Init 2 */
   HAL_TIM_MspPostInit(&htim5);
+
+}
+
+/**
+  * @brief TIM13 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM13_Init(void)
+{
+
+  /* USER CODE BEGIN TIM13_Init 0 */
+
+  /* USER CODE END TIM13_Init 0 */
+
+  /* USER CODE BEGIN TIM13_Init 1 */
+
+  /* USER CODE END TIM13_Init 1 */
+  htim13.Instance = TIM13;
+  htim13.Init.Prescaler = 95;
+  htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim13.Init.Period = 65535;
+  htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM13_Init 2 */
+
+  /* USER CODE END TIM13_Init 2 */
 
 }
 
