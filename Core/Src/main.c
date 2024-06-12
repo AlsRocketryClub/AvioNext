@@ -585,6 +585,18 @@ void pyro_continuity_check()
 		reliable_send_packet(message);
 	}
 }
+
+int usbReceiveHandle(char* output){
+  if(usbBytesReady >= 256){
+		if(usbBytesReady > 256){
+			crash(2);
+		}
+		usbBytesReady = 0;
+
+    memcpy(output, usbDataBuffer, usbBytesReady);
+	}
+  return usbBytesReady;
+}
 /* USER CODE END 0 */
 
 /**
@@ -767,7 +779,7 @@ int main(void)
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
 while (1) {
-
+  /*
     if(strcmp(communication_state,"RECIEVING WITH ACKNOWLEDGE") == 0)
     {
       if(recv_packet(recieved_packet, 50))
@@ -829,11 +841,20 @@ while (1) {
     else if(strcmp(communication_state,"MASTER") == 0)
     {
       //get input
-      char input[50];
-      reliable_send_packet(input)
+      char input[usbDataBuffer];
+      usbReceiveHandle(input);
+      reliable_send_packet(input);
       
       strcpy(communication_state,"RECIEVING WITH ACKNOWLEDGE");
     }
+  */
+
+
+  char input[usbDataBuffer];
+  if(usbReceiveHandle(input))
+  {
+    CDC_Transmit_HS(input, strlen(input));
+  }
 
 
 		//WS2812_Send();
