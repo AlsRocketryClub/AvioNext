@@ -22,7 +22,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#define usbBufferLen 256
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/

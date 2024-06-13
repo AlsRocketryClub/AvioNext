@@ -587,15 +587,16 @@ void pyro_continuity_check()
 }
 
 int usbReceiveHandle(char* output){
-  if(usbBytesReady >= 256){
+	uint32_t temp = usbBytesReady;
+	if(usbBytesReady > 0){
 		if(usbBytesReady > 256){
-			crash(2);
+			//crash(2);
 		}
+		memcpy(output, usbDataBuffer, usbBytesReady);
+		output[usbBytesReady] = '\0';
 		usbBytesReady = 0;
-
-    memcpy(output, usbDataBuffer, usbBytesReady);
 	}
-  return usbBytesReady;
+	return temp;
 }
 /* USER CODE END 0 */
 
@@ -779,7 +780,6 @@ int main(void)
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
 while (1) {
-  /*
     if(strcmp(communication_state,"RECIEVING WITH ACKNOWLEDGE") == 0)
     {
       if(recv_packet(recieved_packet, 50))
@@ -840,23 +840,17 @@ while (1) {
     }
     else if(strcmp(communication_state,"MASTER") == 0)
     {
-      //get input
-      char input[usbDataBuffer];
-      usbReceiveHandle(input);
-      reliable_send_packet(input);
-      
-      strcpy(communication_state,"RECIEVING WITH ACKNOWLEDGE");
+    	//get input
+    	char input[usbBufferLen];
+    	usbReceiveHandle(input);
+    	while(!usbReceiveHandle(input))
+    	{}
+      	reliable_send_packet(input);
+      	strcpy(communication_state,"RECIEVING WITH ACKNOWLEDGE");
     }
-  */
 
 
-  char input[usbDataBuffer];
-  if(usbReceiveHandle(input))
-  {
-    CDC_Transmit_HS(input, strlen(input));
-  }
-
-
+  //HAL_Delay(3000);
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
