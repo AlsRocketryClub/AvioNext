@@ -25,7 +25,6 @@
 /* USER CODE BEGIN Includes */
 #include "LoRA"
 #include "AvioNEXT.h"
-#include "max_m10s.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,6 +39,7 @@
 #define NUM_LEDS_2 2
 #define NUM_LEDS_3 2
 
+#define PI 3.14159265359
 //first coordinate defines on which string the LED is positioned, second determines the position
 const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
 		{ 2, 1 }, //LED0: CAN
@@ -118,6 +118,7 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim13;
+TIM_HandleTypeDef htim14;
 DMA_HandleTypeDef hdma_tim2_ch3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 DMA_HandleTypeDef hdma_tim3_ch1;
@@ -151,6 +152,7 @@ static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
+static void MX_TIM14_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -361,9 +363,7 @@ void LoRA_begin(long frequency){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
 
 	uint8_t version = LoRA_Read_Register(REG_VERSION);
-    char data_debug[100];
-	sprintf( data_debug,  "%x\n", version);
-	CDC_Transmit_HS(data_debug, strlen(data_debug));
+
 
 	LoRA_sleep();
 	LoRA_set_frequency(868000000);
@@ -396,6 +396,20 @@ void LoRA_endPacket(){
 
 	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
 
+	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+
+	LoRA_explicit_header_mode();
+
+	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
+
+	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+		LoRA_idle();
+	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+	}
 }
 
 
@@ -461,8 +475,6 @@ int mount_SD(){
 	return status;
 }
 
-<<<<<<< Updated upstream
-=======
 int disarm(char* state)
 {
   HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
@@ -546,19 +558,28 @@ void reliable_send_packet(char* LoRA_data)
 }
 
 double x[4];
+double y[4];
+double z[4];
 
-
-void multiplyQuat(double r[4], double s[4]) {
-  float temp[4];
+void multiplyQuat(double r[4], double s[4], double*  result) {
+  double temp[4];
   temp[0] = r[0] * s[0] - r[1] * s[1] - r[2] * s[2] - r[3] * s[3];
   temp[1] = r[0] * s[1] + r[1] * s[0] - r[2] * s[3] + r[3] * s[2];
   temp[2] = r[0] * s[2] + r[1] * s[3] + r[2] * s[0] - r[3] * s[1];
   temp[3] = r[0] * s[3] - r[1] * s[2] + r[2] * s[1] + r[3] * s[0];
-  for (int i = 0; i < 4; i++) {
-    x[i] = temp[i];
+
+  for(int i = 0; i < 4; i++){
+	  result[i] = temp[i];
   }
 }
->>>>>>> Stashed changes
+
+double dotProduct(double a[4], double b[4]){
+	return (a[1] * b[1] + a[2] * b[2] + a[3] * b[3]);
+}
+
+double magnitude(double vector[4]){
+	return sqrt(vector[0]*vector[0]+vector[1]*vector[1]+vector[2]*vector[2]+vector[3]*vector[3]);
+}
 /* USER CODE END 0 */
 
 /**
@@ -615,40 +636,44 @@ int main(void)
   MX_FATFS_Init();
   MX_SDMMC2_SD_Init();
   MX_TIM13_Init();
+  MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-
-  if (MAX_M10s_init(&hi2c2)) Error_Handler();
-
-  //MAX_M10S_init(&hi2c2);
+	HAL_Delay(1000);
 	const int MAX = 50;
 	const double SPEED = 2.0/2000;
 	const double r_offset = 0;
 	const double g_offset = 1;
 	const double b_offset = 2;
 
-	LG2_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
-	LG2_Write_Register(0x11, 0b01101000); //Gyroscope setup - CTRL2_G
-	LG2_Write_Register(0x13, 0b00001100); //disables I2C - CTRL4_C
 
-	HAL_Delay(3000);
-	HG2_Write_Register(0x1C, 0b10111111);
-	HAL_Delay(2);
 
-	HG2_Write_Register(0x1B, 0b01011000);
+
+	HAL_Delay(1000);
 	HG2_Write_Register(0x1B, 0b11011000);
+	HG2_Write_Register(0x1C, 0b10111111);
+	HAL_Delay(200);
+
+
+	LG2_Write_Register(0x13, 0b00001110); //disables I2C - CTRL4_C
+	LG2_Write_Register(0x11, 0b01100000); //Gyroscope setup - CTRL2_G
+	LG2_Write_Register(0x10, 0b01100000); //Accelerometer setup - CTRL1_XL
+
 
 	float rotZ = 0;
 	uint32_t lastTime = 0;
 
-	float calOmegaX = 0;
-	float calOmegaY = 0;
-	float calOmegaZ = 0;
+	double calOmegaX = 0;
+	double calOmegaY = 0;
+	double calOmegaZ = 0;
 	HAL_Delay(2000);
-	for(int i = 0; i < 500; i++){
+	int GyroCalibLoop = 0;
+	while(GyroCalibLoop < 500){
 		if(LG2_Read_Register(0x1E) | (1 << 1)){
 		calOmegaX += LG2_Get_Gyro_X();
 		calOmegaY += LG2_Get_Gyro_Y();
 		calOmegaZ += LG2_Get_Gyro_Z();
+		GyroCalibLoop++;
+
 		}
 
 		//HAL_Delay(20);
@@ -681,51 +706,6 @@ int main(void)
 
     LoRA_begin(868000000);
 
-    //HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-
-	char data_gyro[100];
-//    sprintf( data_gyro,  "Start\n");
-//    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
-//
-//    if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
-//    	{
-//    	Error_Handler();
-//
-//    	}
-//    	else
-//    	{
-//    		if(f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, rtext, sizeof(rtext)) != FR_OK)
-//
-//    	    {
-//    			Error_Handler();
-//    	    }
-//    		else
-//    		{
-//    			//Open file for writing (Create)
-//    			if(f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
-//    			{
-//    				Error_Handler();
-//    			}
-//    			else
-//    			{
-//
-//    				//Write to the text file
-//    				res = f_write(&SDFile, wtext, strlen((char *)wtext), (void *)&byteswritten);
-//    				if((byteswritten == 0) || (res != FR_OK))
-//    				{
-//
-//    					Error_Handler();
-//    				}
-//    				else
-//    				{
-//
-//    					f_close(&SDFile);
-//    				}
-//    			}
-//    		}
-//    	}
-//    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
-
 
 	int connected = 0;
 	long last_packet = 0;
@@ -735,9 +715,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
-<<<<<<< Updated upstream
-	while (1) {
-=======
 
   char state[50] = "DISARMED";
   char command[50];
@@ -755,44 +732,187 @@ int main(void)
  x[1] = 1;
  x[2] = 0;
  x[3] = 0;
+
+ y[0] = 0;
+ y[1] = 0;
+ y[2] = 1;
+ y[3] = 0;
+
+ z[0] = 0;
+ z[1] = 0;
+ z[2] = 0;
+ z[3] = 1;
+
   double rotQuaternion[4];
-  uint16_t lastMeasure = 0;
-  rotQuaternion[0] = 1;
 
   HAL_TIM_Base_Start(&htim13);
+  HAL_TIM_Base_Start(&htim14);
+
   TIM13->CNT = 0;
   double elapsedTime = 0;
   int counter = 0;
+
+  double VelocityExt[3];
+  double PosExt[3];
+  double zeroAcc[4];
+  int AccCalibLoop = 0;
+	char data_gyro[500];
+  double gyroZ = LG2_Get_Acc_Z();
+  sprintf( data_gyro, "Hello %f\n", gyroZ);
+  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+  HAL_Delay(2000);
+  double maxZ = LG2_Get_Acc_Z();
+  double minZ = maxZ;
+
+  double maxY = LG2_Get_Acc_Y();
+  double minY = maxY;
+
+  double maxX = LG2_Get_Acc_X();
+  double minX = maxX;
+
+
+  zeroAcc[0] = 0;
+  zeroAcc[1] = 0;
+  zeroAcc[2] = 0;
+  zeroAcc[3] = 0;
+  while(AccCalibLoop < 50){
+	  if(LG2_Read_Register(0x1E) & 1){
+		  zeroAcc[1] += LG2_Get_Acc_X();
+		  zeroAcc[2] += LG2_Get_Acc_Y();
+		  zeroAcc[3] += LG2_Get_Acc_Z();
+		  AccCalibLoop++;
+	  }
+  }
+  zeroAcc[1] = zeroAcc[1] / 50;
+  zeroAcc[2] = zeroAcc[2] / 50;
+  zeroAcc[3] = zeroAcc[3] / 50;
+
+
+  double rotVector[4];
+  rotVector[0] = 0;
+  rotVector[3] = 0;
+
+  rotVector[1] = zeroAcc[2];
+  rotVector[2] = -zeroAcc[1];
+  double rotVectMag =  magnitude(rotVector);
+  rotVector[1] = rotVector[1] / rotVectMag;
+  rotVector[2] = rotVector[2] / rotVectMag;
+
+  double zeroAccMag = magnitude(zeroAcc);
+  zeroAcc[1] = zeroAcc[1] / zeroAccMag;
+  zeroAcc[2] = zeroAcc[2] / zeroAccMag;
+  zeroAcc[3] = zeroAcc[3] / zeroAccMag;
+
+  double rotAngle =acos(dotProduct(zeroAcc, z));
+
+  rotQuaternion[0] = cos(rotAngle/2);
+  rotQuaternion[1] = rotVector[1] * sin(rotAngle/2);
+  rotQuaternion[2] = rotVector[2] * sin(rotAngle/2);
+  rotQuaternion[3] = rotVector[3] * sin(rotAngle/2);
+  sprintf( data_gyro, "rot quat: %f, %f, %f, %f\n",rotQuaternion[0], rotQuaternion[1], rotQuaternion[2], rotQuaternion[3]);
+  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+  HAL_Delay(2000);
+  sprintf( data_gyro, "Zero Acc: %f, %f, %f, %f\n",rotAngle, zeroAcc[1], zeroAcc[2], zeroAcc[3]);
+  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+  multiplyQuat(rotQuaternion, x, &x);
+  multiplyQuat(rotQuaternion, y, &y);
+  multiplyQuat(rotQuaternion, z, &z);
+  rotQuaternion[1] = - rotQuaternion[1];
+  rotQuaternion[2] = - rotQuaternion[2];
+  rotQuaternion[3] = - rotQuaternion[3];
+  multiplyQuat(x, rotQuaternion, &x);
+  multiplyQuat(y, rotQuaternion, &y);
+  multiplyQuat(z, rotQuaternion, &z);
+
+  sprintf( data_gyro, "zero z: %f, %f, %f\n",z[1], z[2], z[3]);
+  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+
+  for(int i = 0; i < 3; i++){
+	  VelocityExt[i] = 0;
+	  PosExt[i] = 0;
+  }
+
+  uint32_t timeStop = 0;
+  int accelerating = 0;
   while(1){
 	  float Gx;
 	  float Gy;
 	  float Gz;
-	  if(LG2_Read_Register(0x1E) & (1 << 1)){
-		  elapsedTime = (TIM13->CNT / 1000.0);
+
+	  if(LG2_Read_Register(0x1E) & (1 << 1)){ //checks if new data from gyroscope
+		  elapsedTime = (TIM13->CNT /1000);
 		  TIM13->CNT = 0;
 		  Gx = LG2_Get_Gyro_X();
 		  Gy= LG2_Get_Gyro_Y();
 		  Gz = LG2_Get_Gyro_Z();
-		  rotQuaternion[1] = (Gx - calOmegaX) * (3.1415 / 360000) * elapsedTime;
-		  rotQuaternion[2] = (Gy- calOmegaY) * (3.1415 / 360000) * elapsedTime;
-		  rotQuaternion[3] = (Gz - calOmegaZ) * (3.1415 / 360000) * elapsedTime;
-		  rotQuaternion[0] = sqrt(1 - (rotQuaternion[1]*rotQuaternion[1]) - (rotQuaternion[2]*rotQuaternion[2])- (rotQuaternion[3]*rotQuaternion[3]));
-		  counter++;
-		  lastMeasure = HAL_GetTick();
-		  multiplyQuat(rotQuaternion, x);
+
+		  double Wx = (Gx - calOmegaX) * (2 * PI / 360000) * elapsedTime;
+		  double Wy = (Gy- calOmegaY) * (2 * PI / 360000) * elapsedTime;
+		  double Wz = (Gz - calOmegaZ) * (2 * PI / 360000) * elapsedTime;
+
+		  double W = sqrt(Wx*Wx + Wy*Wy + Wz*Wz);
+
+		  Wx /= W;
+		  Wy /= W;
+		  Wz /= W;
+
+		  rotQuaternion[0] = cos(W/2);
+		  rotQuaternion[1] = Wx * sin(W/2);
+		  rotQuaternion[2] = Wy * sin(W/2);
+		  rotQuaternion[3] = Wz * sin(W/2);
+
+		  multiplyQuat(rotQuaternion, x, &x);
+		  multiplyQuat(rotQuaternion, y, &y);
+		  multiplyQuat(rotQuaternion, z, &z);
 		  rotQuaternion[1] = - rotQuaternion[1];
 		  rotQuaternion[2] = - rotQuaternion[2];
 		  rotQuaternion[3] = - rotQuaternion[3];
-		  multiplyQuat(x, rotQuaternion);
+		  multiplyQuat(x, rotQuaternion, &x);
+		  multiplyQuat(y, rotQuaternion, &y);
+		  multiplyQuat(z, rotQuaternion, &z);
+		  	  counter++;
 
 
 	  }
-	  if(counter > 50){
+
+  double SensorAcc[4];
+  SensorAcc[0] = 0;
+
+  double AccExt[4];
+  AccExt[0] = 0;
+
+
+  if(LG2_Read_Register(0x1E) & 1){ //checks if new data from accelerometer
+	  double elapsedTime = (TIM14->CNT / 1000.0);
+	  TIM14->CNT = 0;
+	  counter++;
+
+	  SensorAcc[1] = LG2_Get_Acc_X();
+	  SensorAcc[2] = LG2_Get_Acc_Y();
+	  SensorAcc[3] = LG2_Get_Acc_Z();
+
+	  AccExt[1] = dotProduct(SensorAcc, x);
+	  AccExt[2] = dotProduct(SensorAcc, y);
+	  AccExt[3] = dotProduct(SensorAcc, z) - 9.8;
+
+
+	  VelocityExt[0] += AccExt[1] * elapsedTime/1000;
+	  VelocityExt[1] += AccExt[2] * elapsedTime/1000;
+	  VelocityExt[2] += AccExt[3] * elapsedTime/1000;
+
+
+
+	  PosExt[0] += VelocityExt[0] * elapsedTime/1000;
+	  PosExt[1] += VelocityExt[1] * elapsedTime/1000;
+	  PosExt[2] += VelocityExt[2] * elapsedTime/1000;
+  }
+	  if(counter > 100){
 		counter = 0;
-		float pitch = 180*(asin(x[3])/ 3.1415);
 		//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
-		char data_gyro[50];
-	    sprintf( data_gyro, "%f, %f, %f, %f\n",pitch, x[1], x[2], x[3]);
+		char data_gyro[500];
+	    sprintf( data_gyro, "Mag: %f   Z: %f, %f, %f\n", VelocityExt[2], z[1],z[2],z[3]);
 	    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 	  }
 
@@ -939,24 +1059,9 @@ int main(void)
     }
 
 
->>>>>>> Stashed changes
 		//WS2812_Send();
 		//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 		//TIM4->CCR3 = *ptr;
-    /*
-		for(int i = 0; i < 14; i++){
-
-			int time = HAL_GetTick();
-			double height_offset = LED_order[i]*1.0/LED_num_max;
-			double color_offset = time*SPEED + height_offset;
-
-			LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
-			LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
-			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
-		}
-		setLEDs();
-
-		uint8_t* data_gyro[100];
 //		for(int i = 0; i < 14; i++){
 //
 //			int time = HAL_GetTick();
@@ -987,21 +1092,6 @@ int main(void)
 
 		lastTime = HAL_GetTick();
 
-		int a = add(2, 5);
-    
-        int btr = MAX_M10s_bytesToRead(&hi2c2);
-        if (btr == -1) Error_Handler();
-        for (int i = 0; i < btr; i++)
-            MAX_M10s_poll(&hi2c2);
-        MAX_M10S_parse();
-
-    /*
-		sprintf(data_gyro, "%d\n", a);
-		//sprintf( data_gyro,  "%d,%d,%d,%d\n", (int)(GyroX*1000), (int)(GyroY*1000), (int)(GyroZ*1000), lastTime);
-		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
-
-		HAL_Delay(1000);
-    */
 //		int packetLenght = LoRA_parsePacket();
 //		if(packetLenght > 0){
 //			for(int i = 0; i < packetLenght; i++){
@@ -1015,6 +1105,7 @@ int main(void)
 
 	     // Start ADC Conversion
 		//HAL_Delay(100);
+    /*
 		if(HAL_GetTick() - last_packet > 1000){
 			connected = 0;
 		}
@@ -1027,36 +1118,6 @@ int main(void)
 			LED_Color_Data[2][0] = 120;
 			LED_Color_Data[2][1] = 255;
 			LED_Color_Data[2][2] = 0;
-		}
-
-		if(!ARMED){
-			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
-
-			HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
-			HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
-			HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
-			HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
-
-			HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
-			HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
-			HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
-			HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
-
-			LED_Color_Data[7][0] = 255;
-			LED_Color_Data[7][1] = 0;
-			LED_Color_Data[7][2] = 0;
-			setLEDs();
-		}else{
-
-			HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
-			HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
-
-
-			LED_Color_Data[7][0] = 0;
-			LED_Color_Data[7][1] = 255;
-			LED_Color_Data[7][2] = 0;
-			setLEDs();
 		}
 
 		int packet_lenght = LoRA_parsePacket();
@@ -1088,7 +1149,6 @@ int main(void)
 		    }
 		    if(strcmp(LoRA_data, "CONT") == 0){
 
-		    	char cont_str[150];
 		    	uint8_t CONTS[8];
 		    	CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
 		    	CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
@@ -1114,8 +1174,6 @@ int main(void)
 		    		LoRA_sendPacket(message);
 		    		HAL_Delay(100);
 		    	}
-
-
 
 		    }
         
@@ -1198,7 +1256,7 @@ int main(void)
 		    	}
 		    }
 		}
-
+    */
 
 		//uint8_t data = read_EEPROM(1);
 	    //sprintf( data_gyro,  "%d\n", DMA_data);
@@ -1233,15 +1291,16 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
+                              |RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = 64;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 12;
-  RCC_OscInitStruct.PLL.PLLN = 12;
+  RCC_OscInitStruct.PLL.PLLN = 16;
   RCC_OscInitStruct.PLL.PLLP = 1;
   RCC_OscInitStruct.PLL.PLLQ = 12;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -1263,11 +1322,9 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
@@ -1288,7 +1345,7 @@ void PeriphCommonClock_Config(void)
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_SPI3
                               |RCC_PERIPHCLK_SPI2|RCC_PERIPHCLK_SPI1;
   PeriphClkInitStruct.PLL2.PLL2M = 4;
-  PeriphClkInitStruct.PLL2.PLL2N = 12;
+  PeriphClkInitStruct.PLL2.PLL2N = 16;
   PeriphClkInitStruct.PLL2.PLL2P = 4;
   PeriphClkInitStruct.PLL2.PLL2Q = 2;
   PeriphClkInitStruct.PLL2.PLL2R = 2;
@@ -1502,7 +1559,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x20303E5D;
+  hi2c2.Init.Timing = 0x00C0EAFF;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -1632,7 +1689,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1933,7 +1990,7 @@ static void MX_TIM13_Init(void)
 
   /* USER CODE END TIM13_Init 1 */
   htim13.Instance = TIM13;
-  htim13.Init.Prescaler = 95;
+  htim13.Init.Prescaler = 99;
   htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim13.Init.Period = 65535;
   htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -1945,6 +2002,37 @@ static void MX_TIM13_Init(void)
   /* USER CODE BEGIN TIM13_Init 2 */
 
   /* USER CODE END TIM13_Init 2 */
+
+}
+
+/**
+  * @brief TIM14 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM14_Init(void)
+{
+
+  /* USER CODE BEGIN TIM14_Init 0 */
+
+  /* USER CODE END TIM14_Init 0 */
+
+  /* USER CODE BEGIN TIM14_Init 1 */
+
+  /* USER CODE END TIM14_Init 1 */
+  htim14.Instance = TIM14;
+  htim14.Init.Prescaler = 99;
+  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim14.Init.Period = 65535;
+  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM14_Init 2 */
+
+  /* USER CODE END TIM14_Init 2 */
 
 }
 
@@ -2093,6 +2181,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -2212,10 +2301,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef* hi2c) {
-    //MAX_M10s_irq_handler(hi2c);
-}
 
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {

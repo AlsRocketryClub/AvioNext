@@ -67,7 +67,7 @@ float LG2_Get_Gyro_X(){
 	uint8_t Gyro_L = LG2_Read_Register(0x22);
 	uint8_t Gyro_H = LG2_Read_Register(0x23);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (float)Gyro*35.0/1000;
+	float omega = (float)Gyro*(1*8.75)/1000;
 	return omega;
 }
 
@@ -75,7 +75,7 @@ float LG2_Get_Gyro_Y(){
 	uint8_t Gyro_L = LG2_Read_Register(0x24);
 	uint8_t Gyro_H = LG2_Read_Register(0x25);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (float)Gyro*35.0/1000;
+	float omega = (float)Gyro*(1*8.75)/1000;
 
 	return omega;
 }
@@ -84,7 +84,7 @@ float LG2_Get_Gyro_Z(){
 	uint8_t Gyro_L = LG2_Read_Register(0x26);
 	uint8_t Gyro_H = LG2_Read_Register(0x27);
 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
-	float omega = (float)Gyro*35.0/1000;
+	float omega = (float)Gyro*(1*8.75)/1000;
 
 	return omega;
 }
@@ -94,7 +94,7 @@ float LG2_Get_Acc_X(){
 	uint8_t Acc_H = LG2_Read_Register(0x29);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000)- 0.134732 - 0.104937;
 	return AccSI;
 }
 
@@ -103,7 +103,7 @@ float LG2_Get_Acc_Y(){
 	uint8_t Acc_H = LG2_Read_Register(0x2B);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000) + 0.384580;
 	return AccSI;
 }
 
@@ -112,6 +112,6 @@ float LG2_Get_Acc_Z(){
 	uint8_t Acc_H = LG2_Read_Register(0x2D);
 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000) + 0.005841;
 	return AccSI;
 }
