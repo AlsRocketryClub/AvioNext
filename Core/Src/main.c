@@ -727,6 +727,20 @@ int main(void)
   char communication_state[50] = "RECIEVING";
   int isReceived = 0;
 
+  int cube[12][2][3] = [
+  [[-2,1,-4],[-2,1,4]],
+  [[-2,1,-4],[2,1,-4]],
+  [[2,1,4],[2,1,-4]],
+  [[2,1,4],[-2,1,4]],
+  [[-2,1,-4],[-2,-1,-4]],
+  [[2,-1,-4],[2,1,-4]],
+  [[2,1,4],[2,-1,4]],
+  [[-2,-1,4],[-2,1,4]],
+  [[2,-1,-4],[2,-1,4]],
+  [[2,-1,-4],[-2,-1,-4]],
+  [[-2,-1,4],[2,-1,4]],
+  [[-2,-1,4],[-2,-1,-4]]
+]
 
  x[0] = 0;
  x[1] = 1;
@@ -825,8 +839,34 @@ int main(void)
   multiplyQuat(y, rotQuaternion, &y);
   multiplyQuat(z, rotQuaternion, &z);
 
+  //cube
+  strcpy(data_gyro, "");
+  for(int i=0; i < 12; i++)
+  {
+    for(int j=0; j<2; j++)
+    {
+      for(int k=0, k<3; k++)
+      {
+        sprintf(data_gyro, "%s%d", data_gyro, cube[i][j][k]*(x[k+1]+y[k+1]+z[k+1]));
+
+        //ugly :(
+        if(k<2)
+        {
+          sprintf(data_gyro, "%s,", data_gyro);
+        }
+        else if(i*j<22)
+        {
+          sprintf(data_gyro, "%s;", data_gyro);
+        }
+      }
+    }
+  }
+  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+  /*
   sprintf( data_gyro, "zero z: %f, %f, %f\n",z[1], z[2], z[3]);
   CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+  */
 
 
   for(int i = 0; i < 3; i++){
