@@ -727,7 +727,7 @@ int main(void)
   char communication_state[50] = "RECIEVING";
   int isReceived = 0;
 
-  int cube[12][2][3] = {
+  double cube[12][2][3] = {
   {{-2,1,-4},{-2,1,4}},
   {{-2,1,-4},{2,1,-4}},
   {{2,1,4},{2,1,-4}},
@@ -839,29 +839,6 @@ int main(void)
   multiplyQuat(y, rotQuaternion, &y);
   multiplyQuat(z, rotQuaternion, &z);
 
-  //cube
-  strcpy(data_gyro, "");
-  for(int i=0; i < 12; i++)
-  {
-    for(int j=0; j<2; j++)
-    {
-      for(int k=0; k<3; k++)
-      {
-        sprintf(data_gyro, "%s%d", data_gyro, cube[i][j][k]*(x[k+1]+y[k+1]+z[k+1]));
-
-        //ugly :(
-        if(k<2)
-        {
-          sprintf(data_gyro, "%s,", data_gyro);
-        }
-        else if(i*j<22)
-        {
-          sprintf(data_gyro, "%s;", data_gyro);
-        }
-      }
-    }
-  }
-  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 
   /*
   sprintf( data_gyro, "zero z: %f, %f, %f\n",z[1], z[2], z[3]);
@@ -876,7 +853,17 @@ int main(void)
 
   uint32_t timeStop = 0;
   int accelerating = 0;
+  char dataTest[500];
+  HAL_Delay(2000);
+  sprintf(dataTest, "%s", "hi");
+  sprintf(dataTest, "%s, Helllo\n", dataTest);
+  CDC_Transmit_HS(dataTest, strlen(dataTest));
+  HAL_Delay(2000);
+  sprintf(dataTest, "%s, Helllo\n", dataTest);
+  HAL_Delay(2000);
+  CDC_Transmit_HS(dataTest, strlen(dataTest));
   while(1){
+	  HAL_Delay(1);
 	  float Gx;
 	  float Gy;
 	  float Gz;
@@ -952,8 +939,37 @@ int main(void)
 		counter = 0;
 		//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
 		char data_gyro[500];
+		  //cube
+		  strcpy(data_gyro, "");
+		  for(int i=0; i < 12; i++)
+		  {
+		    for(int j=0; j<2; j++)
+		    {
+		      for(int k=0; k<3; k++)
+		      {
+		    	double coordinate = cube[i][j][k]*(x[k+1]+y[k+1]+z[k+1]);
+		        sprintf(data_gyro, "%s%f", data_gyro, coordinate);
+		        //ugly :(
+		        if(k<2)
+		        {
+		          sprintf(data_gyro, "%s,", data_gyro);
+		        }
+		        else if(i*j<22)
+		        {
+		          sprintf(data_gyro, "%s;", data_gyro);
+		        }
+
+		      }
+		    }
+		  }
+		  sprintf(data_gyro, "%s\n", data_gyro);
+		  HAL_Delay(100);
+		  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+/*
 	    sprintf( data_gyro, "Mag: %f   Z: %f, %f, %f\n", VelocityExt[2], z[1],z[2],z[3]);
 	    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+	    */
 	  }
 
   }
