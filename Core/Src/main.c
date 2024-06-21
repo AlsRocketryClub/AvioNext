@@ -863,7 +863,6 @@ int main(void)
   HAL_Delay(2000);
   CDC_Transmit_HS(dataTest, strlen(dataTest));
   while(1){
-	  HAL_Delay(1);
 	  float Gx;
 	  float Gy;
 	  float Gz;
@@ -875,11 +874,15 @@ int main(void)
 		  Gy= LG2_Get_Gyro_Y();
 		  Gz = LG2_Get_Gyro_Z();
 
+
 		  double Wx = (Gx - calOmegaX) * (2 * PI / 360000) * elapsedTime;
 		  double Wy = (Gy- calOmegaY) * (2 * PI / 360000) * elapsedTime;
 		  double Wz = (Gz - calOmegaZ) * (2 * PI / 360000) * elapsedTime;
 
 		  double W = sqrt(Wx*Wx + Wy*Wy + Wz*Wz);
+
+		  char dataTest[200];
+		  sprintf(dataTest, "time %f\n", elapsedTime);
 
 		  Wx /= W;
 		  Wy /= W;
@@ -890,17 +893,26 @@ int main(void)
 		  rotQuaternion[2] = Wy * sin(W/2);
 		  rotQuaternion[3] = Wz * sin(W/2);
 
+
+
 		  multiplyQuat(rotQuaternion, x, &x);
 		  multiplyQuat(rotQuaternion, y, &y);
 		  multiplyQuat(rotQuaternion, z, &z);
+
 		  rotQuaternion[1] = - rotQuaternion[1];
 		  rotQuaternion[2] = - rotQuaternion[2];
 		  rotQuaternion[3] = - rotQuaternion[3];
+
+		  //sprintf(dataTest, "%sTwo: x1: %f\n", dataTest, x[1]);
+		  //sprintf(dataTest, "%sTwo: Quaternion: %f\n", dataTest, rotQuaternion[1]);
+
 		  multiplyQuat(x, rotQuaternion, &x);
 		  multiplyQuat(y, rotQuaternion, &y);
 		  multiplyQuat(z, rotQuaternion, &z);
 		  	  counter++;
 
+		  //sprintf(dataTest, "%sThree: x1: %f\n", dataTest, x[1]);
+		  CDC_Transmit_HS(dataTest, strlen(dataTest));
 
 	  }
 
@@ -912,7 +924,7 @@ int main(void)
 
 
   if(LG2_Read_Register(0x1E) & 1){ //checks if new data from accelerometer
-	  double elapsedTime = (TIM14->CNT / 1000.0);
+	  elapsedTime = (TIM14->CNT / 1000.0);
 	  TIM14->CNT = 0;
 	  counter++;
 
@@ -935,7 +947,9 @@ int main(void)
 	  PosExt[1] += VelocityExt[1] * elapsedTime/1000;
 	  PosExt[2] += VelocityExt[2] * elapsedTime/1000;
   }
-	  if(counter > 100){
+
+
+	  if(counter > 200){
 		counter = 0;
 		//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
 		char data_gyro[500];
@@ -945,25 +959,28 @@ int main(void)
 		  {
 		    for(int j=0; j<2; j++)
 		    {
-		      for(int k=0; k<3; k++)
-		      {
-		    	double coordinate = cube[i][j][k]*(x[k+1]+y[k+1]+z[k+1]);
-		        sprintf(data_gyro, "%s%f", data_gyro, coordinate);
-		        //ugly :(
-		        if(k<2)
-		        {
-		          sprintf(data_gyro, "%s,", data_gyro);
-		        }
-		        else if(i*j<22)
-		        {
-		          sprintf(data_gyro, "%s;", data_gyro);
-		        }
+		      double coordinates[3] = {0,0,0};
 
-		      }
+		      coordinates[0] += cube[i][j][0]*x[1];
+		      coordinates[1] += cube[i][j][0]*x[2];
+		      coordinates[2] += cube[i][j][0]*x[3];
+
+		      coordinates[0] += cube[i][j][1]*y[1];
+		      coordinates[1] += cube[i][j][1]*y[2];
+		      coordinates[2] += cube[i][j][1]*y[3];
+
+		      coordinates[0] += cube[i][j][2]*z[1];
+		      coordinates[1] += cube[i][j][2]*z[2];
+		      coordinates[2] += cube[i][j][2]*z[3];
+			  sprintf(data_gyro, "%s%f,%f,%f", data_gyro, coordinates[0], coordinates[1], coordinates[2]);
+		      //ugly :(
+		      if(i*j<11)
+			  {
+			    sprintf(data_gyro, "%s;", data_gyro);
+			  }
 		    }
 		  }
 		  sprintf(data_gyro, "%s\n", data_gyro);
-		  HAL_Delay(100);
 		  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 
 /*
