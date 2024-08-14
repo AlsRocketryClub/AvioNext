@@ -59,14 +59,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ARM_CHECK_Pin GPIO_PIN_0
-#define ARM_CHECK_GPIO_Port GPIOC
 #define BATT_MEASURE_Pin GPIO_PIN_3
 #define BATT_MEASURE_GPIO_Port GPIOC
 #define ARM1_Pin GPIO_PIN_1
 #define ARM1_GPIO_Port GPIOA
-#define ARM2_Pin GPIO_PIN_2
-#define ARM2_GPIO_Port GPIOA
 #define PYRO1_Pin GPIO_PIN_1
 #define PYRO1_GPIO_Port GPIOB
 #define CONT1_Pin GPIO_PIN_2

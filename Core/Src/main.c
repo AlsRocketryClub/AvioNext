@@ -165,7 +165,7 @@ volatile int datasentflag = 0;
 
 void setServo(int servoNum, float angle){
 
-	uint16_t timerVal =(int)( 3000 + (4000 * (angle/180)));
+	uint16_t timerVal =(int)( 3000 + (4000 * (angle/100)));
 	switch (servoNum) {
 		case 1:
 			TIM4->CCR4 = timerVal;
@@ -478,7 +478,7 @@ int mount_SD(){
 int disarm(char* state)
 {
   HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+  //HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
 
   HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
   HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
@@ -502,7 +502,7 @@ int disarm(char* state)
 int arm(char* state)
 {
   HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
-  HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+//HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
 
 
   strcpy(state,"ARMED");
@@ -590,11 +590,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-
-	FRESULT res; /* FatFs function common result code */
-	uint32_t byteswritten, bytesread; /* File write/read counts */
-	uint8_t wtext[] = "STM32 FATFS works great!"; /* File write buffer */
-	uint8_t rtext[_MAX_SS];/* File read buffer */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -638,6 +633,32 @@ int main(void)
   MX_TIM13_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
+  FATFS FatFs;
+  FIL Fil;
+  FRESULT FR_Status;
+
+  FR_Status = f_mount(&FatFs, SDPath, 1);
+  FR_Status = f_open(&Fil, "MyTextFile.txt", FA_OPEN_APPEND | FA_WRITE);
+  f_puts("meow2\n", &Fil);
+  f_close(&Fil);
+
+
+
+  while(1){
+	  HAL_ADC_Start(&hadc1); // start the adc
+
+	  HAL_ADC_PollForConversion(&hadc1, 100); // poll for conversion
+
+	  uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
+
+	  char debug_data[100];
+	  sprintf(debug_data, "%d\n", adc_val);
+	  CDC_Transmit_HS(debug_data, strlen(debug_data));
+
+	  HAL_ADC_Stop(&hadc1); // stop adc
+
+	  HAL_Delay (1); // wait for 500ms
+  }
 	HAL_Delay(1000);
 	const int MAX = 50;
 	const double SPEED = 2.0/2000;
@@ -699,10 +720,9 @@ int main(void)
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 
-    setServo(1, 90);
-    setServo(2, 180);
-    setServo(3, 0);
-    setServo(4, 45);
+    setServo(1, 7.5);
+    setServo(2, 92.5);
+
 
     LoRA_begin(868000000);
 
@@ -862,6 +882,23 @@ int main(void)
   sprintf(dataTest, "%s, Helllo\n", dataTest);
   HAL_Delay(2000);
   CDC_Transmit_HS(dataTest, strlen(dataTest));
+
+  while(1){
+	  LED_Color_Data[0][0] = 255;
+	  LED_Color_Data[0][1] = 255;
+	  LED_Color_Data[0][2] = 255;
+
+	  //HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+	  setLEDs();
+	  HAL_Delay(1000);
+	  LED_Color_Data[0][0] = 0;
+	  LED_Color_Data[0][1] = 0;
+	  LED_Color_Data[0][2] = 0;
+	  setLEDs();
+	  //HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+	  HAL_Delay(1000);
+  }
   while(1){
 	  float Gx;
 	  float Gy;
@@ -1372,10 +1409,10 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 16;
+  RCC_OscInitStruct.PLL.PLLM = 5;
+  RCC_OscInitStruct.PLL.PLLN = 24;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 12;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -1398,7 +1435,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1418,13 +1455,13 @@ void PeriphCommonClock_Config(void)
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_SPI3
                               |RCC_PERIPHCLK_SPI2|RCC_PERIPHCLK_SPI1;
   PeriphClkInitStruct.PLL2.PLL2M = 4;
-  PeriphClkInitStruct.PLL2.PLL2N = 16;
+  PeriphClkInitStruct.PLL2.PLL2N = 15;
   PeriphClkInitStruct.PLL2.PLL2P = 4;
   PeriphClkInitStruct.PLL2.PLL2Q = 2;
   PeriphClkInitStruct.PLL2.PLL2R = 2;
   PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_3;
   PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
-  PeriphClkInitStruct.PLL2.PLL2FRACN = 0;
+  PeriphClkInitStruct.PLL2.PLL2FRACN = 2950;
   PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL2;
   PeriphClkInitStruct.AdcClockSelection = RCC_ADCCLKSOURCE_PLL2;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
@@ -1484,7 +1521,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_10;
+  sConfig.Channel = ADC_CHANNEL_14;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_16CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -1632,7 +1669,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x00C0EAFF;
+  hi2c2.Init.Timing = 0x107075B0;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -1684,7 +1721,7 @@ static void MX_SDMMC2_SD_Init(void)
   hsd2.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   hsd2.Init.BusWide = SDMMC_BUS_WIDE_4B;
   hsd2.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd2.Init.ClockDiv = 0;
+  hsd2.Init.ClockDiv = 8;
   /* USER CODE BEGIN SDMMC2_Init 2 */
 
   /* USER CODE END SDMMC2_Init 2 */
@@ -1956,7 +1993,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 28;
+  htim4.Init.Prescaler = 29;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 9999;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -2265,7 +2302,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2|PYRO6_Pin|PYRO7_Pin|PYRO8_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, ARM1_Pin|ARM2_Pin|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, ARM1_Pin|GPIO_PIN_15, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
@@ -2289,8 +2326,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ARM1_Pin ARM2_Pin PA15 */
-  GPIO_InitStruct.Pin = ARM1_Pin|ARM2_Pin|GPIO_PIN_15;
+  /*Configure GPIO pins : ARM1_Pin PA15 */
+  GPIO_InitStruct.Pin = ARM1_Pin|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
