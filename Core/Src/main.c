@@ -638,9 +638,7 @@ int main(void)
   FRESULT FR_Status;
 
   FR_Status = f_mount(&FatFs, SDPath, 1);
-  FR_Status = f_open(&Fil, "MyTextFile.txt", FA_OPEN_APPEND | FA_WRITE);
-  f_puts("meow2\n", &Fil);
-  f_close(&Fil);
+
 
 
 
@@ -652,8 +650,11 @@ int main(void)
 	  uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
 
 	  char debug_data[100];
-	  sprintf(debug_data, "%d\n", adc_val);
+	  sprintf(debug_data, "%d, %d\n",HAL_GetTick(), adc_val);
 	  CDC_Transmit_HS(debug_data, strlen(debug_data));
+	  FR_Status = f_open(&Fil, "MyTextFile.txt", FA_OPEN_APPEND | FA_WRITE);
+	  f_puts(debug_data, &Fil);
+	  f_close(&Fil);
 
 	  HAL_ADC_Stop(&hadc1); // stop adc
 
@@ -848,7 +849,7 @@ int main(void)
 //			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
 //		}
 
-		float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
+		//float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
 
 		//float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
 		//rotZ += omegaZ * timeElapsed;
@@ -865,7 +866,7 @@ int main(void)
 		//float GyroY = LG2_Get_Gyro_Y() - calOmegaY;
 		//float GyroZ = LG2_Get_Gyro_Z() - calOmegaZ;
 
-		lastTime = HAL_GetTick();
+		//lastTime = HAL_GetTick();
 
 //		int packetLenght = LoRA_parsePacket();
 //		if(packetLenght > 0){
