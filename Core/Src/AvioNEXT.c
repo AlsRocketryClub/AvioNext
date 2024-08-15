@@ -4,7 +4,52 @@
 extern SPI_HandleTypeDef hspi2;
 extern SPI_HandleTypeDef hspi3;
 extern I2C_HandleTypeDef hi2c2;
-extern LED_Color_Data;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim5;
+
+
+extern uint8_t LED_Color_Data[14][3];
+
+#define NUM_LEDS_0 5
+#define NUM_LEDS_1 5
+#define NUM_LEDS_2 2
+#define NUM_LEDS_3 2
+
+//first coordinate defines on which string the LED is positioned, second determines the position
+const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
+		{ 2, 1 }, //LED0: CAN
+		{ 2, 0 }, //LED1: GPS
+		{ 3, 0 }, //LED2: LoRA
+		{ 3, 1 }, //LED3: SD Card
+		{ 0, 0 }, //LED4: HG1
+		{ 0, 1 }, //LED5: LG1
+		{ 0, 2 }, //LED6: BAR1
+		{ 1, 0 }, //LED7: ARM
+		{ 1, 1 }, //LED8: HG2
+		{ 1, 2 }, //LED9: LG2
+		{ 1, 3 }, //LED10: BAR1
+		{ 0, 3 }, //LED11: REG1
+		{ 1, 4 }, //LED12: REG2
+		{ 0, 4 }  //LED13: BATT
+
+};
+const int LED_num_max = 6;
+const int LED_order[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3] = { 0, //LED0: CAN
+		0, //LED1: GPS
+		0, //LED2: LoRA
+		1, //LED3: SD Card
+		2, //LED4: HG1
+		3, //LED5: LG1
+		4, //LED6: BAR1
+		3, //LED7: ARM
+		4, //LED8: HG2
+		3, //LED9: LG2
+		2, //LED10: BAR2
+		5, //LED11: REG1
+		5, //LED12: REG2
+		6  //LED13: BATT
+		};
 
 
 uint8_t HG2_Read_Register(uint8_t addr){
@@ -378,4 +423,97 @@ uint8_t read_EEPROM(uint32_t address) {
 	return data;
 }
 
+void setLEDs() {
+
+	static uint32_t LED_PWM_Data_0[(NUM_LEDS_0 * 24) + 58];
+	static uint32_t LED_PWM_Data_1[(NUM_LEDS_1 * 24) + 58];
+	static uint32_t LED_PWM_Data_2[(NUM_LEDS_2 * 24) + 58];
+	static uint32_t LED_PWM_Data_3[(NUM_LEDS_3 * 24) + 58];
+
+	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3;
+			i++) {
+		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
+		case 0:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58;
+					i++) {
+				LED_PWM_Data_0[i] = 0;
+			}
+			break;
+		case 1:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58;
+					i++) {
+				LED_PWM_Data_1[i] = 0;
+			}
+			break;
+		case 2:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58;
+					i++) {
+				LED_PWM_Data_2[i] = 0;
+			}
+			break;
+		case 3:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58;
+					i++) {
+				LED_PWM_Data_3[i] = 0;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	HAL_TIM_PWM_Start_DMA(&htim5, TIM_CHANNEL_4, LED_PWM_Data_0,
+			(NUM_LEDS_0 * 24) + 58); //DMA for LEDS 0
+	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, LED_PWM_Data_1,
+			(NUM_LEDS_1 * 24) + 58); //DMA for LEDS 1
+	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_2, LED_PWM_Data_2,
+			(NUM_LEDS_2 * 24) + 58); //DMA for LEDS 2
+	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, LED_PWM_Data_3,
+			(NUM_LEDS_3 * 24) + 58); //DMA for LEDS 3
+
+}
 

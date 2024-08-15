@@ -35,52 +35,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUM_LEDS_0 5
-#define NUM_LEDS_1 5
-#define NUM_LEDS_2 2
-#define NUM_LEDS_3 2
-
-//first coordinate defines on which string the LED is positioned, second determines the position
-const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
-		{ 2, 1 }, //LED0: CAN
-		{ 2, 0 }, //LED1: GPS
-		{ 3, 0 }, //LED2: LoRA
-		{ 3, 1 }, //LED3: SD Card
-		{ 0, 0 }, //LED4: HG1
-		{ 0, 1 }, //LED5: LG1
-		{ 0, 2 }, //LED6: BAR1
-		{ 1, 0 }, //LED7: ARM
-		{ 1, 1 }, //LED8: HG2
-		{ 1, 2 }, //LED9: LG2
-		{ 1, 3 }, //LED10: BAR1
-		{ 0, 3 }, //LED11: REG1
-		{ 1, 4 }, //LED12: REG2
-		{ 0, 4 }  //LED13: BATT
-
-};
-const int LED_num_max = 6;
-const int LED_order[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3] = { 0, //LED0: CAN
-		0, //LED1: GPS
-		0, //LED2: LoRA
-		1, //LED3: SD Card
-		2, //LED4: HG1
-		3, //LED5: LG1
-		4, //LED6: BAR1
-		3, //LED7: ARM
-		4, //LED8: HG2
-		3, //LED9: LG2
-		2, //LED10: BAR2
-		5, //LED11: REG1
-		5, //LED12: REG2
-		6  //LED13: BATT
-		};
-
-uint32_t LED_PWM_Data_0[(NUM_LEDS_0 * 24) + 58];
-uint32_t LED_PWM_Data_1[(NUM_LEDS_1 * 24) + 58];
-uint32_t LED_PWM_Data_2[(NUM_LEDS_2 * 24) + 58];
-uint32_t LED_PWM_Data_3[(NUM_LEDS_3 * 24) + 58];
-
-uint32_t LED_PWM_Data_Combined[(5 * 24) + 50][4];
 
 uint16_t DMA_data;
 
@@ -156,93 +110,6 @@ static void MX_TIM13_Init(void);
 
 volatile int datasentflag = 0;
 uint8_t LED_Color_Data[14][3];
-void setLEDs() {
-	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3;
-			i++) {
-		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
-		case 0:
-			for (int j = 0; j < 3; j++) {
-				for (int n = 0; n < 8; n++) {
-					if (LED_Color_Data[i][j] & (128 >> n)) {
-						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 60;
-					} else {
-						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 30;
-					}
-				}
-			}
-			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58;
-					i++) {
-				LED_PWM_Data_0[i] = 0;
-			}
-			break;
-		case 1:
-			for (int j = 0; j < 3; j++) {
-				for (int n = 0; n < 8; n++) {
-					if (LED_Color_Data[i][j] & (128 >> n)) {
-						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 60;
-					} else {
-						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 30;
-					}
-				}
-			}
-			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58;
-					i++) {
-				LED_PWM_Data_1[i] = 0;
-			}
-			break;
-		case 2:
-			for (int j = 0; j < 3; j++) {
-				for (int n = 0; n < 8; n++) {
-					if (LED_Color_Data[i][j] & (128 >> n)) {
-						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 60;
-					} else {
-						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 30;
-					}
-				}
-			}
-			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58;
-					i++) {
-				LED_PWM_Data_2[i] = 0;
-			}
-			break;
-		case 3:
-			for (int j = 0; j < 3; j++) {
-				for (int n = 0; n < 8; n++) {
-					if (LED_Color_Data[i][j] & (128 >> n)) {
-						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 60;
-					} else {
-						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
-								+ 8] = 30;
-					}
-				}
-			}
-			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58;
-					i++) {
-				LED_PWM_Data_3[i] = 0;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	HAL_TIM_PWM_Start_DMA(&htim5, TIM_CHANNEL_4, LED_PWM_Data_0,
-			(NUM_LEDS_0 * 24) + 58); //DMA for LEDS 0
-	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, LED_PWM_Data_1,
-			(NUM_LEDS_1 * 24) + 58); //DMA for LEDS 1
-	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_2, LED_PWM_Data_2,
-			(NUM_LEDS_2 * 24) + 58); //DMA for LEDS 2
-	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, LED_PWM_Data_3,
-			(NUM_LEDS_3 * 24) + 58); //DMA for LEDS 3
-
-}
 
 int disarm(char *state) {
 	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
@@ -352,9 +219,25 @@ int main(void) {
 	MX_TIM13_Init();
 	/* USER CODE BEGIN 2 */
 
-	if (MAX_M10s_init(&hi2c2))
-		Error_Handler();
+	//if (MAX_M10s_init(&hi2c2))
+	//	Error_Handler();
 
+	while(1){
+		for(int i = 0; i < 14; i++){
+			LED_Color_Data[i][0] = 255;
+			LED_Color_Data[i][1] = 255;
+			LED_Color_Data[i][2] = 255;
+		}
+		setLEDs();
+		HAL_Delay(1000);
+		for(int i = 0; i < 14; i++){
+			LED_Color_Data[i][0] = 0;
+			LED_Color_Data[i][1] = 0;
+			LED_Color_Data[i][2] = 0;
+		}
+		setLEDs();
+		HAL_Delay(1000);
+	}
 	//MAX_M10S_init(&hi2c2);
 	const int MAX = 50;
 	const double SPEED = 2.0 / 2000;
@@ -416,49 +299,6 @@ int main(void) {
 	LoRA_begin(868000000);
 
 	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-
-	char data_gyro[100];
-//    sprintf( data_gyro,  "Start\n");
-//    CDC_Transmit_HS(data_gyro, strlen(data_gyro));
-//
-//    if(f_mount(&SDFatFS, (TCHAR const*)SDPath, 0) != FR_OK)
-//    	{
-//    	Error_Handler();
-//
-//    	}
-//    	else
-//    	{
-//    		if(f_mkfs((TCHAR const*)SDPath, FM_ANY, 0, rtext, sizeof(rtext)) != FR_OK)
-//
-//    	    {
-//    			Error_Handler();
-//    	    }
-//    		else
-//    		{
-//    			//Open file for writing (Create)
-//    			if(f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
-//    			{
-//    				Error_Handler();
-//    			}
-//    			else
-//    			{
-//
-//    				//Write to the text file
-//    				res = f_write(&SDFile, wtext, strlen((char *)wtext), (void *)&byteswritten);
-//    				if((byteswritten == 0) || (res != FR_OK))
-//    				{
-//
-//    					Error_Handler();
-//    				}
-//    				else
-//    				{
-//
-//    					f_close(&SDFile);
-//    				}
-//    			}
-//    		}
-//    	}
-//    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
 
 	int connected = 0;
 	long last_packet = 0;
