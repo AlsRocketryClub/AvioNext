@@ -82,8 +82,6 @@ uint32_t LED_PWM_Data_3[(NUM_LEDS_3 * 24) + 58];
 
 uint32_t LED_PWM_Data_Combined[(5 * 24) + 50][4];
 
-uint32_t LED_Color_Data[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][3];
-
 uint16_t DMA_data;
 
 uint16_t read_Data;
@@ -157,10 +155,144 @@ static void MX_TIM13_Init(void);
 /* USER CODE BEGIN 0 */
 
 volatile int datasentflag = 0;
+uint8_t LED_Color_Data[14][3];
+void setLEDs() {
+	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3;
+			i++) {
+		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
+		case 0:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58;
+					i++) {
+				LED_PWM_Data_0[i] = 0;
+			}
+			break;
+		case 1:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58;
+					i++) {
+				LED_PWM_Data_1[i] = 0;
+			}
+			break;
+		case 2:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58;
+					i++) {
+				LED_PWM_Data_2[i] = 0;
+			}
+			break;
+		case 3:
+			for (int j = 0; j < 3; j++) {
+				for (int n = 0; n < 8; n++) {
+					if (LED_Color_Data[i][j] & (128 >> n)) {
+						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 60;
+					} else {
+						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+								+ 8] = 30;
+					}
+				}
+			}
+			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58;
+					i++) {
+				LED_PWM_Data_3[i] = 0;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 
+	HAL_TIM_PWM_Start_DMA(&htim5, TIM_CHANNEL_4, LED_PWM_Data_0,
+			(NUM_LEDS_0 * 24) + 58); //DMA for LEDS 0
+	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, LED_PWM_Data_1,
+			(NUM_LEDS_1 * 24) + 58); //DMA for LEDS 1
+	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_2, LED_PWM_Data_2,
+			(NUM_LEDS_2 * 24) + 58); //DMA for LEDS 2
+	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, LED_PWM_Data_3,
+			(NUM_LEDS_3 * 24) + 58); //DMA for LEDS 3
 
+}
+
+int disarm(char *state) {
+	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
+	HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+
+	HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
+	HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
+	HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
+	HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
+
+	HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
+	HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
+	HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
+	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
+
+	LED_Color_Data[7][0] = 255;
+	LED_Color_Data[7][1] = 0;
+	LED_Color_Data[7][2] = 0;
+	setLEDs();
+
+	strcpy(state, "DISARMED");
+	return 0;
+}
+
+int arm(char *state) {
+	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
+	HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+	strcpy(state, "ARMED");
+	LED_Color_Data[7][0] = 0;
+	LED_Color_Data[7][1] = 255;
+	LED_Color_Data[7][2] = 0;
+	setLEDs();
+	return 0;
+}
 
 double x[4];
+void multiplyQuat(double r[4], double s[4]) {
+	float temp[4];
+	temp[0] = r[0] * s[0] - r[1] * s[1] - r[2] * s[2] - r[3] * s[3];
+	temp[1] = r[0] * s[1] + r[1] * s[0] - r[2] * s[3] + r[3] * s[2];
+	temp[2] = r[0] * s[2] + r[1] * s[3] + r[2] * s[0] - r[3] * s[1];
+	temp[3] = r[0] * s[3] - r[1] * s[2] + r[2] * s[1] + r[3] * s[0];
+	for (int i = 0; i < 4; i++) {
+		x[i] = temp[i];
+	}
+}
+
+
+
 
 
 
