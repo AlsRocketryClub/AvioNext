@@ -9,8 +9,6 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim5;
 
 
-extern uint8_t LED_Color_Data[14][3];
-
 #define NUM_LEDS_0 5
 #define NUM_LEDS_1 5
 #define NUM_LEDS_2 2
@@ -28,7 +26,7 @@ const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
 		{ 1, 0 }, //LED7: ARM
 		{ 1, 1 }, //LED8: HG2
 		{ 1, 2 }, //LED9: LG2
-		{ 1, 3 }, //LED10: BAR1
+		{ 1, 3 }, //LED10: BAR2
 		{ 0, 3 }, //LED11: REG1
 		{ 1, 4 }, //LED12: REG2
 		{ 0, 4 }  //LED13: BATT
@@ -423,7 +421,7 @@ uint8_t read_EEPROM(uint32_t address) {
 	return data;
 }
 
-void setLEDs() {
+void setLEDs(uint8_t LED_Color_Data[14][3]) {
 
 	static uint32_t LED_PWM_Data_0[(NUM_LEDS_0 * 24) + 58];
 	static uint32_t LED_PWM_Data_1[(NUM_LEDS_1 * 24) + 58];

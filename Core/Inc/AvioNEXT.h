@@ -1,3 +1,5 @@
+#include <main.h>
+
 uint8_t HG2_Read_Register(uint8_t addr);
 
 void HG2_Write_Register(uint8_t addr, uint8_t data);
@@ -49,7 +51,7 @@ void reliable_send_packet(char *LoRA_data);
 
 void setServo(int servoNum, float angle);
 
-void setLEDs(void);
+void setLEDs(uint8_t LED_Color_Data[14][3]);
 
 double triangle_space(double x);
 

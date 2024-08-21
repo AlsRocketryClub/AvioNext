@@ -26,6 +26,7 @@
 #include "LoRA"
 #include "AvioNEXT.h"
 #include "max_m10s.h"
+#include "StatusDisplay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -125,10 +126,8 @@ int disarm(char *state) {
 	HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
 	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
 
-	LED_Color_Data[7][0] = 255;
-	LED_Color_Data[7][1] = 0;
-	LED_Color_Data[7][2] = 0;
-	setLEDs();
+
+	setStatus("ARM", 2);
 
 	strcpy(state, "DISARMED");
 	return 0;
@@ -139,10 +138,8 @@ int arm(char *state) {
 	HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
 
 	strcpy(state, "ARMED");
-	LED_Color_Data[7][0] = 0;
-	LED_Color_Data[7][1] = 255;
-	LED_Color_Data[7][2] = 0;
-	setLEDs();
+
+	setStatus("ARM", 0);
 	return 0;
 }
 
@@ -211,6 +208,8 @@ int32_t Baro2_Get_Pressure(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	char state[50] = "DISARMED";
+
 
 	FRESULT res; /* FatFs function common result code */
 	uint32_t byteswritten, bytesread; /* File write/read counts */
@@ -288,6 +287,16 @@ int main(void)
 
 	int index = 0;
 	double avg_tab[100];
+
+	for(int i = 0; i < 14; i++){
+		LED_Color_Data[i][0] = 0;
+		LED_Color_Data[i][1] = 255;
+		LED_Color_Data[i][2] = 0;
+
+	}
+	disarm(state);
+	setLEDs(LED_Color_Data);
+	setStatus("CAN", 1);
 	for(int i = 0; i < 100; i++){
 		avg_tab[i] = 0;
 	}
@@ -310,10 +319,10 @@ int main(void)
 		double altitude = (temperature/0.0065) *(1- pow((sum/sea_level_pressure), (1/5.256)));
 
 		char data_gyro[50];
-		sprintf(data_gyro, "%f\n", altitude);
-		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+		//sprintf(data_gyro, "%f\n", altitude);
+		//CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 		HAL_Delay(20);
-
+		updateStatus();
 
 	}
 	float rotZ = 0;
@@ -370,7 +379,6 @@ int main(void)
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 	while (1) {
 
-		char state[50] = "DISARMED";
 		char command[50];
 		char acknowledge[50];
 		char recieved_packet[50];
@@ -662,7 +670,6 @@ int main(void)
 				LED_Color_Data[7][0] = 255;
 				LED_Color_Data[7][1] = 0;
 				LED_Color_Data[7][2] = 0;
-				setLEDs();
 			} else {
 
 				HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
@@ -671,7 +678,6 @@ int main(void)
 				LED_Color_Data[7][0] = 0;
 				LED_Color_Data[7][1] = 255;
 				LED_Color_Data[7][2] = 0;
-				setLEDs();
 			}
 
 			int packet_lenght = LoRA_parsePacket();
@@ -693,7 +699,6 @@ int main(void)
 
 				if (strcmp(LoRA_data, "ARM") == 0) {
 					ARMED = 1;
-					setLEDs();
 					LoRA_sendPacket("ARM SUCCESS");
 				}
 				if (strcmp(LoRA_data, "DISARM") == 0) {
