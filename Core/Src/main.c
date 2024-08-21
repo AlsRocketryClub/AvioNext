@@ -25,6 +25,8 @@
 /* USER CODE BEGIN Includes */
 #include "LoRA"
 #include "AvioNEXT.h"
+
+#include "LG_IMU.h"
 #include "max_m10s.h"
 #include "StatusDisplay.h"
 /* USER CODE END Includes */
@@ -208,6 +210,7 @@ int32_t Baro2_Get_Pressure(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
 	char state[50] = "DISARMED";
 
 
@@ -269,10 +272,20 @@ int main(void)
 	const double b_offset = 2;
 
 
-	LG2_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
-	LG2_Write_Register(0x11, 0b01101000); //Gyroscope setup - CTRL2_G
-	LG2_Write_Register(0x13, 0b00001100); //disables I2C - CTRL4_C
+	uint8_t LG_status = LG_Check();
 
+	if(LG_status & 1){
+		setStatus("LG 1", 2);
+	}else{
+		setStatus("LG 1", 0);
+	}
+
+	if(LG_status & 2){
+		setStatus("LG 2", 2);
+	}else{
+		setStatus("LG 2", 0);
+	}
+	LG_Configure();
 	HAL_Delay(3000);
 	HG2_Write_Register(0x1C, 0b10111111);
 	HAL_Delay(2);
@@ -319,8 +332,10 @@ int main(void)
 		double altitude = (temperature/0.0065) *(1- pow((sum/sea_level_pressure), (1/5.256)));
 
 		char data_gyro[50];
-		//sprintf(data_gyro, "%f\n", altitude);
-		//CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+		double test = LG_Get_Acc_Z();
+		sprintf(data_gyro, "%f\n", test);
+		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 		HAL_Delay(20);
 		updateStatus();
 
@@ -333,10 +348,10 @@ int main(void)
 	float calOmegaZ = 0;
 	HAL_Delay(2000);
 	for (int i = 0; i < 500; i++) {
-		if (LG2_Read_Register(0x1E) | (1 << 1)) {
-			calOmegaX += LG2_Get_Gyro_X();
-			calOmegaY += LG2_Get_Gyro_Y();
-			calOmegaZ += LG2_Get_Gyro_Z();
+		if (LG_Read_Register(0x1E) | (1 << 1)) {
+			calOmegaX += LG_Get_Gyro_X();
+			calOmegaY += LG_Get_Gyro_Y();
+			calOmegaZ += LG_Get_Gyro_Z();
 		}
 
 		//HAL_Delay(20);
@@ -405,12 +420,12 @@ int main(void)
 			float Gx;
 			float Gy;
 			float Gz;
-			if (LG2_Read_Register(0x1E) & (1 << 1)) {
+			if (LG_Read_Register(0x1E) & (1 << 1)) {
 				elapsedTime = (TIM13->CNT / 1000.0);
 				TIM13->CNT = 0;
-				Gx = LG2_Get_Gyro_X();
-				Gy = LG2_Get_Gyro_Y();
-				Gz = LG2_Get_Gyro_Z();
+				Gx = LG_Get_Gyro_X();
+				Gy = LG_Get_Gyro_Y();
+				Gz = LG_Get_Gyro_Z();
 				rotQuaternion[1] = (Gx - calOmegaX) * (3.1415 / 360000)
 						* elapsedTime;
 				rotQuaternion[2] = (Gy - calOmegaY) * (3.1415 / 360000)
@@ -596,20 +611,20 @@ int main(void)
 
 			 float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
 
-			 //float omegaZ = LG2_Get_Gyro_Z() - calOmegaZ;
+			 //float omegaZ = LG_Get_Gyro_Z() - calOmegaZ;
 			 //rotZ += omegaZ * timeElapsed;
 
-			 //int16_t accZ = LG2_Get_Acc_X();
+			 //int16_t accZ = LG_Get_Acc_X();
 
 			 //HG2_Get_Acc();
 			 //int16_t AccX = (int16_t)(HG2_Acc[1] << 8) | HG2_Acc[0];
-			 //float AccX = LG2_Get_Acc_X();
-			 //float AccY = LG2_Get_Acc_Y();
-			 //float AccZ = LG2_Get_Acc_Z();
+			 //float AccX = LG_Get_Acc_X();
+			 //float AccY = LG_Get_Acc_Y();
+			 //float AccZ = LG_Get_Acc_Z();
 
-			 //float GyroX = LG2_Get_Gyro_X() - calOmegaX;
-			 //float GyroY = LG2_Get_Gyro_Y() - calOmegaY;
-			 //float GyroZ = LG2_Get_Gyro_Z() - calOmegaZ;
+			 //float GyroX = LG_Get_Gyro_X() - calOmegaX;
+			 //float GyroY = LG_Get_Gyro_Y() - calOmegaY;
+			 //float GyroZ = LG_Get_Gyro_Z() - calOmegaZ;
 
 			 lastTime = HAL_GetTick();
 
@@ -1716,7 +1731,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|PYRO1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOF, PYRO2_Pin|PYRO3_Pin|PYRO4_Pin, GPIO_PIN_RESET);
@@ -1751,12 +1766,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PYRO1_Pin */
-  GPIO_InitStruct.Pin = PYRO1_Pin;
+  /*Configure GPIO pins : PB0 PYRO1_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|PYRO1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(PYRO1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : CONT1_Pin */
   GPIO_InitStruct.Pin = CONT1_Pin;

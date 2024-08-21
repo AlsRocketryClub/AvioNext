@@ -1,6 +1,7 @@
 #include <AvioNEXT.h>
 #include <main.h>
-uint8_t LED_Color_Data_Staus[14][3];
+uint8_t statusArray[14];
+
 
 const float brightness = 0.4;
 
@@ -30,10 +31,10 @@ void setStatus(char *ModuleName, uint8_t status) {
 	} else if (strcmp(ModuleName, "ARM") == 0) {
 		statusArray[7] = status;
 
-	} else if (strcmp(ModuleName, "HG2") == 0) {
+	} else if (strcmp(ModuleName, "HG 2") == 0) {
 		statusArray[8] = status;
 
-	} else if (strcmp(ModuleName, "LG2") == 0) {
+	} else if (strcmp(ModuleName, "LG 2") == 0) {
 		statusArray[9] = status;
 
 	} else if (strcmp(ModuleName, "BAR 2") == 0) {
@@ -53,7 +54,7 @@ void setStatus(char *ModuleName, uint8_t status) {
 }
 
 void updateStatus() {
-	uint8_t statusArray[14];
+	uint8_t LED_Color_Data_Staus[14][3];
 	for (int i = 0; i < 14; i++) {
 		switch (statusArray[i]) {
 		case 0: //RED LED, critical module malfunction
