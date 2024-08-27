@@ -677,12 +677,13 @@ int main(void)
   char command[50];
   char recieved_packet[50];
   char previous_packet[50];
+  char response_packet[50];
   int packetId;
   char communication_state[50] = "RECIEVING";
 
 
 	while (1) {
-	  char buffered_debug_data[MAX_PACKET_LENGTH] = "";
+	  strcpy(buffered_debug_data[MAX_PACKET_LENGTH], "");
 	  while(1){
 	    HAL_ADC_Start(&hadc1); // start the adc
 
@@ -736,7 +737,8 @@ int main(void)
       {
         previousTime = HAL_GetTick();
         //give up MASTER
-        LoRA_sendPacket("$");
+        ssprintf(response_packet, "$ %s", state);
+        LoRA_sendPacket(response_packet);
       }
     }
     else if(strcmp(communication_state,"MASTER") == 0)
@@ -827,7 +829,8 @@ int main(void)
         }
 
 
-        LoRA_sendPacket("$");
+        ssprintf(response_packet, "$ %s", state);
+        LoRA_sendPacket(response_packet);
         strcpy(communication_state,"MASTER");
       }
 
