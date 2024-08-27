@@ -781,34 +781,26 @@ int main(void)
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
 while (1) {
-    if(strcmp(communication_state,"RECIEVING RELIABLE") == 0)
+    if(strcmp(communication_state,"RECIEVING") == 0)
     {
       if(recv_packet(recieved_packet, 50))
       {
         previousTime = HAL_GetTick();
-        //if crc then:
-        //{
-          if(strcmp(recieved_packet, "$") == 0)
-          {
-            strcpy(communication_state,"SEND RELIABLE");
-          }
-          else if(strcmp(recieved_packet, "%") == 0)
-          {
-            strcpy(communication_state,"RELIABLE STREAM");
-            LoRA_sendPacket(recieved_packet);
-          }
-          else if(strcmp(recieved_packet, previous_packet))
-          {
-            //send acknowledge again
-            LoRA_sendPacket(recieved_packet);
-          }
-          else
-          {
-            strcpy(previous_packet, recieved_packet);
-            LoRA_sendPacket(recieved_packet);
-            CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-          }
-        //}
+        if(sscanf(recieved_packet, "$ %s", state) == 1)
+        {
+          strcpy(communication_state,"MASTER");
+        }
+        else if(strcmp(recieved_packet, previous_packet))
+        {
+          //send acknowledge again
+          LoRA_sendPacket(recieved_packet);
+        }
+        else
+        {
+          strcpy(previous_packet, recieved_packet);
+          LoRA_sendPacket(recieved_packet);
+          CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
+        }
       }
       else if(HAL_GetTick()-previousTime > 1000)
       {
@@ -817,60 +809,29 @@ while (1) {
         LoRA_sendPacket("$");
       }
     }
-    else if(strcmp(communication_state,"RECIEVING STREAM") == 0)
-    {
-      if(recv_packet(recieved_packet, 50))
-      {
-        previousTime = HAL_GetTick();
-        //if crc then:
-        //{
-          if(strcmp(recieved_packet, "$") == 0)
-          {
-            strcpy(communication_state,"SEND RELIABLE");
-          }
-          else if(HAL_GetTick()-previousTime > 1000)
-          {
-            previousTime = HAL_GetTick();
-            //give up SENDING
-            LoRA_sendPacket("$");
-          }
-          else
-          {
-            strcpy(previous_packet, recieved_packet);
-            CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-          }
-        //}
-      }
-      else if(HAL_GetTick()-previousTime > 1000)
-      {
-        previousTime = HAL_GetTick();
-        //give up SEND RELIABLE
-        LoRA_sendPacket("$");
-      } 
-    }
-    else if(strcmp(communication_state,"SEND STREAM") == 0)
-    {
-      if(stream_counter == 0)
-      {
-        //give up SENDING
-        LoRA_sendPacket("$");
-        strcpy(communication_state,"RECIEVING RELIABLE");
-      }
-      else
-      {
-        //reliable_send_packet isn't allowed!!
-        stream_counter--;
-      }
-    }
-    else if(strcmp(communication_state,"SEND RELIABLE") == 0)
+    else if(strcmp(communication_state,"MASTER") == 0)
     {
     	//get input
     	char input[usbBufferLen];
     	usbReceiveHandle(input);
-    	while(!usbReceiveHandle(input))
-    	{}
-      reliable_send_packet(input);
-      strcpy(communication_state,"RECIEVING RELIABLE");
+    	if(strcmp(state, "STATIC_FIRE_LOGGING"))
+      {
+        if(!usbReceiveHandle(input))
+        {
+          reliable_send_packet("DATA");
+        }
+        else
+        {
+          reliable_send_packet(input);
+        }
+      }
+      else {
+    	  while(!usbReceiveHandle(input))
+    	  {}
+        reliable_send_packet(input);
+      }
+      strcpy(communication_state,"RECIEVING");
+      LoRA_sendPacket("$");
     }
 
 
