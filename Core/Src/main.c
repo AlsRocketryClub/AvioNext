@@ -767,7 +767,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 
-  char state[50] = "MASTER";
+  int stream_counter = 0;
+  char state[50] = "";
   char command[50];
   char acknowledge[50];
   char previous_packet[50];
@@ -776,11 +777,11 @@ int main(void)
   char sendMessage[50];
   int last = 0;
   int packetId;
-  char communication_state[50] = "MASTER";
+  char communication_state[50] = "SEND RELIABLE";
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
 while (1) {
-    if(strcmp(communication_state,"RECIEVING WITH ACKNOWLEDGE") == 0)
+    if(strcmp(communication_state,"RECIEVING RELIABLE") == 0)
     {
       if(recv_packet(recieved_packet, 50))
       {
@@ -789,8 +790,12 @@ while (1) {
         //{
           if(strcmp(recieved_packet, "$") == 0)
           {
-
-            strcpy(communication_state,"MASTER");
+            strcpy(communication_state,"SEND RELIABLE");
+          }
+          else if(strcmp(recieved_packet, "%") == 0)
+          {
+            strcpy(communication_state,"RELIABLE STREAM");
+            LoRA_sendPacket(recieved_packet);
           }
           else if(strcmp(recieved_packet, previous_packet))
           {
@@ -808,11 +813,11 @@ while (1) {
       else if(HAL_GetTick()-previousTime > 1000)
       {
         previousTime = HAL_GetTick();
-        //give up MASTER
+        //give up SENDING
         LoRA_sendPacket("$");
       }
     }
-    else if(strcmp(communication_state,"RECIEVING WITHOUT ACKNOWLEDGE") == 0)
+    else if(strcmp(communication_state,"RECIEVING STREAM") == 0)
     {
       if(recv_packet(recieved_packet, 50))
       {
@@ -821,12 +826,17 @@ while (1) {
         //{
           if(strcmp(recieved_packet, "$") == 0)
           {
-            strcpy(communication_state,"MASTER");
+            strcpy(communication_state,"SEND RELIABLE");
+          }
+          else if(HAL_GetTick()-previousTime > 1000)
+          {
+            previousTime = HAL_GetTick();
+            //give up SENDING
+            LoRA_sendPacket("$");
           }
           else
           {
             strcpy(previous_packet, recieved_packet);
-            
             CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
           }
         //}
@@ -834,19 +844,33 @@ while (1) {
       else if(HAL_GetTick()-previousTime > 1000)
       {
         previousTime = HAL_GetTick();
-        //give up MASTER
+        //give up SEND RELIABLE
         LoRA_sendPacket("$");
       } 
     }
-    else if(strcmp(communication_state,"MASTER") == 0)
+    else if(strcmp(communication_state,"SEND STREAM") == 0)
+    {
+      if(stream_counter == 0)
+      {
+        //give up SENDING
+        LoRA_sendPacket("$");
+        strcpy(communication_state,"RECIEVING RELIABLE");
+      }
+      else
+      {
+        //reliable_send_packet isn't allowed!!
+        stream_counter--;
+      }
+    }
+    else if(strcmp(communication_state,"SEND RELIABLE") == 0)
     {
     	//get input
     	char input[usbBufferLen];
     	usbReceiveHandle(input);
     	while(!usbReceiveHandle(input))
     	{}
-      	reliable_send_packet(input);
-      	strcpy(communication_state,"RECIEVING WITH ACKNOWLEDGE");
+      reliable_send_packet(input);
+      strcpy(communication_state,"RECIEVING RELIABLE");
     }
 
 
