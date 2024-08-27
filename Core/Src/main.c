@@ -40,6 +40,8 @@
 #define NUM_LEDS_3 2
 #define usbBufferLen 256
 
+#define MAX_PAYLOAD_LENGHT 250
+
 uint8_t usbDataBuffer[usbBufferLen];
 uint32_t usbBytesReady = 0;
 
@@ -533,29 +535,27 @@ int recv_packet(char* LoRA_data, int max_length)
   }
 }
 
-void reliable_send_packet(char* LoRA_data)
-{
-  uint16_t length = strlen(LoRA_data)+1; //+1 for the \0
-  char acknowledge[length]; 
-  LoRA_sendPacket(LoRA_data);
-  while(1)
-  {
-    
-    if(recv_packet(acknowledge, length))
-    {
-      //cehck crc
-      if(strcmp(acknowledge, LoRA_data) != 0)
-      {
-        LoRA_sendPacket(LoRA_data);
-      }
-      else
-      {
-        break;
-      }
-    }
+void reliable_send_packet(char *LoRA_data) {
+	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
+	char acknowledge[length];
+	uint32_t lastTime = HAL_GetTick();
+	LoRA_sendPacket(LoRA_data);
+	while (1) {
 
-    //delay
-  }
+		if (recv_packet(acknowledge, length)) {
+			//cehck crc
+			if (strcmp(acknowledge, LoRA_data) != 0) {
+				LoRA_sendPacket(LoRA_data);
+			} else {
+				break;
+			}
+		}
+
+		if (HAL_GetTick() - lastTime > 1000) {
+			LoRA_sendPacket(LoRA_data);
+			lastTime = HAL_GetTick();
+		}
+	}
 }
 
 void pyro_continuity_check()
@@ -710,7 +710,6 @@ int main(void)
     setServo(3, 0);
     setServo(4, 45);
 
-    LoRA_begin(868000000);
 
     //HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 
@@ -768,31 +767,32 @@ int main(void)
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 
   int stream_counter = 0;
-  char state[50] = "";
-  char command[50];
-  char acknowledge[50];
-  char previous_packet[50];
-  char recieved_packet[50];
-  char response_packet[50];
-  char sendMessage[50];
+  char state[MAX_PAYLOAD_LENGHT] = "";
+  char command[MAX_PAYLOAD_LENGHT];
+  char acknowledge[MAX_PAYLOAD_LENGHT];
+  char previous_packet[MAX_PAYLOAD_LENGHT];
+  char recieved_packet[MAX_PAYLOAD_LENGHT];
+  char response_packet[MAX_PAYLOAD_LENGHT];
+  char sendMessage[MAX_PAYLOAD_LENGHT];
   int last = 0;
   int packetId;
   char communication_state[50] = "MASTER";
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
+  LoRA_begin(868000000);
 
 
 while (1) {
     if(strcmp(communication_state,"RECIEVING") == 0)
     {
-      if(recv_packet(recieved_packet, 50))
+      if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
       {
         previousTime = HAL_GetTick();
         if(sscanf(recieved_packet, "$ %s", state) == 1)
         {
           strcpy(communication_state,"MASTER");
         }
-        else if(strcmp(recieved_packet, previous_packet))
+        else if(strcmp(recieved_packet, previous_packet)==0)
         {
           //send acknowledge again
           LoRA_sendPacket(recieved_packet);
@@ -813,6 +813,8 @@ while (1) {
     }
     else if(strcmp(communication_state,"MASTER") == 0)
     {
+	  	  CDC_Transmit_HS(state, strlen(state));
+
     	//get input
     	char input[usbBufferLen];
     	usbReceiveHandle(input);
