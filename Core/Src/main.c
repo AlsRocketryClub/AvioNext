@@ -777,9 +777,11 @@ int main(void)
   char sendMessage[50];
   int last = 0;
   int packetId;
-  char communication_state[50] = "SEND RELIABLE";
+  char communication_state[50] = "MASTER";
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
+
+
 while (1) {
     if(strcmp(communication_state,"RECIEVING") == 0)
     {
@@ -814,8 +816,11 @@ while (1) {
     	//get input
     	char input[usbBufferLen];
     	usbReceiveHandle(input);
-    	if(strcmp(state, "STATIC_FIRE_LOGGING"))
+
+
+    	if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
       {
+
         if(!usbReceiveHandle(input))
         {
           reliable_send_packet("DATA");
@@ -826,13 +831,17 @@ while (1) {
         }
       }
       else {
+
     	  while(!usbReceiveHandle(input))
     	  {}
+
         reliable_send_packet(input);
+
+	  	  char debug[usbBufferLen+10];
+	  	  sprintf(debug, "Debug: %s", input);
+	  	  CDC_Transmit_HS(debug, strlen(debug));
       }
-      char debug[usbBufferLen+10];
-      sprintf(debug, "Debug: %s", input);
-      CDC_Transmit_HS(debug, strlen(debug));
+
       strcpy(communication_state,"RECIEVING");
       LoRA_sendPacket("$");
     }
