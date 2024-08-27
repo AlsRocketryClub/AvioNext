@@ -490,9 +490,17 @@ int disarm(char* state)
   HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
   HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
 
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  setServo(1, 0);
+
+
   LED_Color_Data[7][0] = 255;
   LED_Color_Data[7][1] = 0;
   LED_Color_Data[7][2] = 0;
+
+  LED_Color_Data[2][0] = 255;
+  LED_Color_Data[2][1] = 0;
+  LED_Color_Data[2][2] = 0;
   setLEDs();
 
   strcpy(state,"DISARMED");
@@ -504,6 +512,8 @@ int arm(char* state)
   HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
 //HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
 
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  setServo(1, 100);
 
   strcpy(state,"ARMED");
   LED_Color_Data[7][0] = 0;
@@ -633,13 +643,21 @@ int main(void)
   MX_TIM13_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
+  char dummy[50];
+  disarm(dummy);
+
   FATFS FatFs;
   FIL Fil;
   FRESULT FR_Status;
-
   FR_Status = f_mount(&FatFs, SDPath, 1);
 
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
+  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
 
+
+  FR_Status = f_open(&Fil, "MyTextFile.txt", FA_CREATE_NEW);
+  f_close(&Fil);
 
 
   while(1){
@@ -658,7 +676,6 @@ int main(void)
 
 	  HAL_ADC_Stop(&hadc1); // stop adc
 
-	  HAL_Delay (1); // wait for 500ms
   }
 
     LoRA_begin(868000000);
@@ -1067,18 +1084,16 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
-                              |RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = 64;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 5;
-  RCC_OscInitStruct.PLL.PLLN = 24;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 12;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 5;
+  RCC_OscInitStruct.PLL.PLLQ = 3;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -1101,7 +1116,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1121,13 +1136,13 @@ void PeriphCommonClock_Config(void)
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_SPI3
                               |RCC_PERIPHCLK_SPI2|RCC_PERIPHCLK_SPI1;
   PeriphClkInitStruct.PLL2.PLL2M = 4;
-  PeriphClkInitStruct.PLL2.PLL2N = 15;
+  PeriphClkInitStruct.PLL2.PLL2N = 12;
   PeriphClkInitStruct.PLL2.PLL2P = 4;
   PeriphClkInitStruct.PLL2.PLL2Q = 2;
   PeriphClkInitStruct.PLL2.PLL2R = 2;
   PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_3;
   PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
-  PeriphClkInitStruct.PLL2.PLL2FRACN = 2950;
+  PeriphClkInitStruct.PLL2.PLL2FRACN = 0;
   PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL2;
   PeriphClkInitStruct.AdcClockSelection = RCC_ADCCLKSOURCE_PLL2;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
@@ -1335,7 +1350,7 @@ static void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x107075B0;
+  hi2c2.Init.Timing = 0x20303E5D;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -1957,7 +1972,6 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
