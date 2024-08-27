@@ -676,6 +676,7 @@ int main(void)
   char state[50] = "DISARMED";
   char command[50];
   char recieved_packet[50];
+  char previous_packet[50];
   int packetId;
   char communication_state[50] = "RECIEVING";
 
@@ -728,7 +729,7 @@ int main(void)
           {
             strcpy(previous_packet, recieved_packet);
             LoRA_sendPacket(recieved_packet);
-            CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
+            strcpy(command, recieved_packet);
           }
       }
       else if(HAL_GetTick()-previousTime > 1000)
