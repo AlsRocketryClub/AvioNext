@@ -830,6 +830,9 @@ while (1) {
     	  {}
         reliable_send_packet(input);
       }
+      char debug[usbBufferLen+10];
+      sprintf(debug, "Debug: %s", input);
+      CDC_Transmit_HS(debug, strlen(debug));
       strcpy(communication_state,"RECIEVING");
       LoRA_sendPacket("$");
     }
