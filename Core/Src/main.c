@@ -40,6 +40,9 @@
 #define NUM_LEDS_3 2
 
 #define PI 3.14159265359
+
+#define MAX_PACKET_LENGTH 250
+
 //first coordinate defines on which string the LED is positioned, second determines the position
 const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
 		{ 2, 1 }, //LED0: CAN
@@ -671,15 +674,14 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
-	const int MAX_PACKET_LENGTH = 250;
 	char buffered_debug_data[MAX_PACKET_LENGTH];
-	char state[50] = "DISARMED";
-	char command[50];
-	char recieved_packet[50];
-	char previous_packet[50];
-	char response_packet[50];
+	char state[MAX_PACKET_LENGTH] = "DISARMED";
+	char command[MAX_PACKET_LENGTH];
+	char recieved_packet[MAX_PACKET_LENGTH];
+	char previous_packet[MAX_PACKET_LENGTH];
+	char response_packet[MAX_PACKET_LENGTH];
 	int packetId;
-	char communication_state[50] = "RECIEVING";
+	char communication_state[MAX_PACKET_LENGTH] = "RECIEVING";
 
 	uint32_t previousTime = HAL_GetTick();
 
@@ -694,7 +696,6 @@ int main(void) {
 			uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
 
 			sprintf(debug_data, "%d, %d\n", HAL_GetTick(), adc_val);
-			CDC_Transmit_HS(buffered_debug_data, strlen(buffered_debug_data));
 			FR_Status = f_open(&Fil, "MyTextFile.txt",
 					FA_OPEN_APPEND | FA_WRITE);
 			f_puts(debug_data, &Fil);
@@ -705,15 +706,16 @@ int main(void) {
 			//buffer data for sending
 			if (strlen(debug_data) + strlen(buffered_debug_data) + 1
 					> MAX_PACKET_LENGTH) {
+				CDC_Transmit_HS(buffered_debug_data, strlen(buffered_debug_data));
+
 				break;
 			} else {
-				sprintf(buffered_debug_data+strlen(buffered_debug_data), "\n%s",
-						debug_data);
+				strcat(buffered_debug_data, debug_data);
 			}
 		}
 
 		if (strcmp(communication_state, "RECIEVING") == 0) {
-			if (recv_packet(recieved_packet, 50)) {
+			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
