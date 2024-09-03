@@ -665,6 +665,13 @@ int main(void) {
 	f_close(&Fil);
 
 	LoRA_begin(868000000);
+	while(1){
+		CDC_Transmit_HS("hi", strlen("hi"));
+		if(LoRA_parsePacket()){
+			CDC_Transmit_HS("packet", strlen("packet"));
+		}
+		HAL_Delay(1000);
+	}
 
 	int connected = 0;
 	long last_packet = 0;
@@ -680,9 +687,10 @@ int main(void) {
 	char recieved_packet[MAX_PACKET_LENGTH];
 	char previous_packet[MAX_PACKET_LENGTH];
 	char response_packet[MAX_PACKET_LENGTH];
+	char packets_streamed[MAX_PACKET_LENGTH];
 	int max_packet_count = 0;
 	int packetId;
-	char communication_state[MAX_PACKET_LENGTH] = "RECIEVING";
+	char communication_state[MAX_PACKET_LENGTH] = "RECIEVING RELIABLE";
 
 	uint32_t previousTime = HAL_GetTick();
 
@@ -716,19 +724,21 @@ int main(void) {
 		}*/
 
 		if (strcmp(communication_state, "RECIEVING RELIABLE") == 0) {
+			CDC_Transmit_HS("hi4", strlen("hi4"));
+			HAL_Delay(2000);
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-
+				CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
-
+					CDC_Transmit_HS("hi2", strlen("hi2"));
 					strcpy(communication_state, "SENDING RELIABLE");
-				} else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1)
-        {
-          strcpy(communication_state,"SENDING STREAM");
-        } else if (strcmp(recieved_packet, previous_packet) == 0) {
+				} else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1) {
+					strcpy(communication_state,"SENDING STREAM");
+				} else if (strcmp(recieved_packet, previous_packet) == 0) {
 					//send acknowledge again
 					LoRA_sendPacket(recieved_packet);
 				} else {
+					CDC_Transmit_HS("hi1", strlen("hi1"));
 					strcpy(previous_packet, recieved_packet);
 					LoRA_sendPacket(recieved_packet);
 					strcpy(command, recieved_packet);
@@ -757,8 +767,8 @@ int main(void) {
 			{
 			  previousTime = HAL_GetTick();
 			  //give up SENDING
-			  sprintf(sendMessage, "! %d", packets_streamed);
-			  LoRA_sendPacket(sendMessage);
+			  sprintf(response_packet, "! %d", packets_streamed);
+			  LoRA_sendPacket(response_packet);
 			}
 		} else if(strcmp(communication_state,"SENDING STREAM") == 0) {
 			if(max_packet_count == 0)
@@ -781,7 +791,7 @@ int main(void) {
 						f_puts(debug_data, &Fil);
 						f_close(&Fil);
 						HAL_ADC_Stop(&hadc1); // stop adc
-						Lora_sendpacket(debug_data);
+						LoRA_sendPacket(debug_data);
 					}
 				}
 				max_packet_count--;
@@ -789,6 +799,7 @@ int main(void) {
 			
 		}
 		else if (strcmp(communication_state, "SENDING RELIABLE") == 0) {
+			CDC_Transmit_HS("hi", strlen("hi"));
 			if (strcmp(state, "DISARMED") == 0) {
 				if (strcmp(command, "ARM") == 0) {
 					CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
