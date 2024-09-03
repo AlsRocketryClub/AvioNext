@@ -674,19 +674,20 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
-	char buffered_debug_data[MAX_PACKET_LENGTH];
+	//char buffered_debug_data[MAX_PACKET_LENGTH];
 	char state[MAX_PACKET_LENGTH] = "DISARMED";
 	char command[MAX_PACKET_LENGTH];
 	char recieved_packet[MAX_PACKET_LENGTH];
 	char previous_packet[MAX_PACKET_LENGTH];
 	char response_packet[MAX_PACKET_LENGTH];
+	int max_packet_count = 0;
 	int packetId;
 	char communication_state[MAX_PACKET_LENGTH] = "RECIEVING";
 
 	uint32_t previousTime = HAL_GetTick();
 
 	while (1) {
-		strcpy(buffered_debug_data, "");
+		/*strcpy(buffered_debug_data, "");
 		while (1) {
 			HAL_ADC_Start(&hadc1); // start the adc
 
@@ -712,24 +713,26 @@ int main(void) {
 			} else {
 				strcat(buffered_debug_data, debug_data);
 			}
-		}
+		}*/
 
-		if (strcmp(communication_state, "RECIEVING") == 0) {
+		if (strcmp(communication_state, "RECIEVING RELIABLE") == 0) {
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
 
-					strcpy(communication_state, "MASTER");
-				} else if (strcmp(recieved_packet, previous_packet) == 0) {
+					strcpy(communication_state, "SENDING RELIABLE");
+				} else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1)
+        {
+          strcpy(communication_state,"SENDING STREAM");
+        } else if (strcmp(recieved_packet, previous_packet) == 0) {
 					//send acknowledge again
 					LoRA_sendPacket(recieved_packet);
 				} else {
 					strcpy(previous_packet, recieved_packet);
 					LoRA_sendPacket(recieved_packet);
 					strcpy(command, recieved_packet);
-					CDC_Transmit_HS(command, strlen(command));
-
+					//CDC_Transmit_HS(command, strlen(command));
 				}
 			} else if (HAL_GetTick() - previousTime > 1000) {
 				previousTime = HAL_GetTick();
@@ -737,16 +740,59 @@ int main(void) {
 				sprintf(response_packet, "$ %s", state);
 				LoRA_sendPacket(response_packet);
 			}
-		} else if (strcmp(communication_state, "MASTER") == 0) {
-			CDC_Transmit_HS(state, strlen(state));
+		} else if (strcmp(communication_state, "RECIEVING STREAM") == 0){
+			if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
+			{
+				previousTime = HAL_GetTick();
+				if(sscanf(recieved_packet, "$ %s", state) == 1)
+				{
+					strcpy(communication_state,"SENDING RELIABLE");
+				}
+				else
+				{
+					CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
+				}
+			}
+			else if(HAL_GetTick()-previousTime > 1000)
+			{
+			  previousTime = HAL_GetTick();
+			  //give up SENDING
+			  sprintf(sendMessage, "! %d", packets_streamed);
+			  LoRA_sendPacket(sendMessage);
+			}
+		} else if(strcmp(communication_state,"SENDING STREAM") == 0) {
+			if(max_packet_count == 0)
+			{
+				strcpy(communication_state,"RECIEVING RELIABLE");
+				LoRA_sendPacket("$");
+			}
+			else
+			{
+				//send whatever
+				if (strcmp(state, "ARMED") == 0) {
+					if (strcmp(command, "FIRE") == 0) {
+						HAL_ADC_Start(&hadc1); // start the adc
+						HAL_ADC_PollForConversion(&hadc1, 100); // poll for conversion
+						char debug_data[100];
+						uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
+						sprintf(debug_data, "%d, %d\n", HAL_GetTick(), adc_val);
+						FR_Status = f_open(&Fil, "MyTextFile.txt",
+								FA_OPEN_APPEND | FA_WRITE);
+						f_puts(debug_data, &Fil);
+						f_close(&Fil);
+						HAL_ADC_Stop(&hadc1); // stop adc
+						Lora_sendpacket(debug_data);
+					}
+				}
+				max_packet_count--;
+			}
+			
+		}
+		else if (strcmp(communication_state, "SENDING RELIABLE") == 0) {
 			if (strcmp(state, "DISARMED") == 0) {
-				HAL_Delay(10);
-				CDC_Transmit_HS(command, strlen(command));
 				if (strcmp(command, "ARM") == 0) {
-					HAL_Delay(10);
 					CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
 					if (!arm(state)) {
-						HAL_Delay(10);
 						CDC_Transmit_HS("HELLO 3", strlen("HELLO 3"));
 						reliable_send_packet("ARM SUCCESS");
 					} else {
@@ -787,15 +833,15 @@ int main(void) {
 				} else if (strcmp(command, "ARM") == 0) {
 					reliable_send_packet("ALREADY ARMED");
 				} else if (strcmp(command, "FIRE") == 0) {
-					strcpy(state, "STATIC_FIRE_LOGGING");
+					//strcpy(state, "STATIC_FIRE_LOGGING");
 				}
-			} else if (strcmp(state, "STATIC_FIRE_LOGGING") == 0) {
+			} /*else if (strcmp(state, "STATIC_FIRE_LOGGING") == 0) {
 				if (strcmp(command, "STOP") == 0) {
 					strcpy(state, "ARMED");
 				} else if (strcmp(command, "DATA") == 0) {
 					reliable_send_packet(buffered_debug_data);
 				}
-			} else {
+			}*/ else {
 				LoRA_sendPacket("state wrong!");
 				HAL_Delay(100);
 				LoRA_sendPacket(state);
