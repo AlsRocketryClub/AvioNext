@@ -784,6 +784,7 @@ int main(void)
   int last = 0;
   int packets_streamed = 50;
   int packetId;
+  int have_recieved_anything = 0;
   char communication_state[50] = "SENDING RELIABLE";
   uint32_t previousTime = HAL_GetTick();
   disarm(state);
@@ -795,10 +796,11 @@ while (1) {
     {
       if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
       {
+    	  have_recieved_anything = 1;
         previousTime = HAL_GetTick();
-        HAL_Delay(100);
-        CDC_Transmit_HS("is arm 0succ\n", strlen("is arm 0succ\n"));
-        HAL_Delay(100);
+        //HAL_Delay(100);
+        //CDC_Transmit_HS("is arm 0succ\n", strlen("is arm 0succ\n"));
+        //HAL_Delay(100);
         if(sscanf(recieved_packet, "$ %s", state) == 1)
         {
           strcpy(communication_state,"SENDING RELIABLE");
@@ -814,15 +816,16 @@ while (1) {
         }
         else
         {
-        	CDC_Transmit_HS("is arm 1succ\n", strlen("is arm 1succ\n"));
-          HAL_Delay(100);
+          //CDC_Transmit_HS("is arm 1succ\n", strlen("is arm 1succ\n"));
+          //HAL_Delay(100);
           strcpy(previous_packet, recieved_packet);
           LoRA_sendPacket(recieved_packet);
-          HAL_Delay(100);
+          //HAL_Delay(100);
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
         }
       }
-      else if(HAL_GetTick()-previousTime > 1000)
+      else if((!have_recieved_anything && HAL_GetTick()-previousTime > 1000) ||
+    		  (have_recieved_anything && HAL_GetTick()-previousTime > 5000))
       {
         previousTime = HAL_GetTick();
         //give up SENDING
@@ -856,6 +859,7 @@ while (1) {
       if(max_packet_count == 0)
       {
         strcpy(communication_state,"RECEIVING RELIABLE");
+        have_recieved_anything = 0;
         LoRA_sendPacket("$");
       }
       else
@@ -891,6 +895,7 @@ while (1) {
       else
       {
         strcpy(communication_state,"RECEIVING RELIABLE");
+        have_recieved_anything = 0;
         LoRA_sendPacket("$");
       }
     }
