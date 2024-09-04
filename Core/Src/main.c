@@ -823,9 +823,9 @@ while (1) {
           //HAL_Delay(100);
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
         }
-      }
-      else if((!have_recieved_anything && HAL_GetTick()-previousTime > 1000) ||
-    		  (have_recieved_anything && HAL_GetTick()-previousTime > 5000))
+      } else if (HAL_GetTick()-previousTime > 1000)
+      /*else if((!have_recieved_anything && HAL_GetTick()-previousTime > 1000) ||
+    		  (have_recieved_anything && HAL_GetTick()-previousTime > 5000))*/
       {
         previousTime = HAL_GetTick();
         //give up SENDING
@@ -871,7 +871,7 @@ while (1) {
     }
     else if(strcmp(communication_state,"SENDING RELIABLE") == 0)
     {
-	  	  CDC_Transmit_HS(state, strlen(state));
+	  	 CDC_Transmit_HS(state, strlen(state));
 
     	//get input
     	char input[usbBufferLen];
@@ -896,6 +896,7 @@ while (1) {
       {
         strcpy(communication_state,"RECEIVING RELIABLE");
         have_recieved_anything = 0;
+        HAL_Delay(100);
         LoRA_sendPacket("$");
       }
     }
