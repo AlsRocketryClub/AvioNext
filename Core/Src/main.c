@@ -694,47 +694,23 @@ int main(void) {
 	char response_packet[MAX_PACKET_LENGTH];
 	char packets_streamed[MAX_PACKET_LENGTH];
 	int max_packet_count = 0;
+	int have_recieved_anything = 0;
 	int packetId;
 	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
 
 	uint32_t previousTime = HAL_GetTick();
 
 	while (1) {
-		/*strcpy(buffered_debug_data, "");
-		while (1) {
-			HAL_ADC_Start(&hadc1); // start the adc
 
-			HAL_ADC_PollForConversion(&hadc1, 100); // poll for conversion
-
-			char debug_data[100];
-			uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
-
-			sprintf(debug_data, "%d, %d\n", HAL_GetTick(), adc_val);
-			FR_Status = f_open(&Fil, "MyTextFile.txt",
-					FA_OPEN_APPEND | FA_WRITE);
-			f_puts(debug_data, &Fil);
-			f_close(&Fil);
-
-			HAL_ADC_Stop(&hadc1); // stop adc
-
-			//buffer data for sending
-			if (strlen(debug_data) + strlen(buffered_debug_data) + 1
-					> MAX_PACKET_LENGTH) {
-				CDC_Transmit_HS(buffered_debug_data, strlen(buffered_debug_data));
-
-				break;
-			} else {
-				strcat(buffered_debug_data, debug_data);
-			}
-		}*/
 
 		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
-			CDC_Transmit_HS("hi4", strlen("hi4"));
+			//CDC_Transmit_HS("hi4", strlen("hi4"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-				CDC_Transmit_HS("hi3", strlen("hi3"));
+				have_recieved_anything = 1;
+				//CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
-					CDC_Transmit_HS("hi2", strlen("hi2"));
+					//CDC_Transmit_HS("hi2", strlen("hi2"));
 					strcpy(communication_state, "SENDING RELIABLE");
 				} else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1) {
 					strcpy(communication_state,"SENDING STREAM");
@@ -742,14 +718,15 @@ int main(void) {
 					//send acknowledge again
 					LoRA_sendPacket(recieved_packet);
 				} else {
-					CDC_Transmit_HS("hi1", strlen("hi1"));
+					//CDC_Transmit_HS("hi1", strlen("hi1"));
 					strcpy(previous_packet, recieved_packet);
 					LoRA_sendPacket(recieved_packet);
 					strcpy(command, recieved_packet);
 					//CDC_Transmit_HS(command, strlen(command));
 				}
-			} else if (HAL_GetTick() - previousTime > 1000) {
-				CDC_Transmit_HS("hi5", strlen("hi5"));
+			} else if ((!have_recieved_anything && HAL_GetTick() - previousTime > 1000) ||
+					(have_recieved_anything && HAL_GetTick() - previousTime > 5000)) {
+				//CDC_Transmit_HS("hi5", strlen("hi5"));
 				previousTime = HAL_GetTick();
 				//give up MASTER
 				sprintf(response_packet, "$ %s", state);
@@ -779,7 +756,9 @@ int main(void) {
 			if(max_packet_count == 0)
 			{
 				strcpy(communication_state,"RECEIVING RELIABLE");
-				LoRA_sendPacket("$");
+				have_recieved_anything = 0;
+				sprintf(response_packet, "$ %s", state);
+				LoRA_sendPacket(response_packet);
 			}
 			else
 			{
@@ -804,12 +783,10 @@ int main(void) {
 			
 		}
 		else if (strcmp(communication_state, "SENDING RELIABLE") == 0) {
-			CDC_Transmit_HS("hi", strlen("hi"));
 			if (strcmp(state, "DISARMED") == 0) {
 				if (strcmp(command, "ARM") == 0) {
 					CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
 					if (!arm(state)) {
-						CDC_Transmit_HS("HELLO 3", strlen("HELLO 3"));
 						reliable_send_packet("ARM SUCCESS");
 					} else {
 						reliable_send_packet("ARM UNSUCCESSFUL");
@@ -841,31 +818,28 @@ int main(void) {
 				}
 			} else if (strcmp(state, "ARMED") == 0) {
 				if (strcmp(command, "DISARM") == 0) {
-					if (disarm(state)) {
-						//not success
+					if (!disarm(state)) {
+						reliable_send_packet("DISARM SUCCESS");
 					} else {
-						//success
+						reliable_send_packet("DISARM UNSUCCESS");
 					}
 				} else if (strcmp(command, "ARM") == 0) {
 					reliable_send_packet("ALREADY ARMED");
 				} else if (strcmp(command, "FIRE") == 0) {
 					//strcpy(state, "STATIC_FIRE_LOGGING");
 				}
-			} /*else if (strcmp(state, "STATIC_FIRE_LOGGING") == 0) {
-				if (strcmp(command, "STOP") == 0) {
-					strcpy(state, "ARMED");
-				} else if (strcmp(command, "DATA") == 0) {
-					reliable_send_packet(buffered_debug_data);
-				}
-			}*/ else {
+				CDC_Transmit_HS("\nIamhere\n", strlen("\nIamhere\n"));
+			} else {
 				LoRA_sendPacket("state wrong!");
 				HAL_Delay(100);
 				LoRA_sendPacket(state);
 			}
-
+			//HAL_Delay(100);
 			sprintf(response_packet, "$ %s", state);
 			LoRA_sendPacket(response_packet);
+			CDC_Transmit_HS("\nIamhere2\n", strlen("\nIamhere2\n"));
 			strcpy(communication_state, "RECEIVING RELIABLE");
+			have_recieved_anything = 0;
 		}
 
 	}
