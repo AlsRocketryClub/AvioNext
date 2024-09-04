@@ -704,7 +704,10 @@ int main(void) {
 
 
 		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
-			//CDC_Transmit_HS("hi4", strlen("hi4"));
+
+			sprintf(response_packet, "prev: %d, current: %d\n", previousTime, HAL_GetTick());
+			CDC_Transmit_HS(response_packet, strlen(response_packet));
+			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 				have_recieved_anything = 1;
 				//CDC_Transmit_HS("hi3", strlen("hi3"));
