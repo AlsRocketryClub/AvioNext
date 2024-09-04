@@ -665,13 +665,18 @@ int main(void) {
 	f_close(&Fil);
 
 	LoRA_begin(868000000);
-	while(1){
-		CDC_Transmit_HS("hi", strlen("hi"));
+	/*while(1){
+		uint8_t version = LoRA_Read_Register(REG_VERSION);
+		char debug[50];
+		sprintf(debug, "%x\n", version);
+		CDC_Transmit_HS(debug, strlen(debug));
 		if(LoRA_parsePacket()){
+
 			CDC_Transmit_HS("packet", strlen("packet"));
 		}
 		HAL_Delay(1000);
-	}
+		LoRA_sendPacket("SENDIT");
+	}*/
 
 	int connected = 0;
 	long last_packet = 0;
@@ -690,7 +695,7 @@ int main(void) {
 	char packets_streamed[MAX_PACKET_LENGTH];
 	int max_packet_count = 0;
 	int packetId;
-	char communication_state[MAX_PACKET_LENGTH] = "RECIEVING RELIABLE";
+	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
 
 	uint32_t previousTime = HAL_GetTick();
 
@@ -723,9 +728,8 @@ int main(void) {
 			}
 		}*/
 
-		if (strcmp(communication_state, "RECIEVING RELIABLE") == 0) {
+		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
 			CDC_Transmit_HS("hi4", strlen("hi4"));
-			HAL_Delay(2000);
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 				CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
@@ -745,12 +749,13 @@ int main(void) {
 					//CDC_Transmit_HS(command, strlen(command));
 				}
 			} else if (HAL_GetTick() - previousTime > 1000) {
+				CDC_Transmit_HS("hi5", strlen("hi5"));
 				previousTime = HAL_GetTick();
 				//give up MASTER
 				sprintf(response_packet, "$ %s", state);
 				LoRA_sendPacket(response_packet);
 			}
-		} else if (strcmp(communication_state, "RECIEVING STREAM") == 0){
+		} else if (strcmp(communication_state, "RECEIVING STREAM") == 0){
 			if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
 			{
 				previousTime = HAL_GetTick();
@@ -773,7 +778,7 @@ int main(void) {
 		} else if(strcmp(communication_state,"SENDING STREAM") == 0) {
 			if(max_packet_count == 0)
 			{
-				strcpy(communication_state,"RECIEVING RELIABLE");
+				strcpy(communication_state,"RECEIVING RELIABLE");
 				LoRA_sendPacket("$");
 			}
 			else
@@ -860,7 +865,7 @@ int main(void) {
 
 			sprintf(response_packet, "$ %s", state);
 			LoRA_sendPacket(response_packet);
-			strcpy(communication_state, "RECIEVING");
+			strcpy(communication_state, "RECEIVING RELIABLE");
 		}
 
 	}
