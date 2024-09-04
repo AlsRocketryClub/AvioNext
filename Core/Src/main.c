@@ -755,7 +755,13 @@ int main(void)
 //    		}
 //    	}
 //    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
-
+	  LoRA_begin(868000000);
+/*
+	while(1) {
+		LoRA_sendPacket("whatever");
+		HAL_Delay(1000);
+	}
+*/
 
 	int connected = 0;
 	long last_packet = 0;
@@ -785,11 +791,14 @@ int main(void)
 
 
 while (1) {
-    if(strcmp(communication_state,"RECIEVING RELIABLE") == 0)
+    if(strcmp(communication_state,"RECEIVING RELIABLE") == 0)
     {
       if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
       {
         previousTime = HAL_GetTick();
+        HAL_Delay(100);
+        CDC_Transmit_HS("is arm 0succ\n", strlen("is arm 0succ\n"));
+        HAL_Delay(100);
         if(sscanf(recieved_packet, "$ %s", state) == 1)
         {
           strcpy(communication_state,"SENDING RELIABLE");
@@ -805,8 +814,11 @@ while (1) {
         }
         else
         {
+        	CDC_Transmit_HS("is arm 1succ\n", strlen("is arm 1succ\n"));
+          HAL_Delay(100);
           strcpy(previous_packet, recieved_packet);
           LoRA_sendPacket(recieved_packet);
+          HAL_Delay(100);
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
         }
       }
@@ -817,7 +829,7 @@ while (1) {
         LoRA_sendPacket("$");
       }
     }
-    else if(strcmp(communication_state,"RECIEVING STREAM") == 0)
+    else if(strcmp(communication_state,"RECEIVING STREAM") == 0)
     {
       if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
       {
@@ -843,7 +855,7 @@ while (1) {
     {
       if(max_packet_count == 0)
       {
-        strcpy(communication_state,"RECIEVING RELIABLE");
+        strcpy(communication_state,"RECEIVING RELIABLE");
         LoRA_sendPacket("$");
       }
       else
@@ -867,18 +879,18 @@ while (1) {
       reliable_send_packet(input);
 
 	  	char debug[usbBufferLen+10];
-	  	sprintf(debug, "Debug: %s", input);
+	  	sprintf(debug, "Debug: %s\n", input);
 	  	CDC_Transmit_HS(debug, strlen(debug));
 
       if(strcmp(input,"FIRE")==0)
       {
-        strcpy(communication_state,"RECIEVING STREAM");
+        strcpy(communication_state,"RECEIVING STREAM");
         sprintf(sendMessage, "! %d", packets_streamed);
         LoRA_sendPacket(sendMessage);
       }
       else
       {
-        strcpy(communication_state,"RECIEVING RELIABLE");
+        strcpy(communication_state,"RECEIVING RELIABLE");
         LoRA_sendPacket("$");
       }
     }
