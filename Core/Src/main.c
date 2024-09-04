@@ -730,6 +730,7 @@ int main(void) {
 			} else if ((!have_recieved_anything && HAL_GetTick() - previousTime > 1000) ||
 					(have_recieved_anything && HAL_GetTick() - previousTime > 5000)) {
 				//CDC_Transmit_HS("hi5", strlen("hi5"));
+				CDC_Transmit_HS("reset\n", strlen("reset\n"));
 				previousTime = HAL_GetTick();
 				//give up MASTER
 				sprintf(response_packet, "$ %s", state);
