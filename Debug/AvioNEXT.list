@@ -2241,13 +2241,13 @@ int main(void) {
 		//}
 		//sprintf(data, "%x", version);
 		//CDC_Transmit_HS(data, strlen(data));
-		LoRA_sendPacket("hello");
+		LoRA_sendPacket("hello\n");
  800149e:	480d      	ldr	r0, [pc, #52]	; (80014d4 <main+0x198>)
  80014a0:	f7ff feae 	bl	8001200 <LoRA_sendPacket>
 		HAL_Delay(1000);
  80014a4:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
  80014a8:	f002 f8e6 	bl	8003678 <HAL_Delay>
-		LoRA_sendPacket("hello");
+		LoRA_sendPacket("hello\n");
  80014ac:	e7f7      	b.n	800149e <main+0x162>
  80014ae:	bf00      	nop
  80014b0:	ffffef84 	.word	0xffffef84

@@ -707,7 +707,7 @@ int main(void) {
 		//}
 		//sprintf(data, "%x", version);
 		//CDC_Transmit_HS(data, strlen(data));
-		LoRA_sendPacket("hello");
+		LoRA_sendPacket("hello\n");
 		HAL_Delay(1000);
 	}
 	uint32_t previousTime = HAL_GetTick();
