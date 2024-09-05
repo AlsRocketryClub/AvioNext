@@ -68,10 +68,15 @@ bool MAX_M10s_msgsOff(I2C_HandleTypeDef* i2c) {
 }
 
 bool MAX_M10s_init(I2C_HandleTypeDef* i2c) {
+    HAL_Delay(100);
+    CDC_Transmit_HS("We are here\n", strlen("We are here\n"));
     if (!MAX_M10s_check_if_exists(i2c)) return false; // @INFO: We don't see the GPS.
-    
+    HAL_Delay(100);
+    CDC_Transmit_HS("We see GPS\n", strlen("We see GPS\n"));
     if (MAX_M10s_msgsOff(i2c)) return false; // @INFO: We failed to send the messages.
-    
+    HAL_Delay(100);
+    CDC_Transmit_HS("We sent message GPS\n", strlen("We sent message GPS\n"));
+    HAL_Delay(100);
     // @INFO: Enable the G*RMC NMEA message.
     return HAL_OK != HAL_I2C_Master_Transmit(i2c, MAX_M10S_I2C_ADDR, (void*)enRMCMsg, strlen(enRMCMsg), 100000000);
 }

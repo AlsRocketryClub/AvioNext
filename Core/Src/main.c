@@ -210,7 +210,6 @@ int32_t Baro2_Get_Pressure(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
 	char state[50] = "DISARMED";
 
 
@@ -261,9 +260,16 @@ int main(void)
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
-	//if (MAX_M10s_init(&hi2c2))
-	//	Error_Handler();
+  	char debugmsg[200];
+  	sprintf(debugmsg, "debug: %d\n", MAX_M10s_init(&hi2c2));
+  	CDC_Transmit_HS(debugmsg, strlen(debugmsg));
+	if (MAX_M10s_init(&hi2c2)){
+		setStatus("GPS", 0);
 
+	}else{
+		setStatus("GPS", 2);
+
+	}
 	//MAX_M10S_init(&hi2c2);
 	const int MAX = 50;
 	const double SPEED = 2.0 / 2000;
@@ -285,6 +291,8 @@ int main(void)
 	}else{
 		setStatus("LG 2", 0);
 	}
+
+	CDC_Transmit_HS("hi", strlen("hi"));
 	LG_Configure();
 	HAL_Delay(3000);
 	HG2_Write_Register(0x1C, 0b10111111);
@@ -307,12 +315,68 @@ int main(void)
 		LED_Color_Data[i][2] = 0;
 
 	}
+	CDC_Transmit_HS("hi1", strlen("hi1"));
 	disarm(state);
 	setLEDs(LED_Color_Data);
 	setStatus("CAN", 1);
 	for(int i = 0; i < 100; i++){
 		avg_tab[i] = 0;
 	}
+	LoRA_begin(868000000);
+	char msg[250];
+	while (1) {
+		updateStatus();
+
+
+		LoRA_sendPacket("hahaha");
+		sprintf(msg, "baro: %d, gyro-x: %f, gyro-y: %f, gyro-z: %f, acc-x: %f, acc-y: %f, acc-z: %f",
+		Baro2_Get_Pressure(),
+		LG_Get_Gyro_X(),
+		LG_Get_Gyro_Y(),
+		LG_Get_Gyro_Z(),
+		LG_Get_Acc_X(),
+		LG_Get_Acc_Y(),
+		LG_Get_Acc_Z()
+		);
+		LoRA_sendPacket(msg);
+		HAL_Delay(100);
+		LoRA_sendPacket("whatthehell");
+		int16_t hg2_data[6];
+		HG2_Get_Acc(hg2_data);
+		sprintf(msg, "hgacc-x: %d, hgacc-y: %d, hgacc-z: %d",
+			(hg2_data[1]<<8) + hg2_data[0],
+			(hg2_data[3]<<8) + hg2_data[2],
+			(hg2_data[5]<<8) + hg2_data[4]
+		);
+
+		LoRA_sendPacket(msg);
+
+
+		/*HAL_Delay(100);
+        int btr = MAX_M10s_bytesToRead(&hi2c2);
+        CDC_Transmit_HS("hi2", strlen("hi2"));
+        //if (btr == -1) Error_Handler();
+        for (int i = 0; i < btr; i++)
+            MAX_M10s_poll(&hi2c2);
+        MAX_M10S_parse();
+        CDC_Transmit_HS("hi3", strlen("hi3"));
+        NMEA_RMC grmc = MAX_M10s_getRMC();
+
+        sprintf(msg, "time: %s, lat: %s, nsInd: %c, lon: %s, ewInd: %c, sog: %f, cog: %f, date: %s",
+        grmc.UTCtime,
+        grmc.lat,
+        &grmc.nsInd,
+        grmc.lon,
+        &grmc.ewInd,
+        &grmc.sog,
+        &grmc.cog,
+        grmc.date
+        );
+        LoRA_sendPacket(msg);*/
+	}
+
+
+
 	while (1) {
 		int32_t int_pressure = Baro2_Get_Pressure();
 		double float_pressure = (double)int_pressure / (40960.0 * 256.0);
@@ -380,7 +444,7 @@ int main(void)
 	setServo(3, 0);
 	setServo(4, 45);
 
-	LoRA_begin(868000000);
+
 
 	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 
@@ -392,6 +456,11 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
+	while(1) {
+
+	}
+
+
 	while (1) {
 
 		char command[50];

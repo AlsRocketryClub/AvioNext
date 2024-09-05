@@ -15,6 +15,7 @@
 #define MAX_M10S_I2C_ADDR 0x84
 #define MAX_M10S_RING_BUFFER_SIZE 1024
 
+
 typedef struct {
     char UTCtime[12];
     bool status;
