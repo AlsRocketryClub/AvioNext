@@ -698,6 +698,18 @@ int main(void) {
 	int packetId;
 	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
 
+	while(1){
+		//uint8_t version = LoRA_Read_Register(REG_VERSION);
+		//char data[50];
+		//if(recv_packet(data, 50)){
+		//	sprintf(data, "bajojajo");
+		//	CDC_Transmit_HS(data, strlen(data));
+		//}
+		//sprintf(data, "%x", version);
+		//CDC_Transmit_HS(data, strlen(data));
+		LoRA_sendPacket("hello");
+		HAL_Delay(1000);
+	}
 	uint32_t previousTime = HAL_GetTick();
 
 	while (1) {
