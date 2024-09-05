@@ -393,35 +393,20 @@ void LoRA_beginPacket() {
 	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
 }
 
-void LoRA_endPacket() {
+void LoRA_endPacket(){
 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
 
-	while ((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0) {
+	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
 
 	}
+	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 
 	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
 
-	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
-
-	if ((irqFlags & IRQ_RX_DONE_MASK)
-			&& (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR,
-				LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE)
-			!= (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)) {
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
-	}
 }
 
-int LoRA_parsePacket() {
+
+int LoRA_parsePacket(){
 	int packetLenght = 0;
 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
 
@@ -429,17 +414,16 @@ int LoRA_parsePacket() {
 
 	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
 
-	if ((irqFlags & IRQ_RX_DONE_MASK)
-			&& (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
+	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
 		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR,
-				LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE)
-			!= (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)) {
+		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+
+		//LoRA_idle();
+	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)){
 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
 
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 	}
 	return packetLenght;
 
@@ -565,7 +549,7 @@ void reliable_send_packet(char *LoRA_data) {
 			}
 		}
 
-		if (HAL_GetTick() - lastTime > 1000) {
+		if (HAL_GetTick() - lastTime > 2000) {
 			LoRA_sendPacket(LoRA_data);
 			lastTime = HAL_GetTick();
 		}
@@ -698,7 +682,7 @@ int main(void) {
 	int packetId;
 	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
 
-	while(1){
+	/*while(1){
 		//uint8_t version = LoRA_Read_Register(REG_VERSION);
 		//char data[50];
 		//if(recv_packet(data, 50)){
@@ -709,7 +693,7 @@ int main(void) {
 		//CDC_Transmit_HS(data, strlen(data));
 		LoRA_sendPacket("hello\n");
 		HAL_Delay(1000);
-	}
+	}*/
 	uint32_t previousTime = HAL_GetTick();
 
 	while (1) {
