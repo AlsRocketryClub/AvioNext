@@ -301,7 +301,6 @@ int main(void)
 	HG2_Write_Register(0x1B, 0b01011000);
 	HG2_Write_Register(0x1B, 0b11011000);
 
-	Baro2_Configure();
 
 	double temperature = 275.15;
 	double sea_level_pressure = 101.7;
@@ -315,7 +314,6 @@ int main(void)
 		LED_Color_Data[i][2] = 0;
 
 	}
-	CDC_Transmit_HS("hi1", strlen("hi1"));
 	disarm(state);
 	setLEDs(LED_Color_Data);
 	setStatus("CAN", 1);
@@ -326,10 +324,10 @@ int main(void)
 	char msg[250];
 	while (1) {
 		updateStatus();
+		float temp = 0.0f;
 
-
-		LoRA_sendPacket("hahaha");
-		sprintf(msg, "baro: %d, gyro-x: %f, gyro-y: %f, gyro-z: %f, acc-x: %f, acc-y: %f, acc-z: %f",
+		//LoRA_sendPacket("hahaha");
+		sprintf(msg, "baro: %d, gyro-x: %f, gyro-y: %f, gyro-z: %f, acc-x: %f, acc-y: %f, acc-z: %f\n",
 		Baro2_Get_Pressure(),
 		LG_Get_Gyro_X(),
 		LG_Get_Gyro_Y(),
@@ -338,22 +336,22 @@ int main(void)
 		LG_Get_Acc_Y(),
 		LG_Get_Acc_Z()
 		);
+		CDC_Transmit_HS(msg, strlen(msg));
 		LoRA_sendPacket(msg);
 		HAL_Delay(100);
-		LoRA_sendPacket("whatthehell");
+
+		//LoRA_sendPacket("whatthehell");
 		int16_t hg2_data[6];
 		HG2_Get_Acc(hg2_data);
-		sprintf(msg, "hgacc-x: %d, hgacc-y: %d, hgacc-z: %d",
-			(hg2_data[1]<<8) + hg2_data[0],
-			(hg2_data[3]<<8) + hg2_data[2],
-			(hg2_data[5]<<8) + hg2_data[4]
-		);
 
+
+		HAL_Delay(100);
+
+		sprintf(msg, "temp: %f\n", temp);
+		CDC_Transmit_HS(msg, strlen(msg));
 		LoRA_sendPacket(msg);
-
-
-		/*HAL_Delay(100);
-        int btr = MAX_M10s_bytesToRead(&hi2c2);
+		HAL_Delay(100);
+        /*int btr = MAX_M10s_bytesToRead(&hi2c2);
         CDC_Transmit_HS("hi2", strlen("hi2"));
         //if (btr == -1) Error_Handler();
         for (int i = 0; i < btr; i++)

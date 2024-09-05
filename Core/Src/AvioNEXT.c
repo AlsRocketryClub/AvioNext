@@ -72,16 +72,37 @@ void HG2_Write_Register(uint8_t addr, uint8_t data){
 
 
 void HG2_Get_Acc(int16_t* data){
+	uint8_t reg_value;
 	uint8_t addr = 0x08 | (1<<7);
+
+	int16_t XData;
+	int16_t YData;
+	int16_t ZData;
+
+
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
 	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi2, data[0], 1, 100);
-	HAL_SPI_Receive(&hspi2, data[1], 1, 100);
-	HAL_SPI_Receive(&hspi2, data[2], 1, 100);
-
-	HAL_SPI_Receive(&hspi2, data[3], 1, 100);
-	HAL_SPI_Receive(&hspi2, data[4], 1, 100);
-	HAL_SPI_Receive(&hspi2, data[5], 1, 100);
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	XData = reg_value;
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	XData = XData + ((int16_t)reg_value << 8);
+	data[1] = reg_value;
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	YData = reg_value;
+	data[2] = reg_value;
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	YData = YData + ((int16_t)reg_value << 8);
+	data[3] = reg_value;
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	ZData = reg_value;
+	data[4] = reg_value;
+	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+	ZData = ZData + ((int16_t)reg_value << 8);
+	char debugmsg[50];
+	sprintf(debugmsg, "high-x: %d, high-y: %d, high-z: %d\n", XData, YData, ZData);
+	CDC_Transmit_HS(debugmsg, strlen(debugmsg));
+	LoRA_sendPacket(debugmsg);
+	data[5] = reg_value;
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
 }
 
@@ -207,7 +228,6 @@ void LoRA_endPacket(){
 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
 
 	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
-
 	}
 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 
