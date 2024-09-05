@@ -396,23 +396,10 @@ void LoRA_endPacket(){
 	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
 
 	}
+	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 
 	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
 
-	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
-
-	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
-	}
 }
 
 
@@ -427,11 +414,13 @@ int LoRA_parsePacket(){
 	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
 		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+
+		//LoRA_idle();
+	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)){
 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
 
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 	}
 	return packetLenght;
 
