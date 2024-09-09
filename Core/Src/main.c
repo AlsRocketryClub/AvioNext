@@ -429,6 +429,10 @@ int LoRA_parsePacket(){
 }
 
 void LoRA_sendPacket(char * data){
+	char sent[300];
+	sprintf(sent, "sent: %s\n", data);
+	HAL_Delay(100);
+	CDC_Transmit_HS(sent, strlen(sent));
     LoRA_beginPacket();
     for(int i = 0; i < strlen(data); i++){
     	LoRA_Write_Register(REG_FIFO, data[i]);
@@ -519,6 +523,10 @@ int recv_packet(char* LoRA_data, int max_length)
       LoRA_data[i] = LoRA_Read_Register(0x00);
     }
     LoRA_data[packet_length] = '\0';
+
+    char rec[300];
+    sprintf(rec, "received: %s\n", LoRA_data);
+    CDC_Transmit_HS(rec, strlen(rec));
     return packet_length;
   }
   else{
