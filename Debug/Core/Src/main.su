@@ -23,7 +23,7 @@
 ../Core/Src/main.c:529:6:reliable_send_packet	56	dynamic
 ../Core/Src/main.c:552:6:pyro_continuity_check	120	static
 ../Core/Src/main.c:580:5:usbReceiveHandle	24	static
-../Core/Src/main.c:598:5:main	3112	static
+../Core/Src/main.c:598:5:main	2848	static
 ../Core/Src/main.c:1118:6:SystemClock_Config	120	static
 ../Core/Src/main.c:1179:6:PeriphCommonClock_Config	192	static
 ../Core/Src/main.c:1208:13:MX_ADC1_Init	56	static

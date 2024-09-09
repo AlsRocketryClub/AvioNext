@@ -782,12 +782,12 @@ int main(void)
   disarm(state);
   LoRA_begin(868000000);
 
-  /*while (1) {
+  while (1) {
 	  if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
 	  {
 		  CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
 	  }
-  }*/
+  }
 
 while (1) {
     if(strcmp(communication_state,"RECEIVING RELIABLE") == 0)
