@@ -695,14 +695,18 @@ int main(void) {
 		HAL_Delay(1000);
 	}*/
 	uint32_t previousTime = HAL_GetTick();
+	uint32_t debugTime = HAL_GetTick();
 
 	while (1) {
-
+		if(HAL_GetTick()- debugTime > 1000) {
+			debugTime = HAL_GetTick();
+			sprintf(response_packet, "Lora: %d, Sate: %s, Comms: %s\n", LoRA_Read_Register(REG_MODEM_CONFIG_1), state, communication_state);
+			CDC_Transmit_HS(response_packet, strlen(response_packet));
+		}
 
 		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
 
-			sprintf(response_packet, "prev: %d, current: %d\n", previousTime, HAL_GetTick());
-			CDC_Transmit_HS(response_packet, strlen(response_packet));
+
 			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 				have_recieved_anything = 1;
