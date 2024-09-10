@@ -429,16 +429,16 @@ int LoRA_parsePacket(){
 }
 
 void LoRA_sendPacket(char * data){
-	char sent[300];
-	sprintf(sent, "sent: %s\n", data);
-	HAL_Delay(100);
-	CDC_Transmit_HS(sent, strlen(sent));
     LoRA_beginPacket();
     for(int i = 0; i < strlen(data); i++){
     	LoRA_Write_Register(REG_FIFO, data[i]);
     }
     LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
     LoRA_endPacket();
+	char sent[300];
+	//sprintf(sent, "sent: %s\n", data);
+	//HAL_Delay(100);
+	//CDC_Transmit_HS(sent, strlen(sent));
 }
 
 int write_EEPROM(uint32_t address, uint8_t data){
@@ -524,9 +524,9 @@ int recv_packet(char* LoRA_data, int max_length)
     }
     LoRA_data[packet_length] = '\0';
 
-    char rec[300];
+    /*char rec[300];
     sprintf(rec, "received: %s\n", LoRA_data);
-    CDC_Transmit_HS(rec, strlen(rec));
+    CDC_Transmit_HS(rec, strlen(rec));*/
     return packet_length;
   }
   else{
@@ -587,12 +587,13 @@ void pyro_continuity_check()
 
 int usbReceiveHandle(char* output){
 	uint32_t temp = usbBytesReady;
-	if(usbBytesReady > 0){
-		if(usbBytesReady > 256){
+
+	if(temp > 0){
+		if(temp > 256){
 			//crash(2);
 		}
-		memcpy(output, usbDataBuffer, usbBytesReady);
-		output[usbBytesReady] = '\0';
+		memcpy(output, usbDataBuffer, temp);
+		output[temp] = '\0';
 		usbBytesReady = 0;
 	}
 	return temp;
@@ -791,10 +792,17 @@ int main(void)
   LoRA_begin(868000000);
 
   /*while (1) {
-	  if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
-	  {
-		  CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-	  }
+  	char input[usbBufferLen];
+  	//usbReceiveHandle(input);
+
+  	while(!usbReceiveHandle(input))
+  	{
+  		//HAL_Delay(1000);
+  	}
+
+	char debug[usbBufferLen+10];
+	sprintf(debug, "Debug: %s\n", input);
+	CDC_Transmit_HS(debug, strlen(debug));
   }*/
 
 while (1) {
@@ -825,6 +833,7 @@ while (1) {
           //CDC_Transmit_HS("is arm 1succ\n", strlen("is arm 1succ\n"));
           //HAL_Delay(100);
           strcpy(previous_packet, recieved_packet);
+          //HAL_Delay(100);
           LoRA_sendPacket(recieved_packet);
           //HAL_Delay(100);
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
@@ -835,6 +844,7 @@ while (1) {
       {
         previousTime = HAL_GetTick();
         //give up SENDING
+        HAL_Delay(100);
         LoRA_sendPacket("$");
       }
     }
@@ -877,11 +887,12 @@ while (1) {
     }
     else if(strcmp(communication_state,"SENDING RELIABLE") == 0)
     {
-	  	 CDC_Transmit_HS(state, strlen(state));
+    	sprintf(response_packet, "\nState of other board: %s", state);
+	  	CDC_Transmit_HS(response_packet, strlen(response_packet));
 
     	//get input
     	char input[usbBufferLen];
-    	usbReceiveHandle(input);
+    	//usbReceiveHandle(input);
 
     	while(!usbReceiveHandle(input))
     	{}
@@ -889,7 +900,7 @@ while (1) {
       reliable_send_packet(input);
 
 	  	char debug[usbBufferLen+10];
-	  	sprintf(debug, "Debug: %s\n", input);
+	  	sprintf(debug, "\nEntered: %s\n", input);
 	  	CDC_Transmit_HS(debug, strlen(debug));
 
       if(strcmp(input,"FIRE")==0)

@@ -271,6 +271,10 @@ static int8_t CDC_Receive_HS(uint8_t* Buf, uint32_t *Len)
   extern uint32_t usbBytesReady;
 
   uint32_t cpyLen = *Len;
+  /*char debug[250];
+  sprintf(debug, "cpyLen: %d\n", cpyLen);
+  CDC_Transmit_HS(debug, strlen(debug));*/
+
   memcpy(usbDataBuffer + usbBytesReady, Buf, cpyLen);
   usbBytesReady += cpyLen;
   
