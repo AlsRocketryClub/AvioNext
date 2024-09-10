@@ -534,6 +534,10 @@ int recv_packet(char *LoRA_data, int max_length) {
 }
 
 void reliable_send_packet(char *LoRA_data) {
+	char debug[300];
+	sprintf(debug, "sending: %s", LoRA_data);
+	CDC_Transmit_HS(debug, strlen(debug));
+
 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
 	char acknowledge[length];
 	uint32_t lastTime = HAL_GetTick();
