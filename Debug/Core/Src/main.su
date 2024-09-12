@@ -19,7 +19,7 @@
 ../Core/Src/main.c:485:5:mount_SD	16	static
 ../Core/Src/main.c:490:5:disarm	16	static
 ../Core/Src/main.c:514:5:arm	16	static
-../Core/Src/main.c:528:5:recv_packet	336	static
+../Core/Src/main.c:528:5:recv_packet	32	static
 ../Core/Src/main.c:551:6:reliable_send_packet	56	dynamic
 ../Core/Src/main.c:574:6:pyro_continuity_check	120	static
 ../Core/Src/main.c:602:5:usbReceiveHandle	24	static
