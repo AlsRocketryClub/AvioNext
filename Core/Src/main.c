@@ -792,7 +792,7 @@ int main(void)
   char state[MAX_PAYLOAD_LENGHT] = "";
   char command[MAX_PAYLOAD_LENGHT];
   char acknowledge[MAX_PAYLOAD_LENGHT];
-  char previous_packet[MAX_PAYLOAD_LENGHT];
+  char previous_packet[MAX_PAYLOAD_LENGHT] = "";
   char recieved_packet[MAX_PAYLOAD_LENGHT];
   char response_packet[MAX_PAYLOAD_LENGHT];
   char sendMessage[MAX_PAYLOAD_LENGHT];
@@ -824,7 +824,7 @@ while (1) {
     {
       if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
       {
-    	  have_recieved_anything = 1;
+    	have_recieved_anything = 1;
         previousTime = HAL_GetTick();
         //HAL_Delay(100);
         //CDC_Transmit_HS("is arm 0succ\n", strlen("is arm 0succ\n"));
@@ -851,6 +851,7 @@ while (1) {
           LoRA_sendPacket(recieved_packet);
           //HAL_Delay(100);
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
+
         }
       } else if (HAL_GetTick()-previousTime > 1000)
       /*else if((!have_recieved_anything && HAL_GetTick()-previousTime > 1000) ||
