@@ -449,10 +449,10 @@ void LoRA_sendPacket(char * data){
 		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
 		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 	}
-	char sent[300];
+	/*char sent[300];
 	sprintf(sent, "\nsent: %s\n", data);
 	HAL_Delay(100);
-	CDC_Transmit_HS(sent, strlen(sent));
+	CDC_Transmit_HS(sent, strlen(sent));*/
 }
 
 int write_EEPROM(uint32_t address, uint8_t data){

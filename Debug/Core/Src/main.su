@@ -13,7 +13,7 @@
 ../Core/Src/main.c:388:6:LoRA_beginPacket	8	static
 ../Core/Src/main.c:395:6:LoRA_endPacket	8	static
 ../Core/Src/main.c:408:5:LoRA_parsePacket	16	static
-../Core/Src/main.c:431:6:LoRA_sendPacket	328	static
+../Core/Src/main.c:431:6:LoRA_sendPacket	24	static
 ../Core/Src/main.c:458:5:write_EEPROM	40	static
 ../Core/Src/main.c:471:9:read_EEPROM	40	static
 ../Core/Src/main.c:485:5:mount_SD	16	static
