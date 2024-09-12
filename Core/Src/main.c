@@ -430,12 +430,29 @@ int LoRA_parsePacket(){
 }
 
 void LoRA_sendPacket(char *data) {
-	LoRA_beginPacket();
-	for (int i = 0; i < strlen(data); i++) {
-		LoRA_Write_Register(REG_FIFO, data[i]);
+	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+	/*char debug[250];
+	sprintf(debug, "here: %d\n", (irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK));
+	CDC_Transmit_HS(debug, strlen(debug));
+	HAL_Delay(100);*/
+	if(!((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0))
+	{
+		//CDC_Transmit_HS("here1\n", strlen("here1\n"));
+		LoRA_beginPacket();
+    	for(int i = 0; i < strlen(data); i++){
+    		LoRA_Write_Register(REG_FIFO, data[i]);
+    	}
+    	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
+    	LoRA_endPacket();
 	}
-	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
-	LoRA_endPacket();
+	else {
+		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+	}
+	char sent[300];
+	sprintf(sent, "\nsent: %s\n", data);
+	HAL_Delay(100);
+	CDC_Transmit_HS(sent, strlen(sent));
 }
 
 int write_EEPROM(uint32_t address, uint8_t data) {
@@ -527,6 +544,9 @@ int recv_packet(char *LoRA_data, int max_length) {
 			LoRA_data[i] = LoRA_Read_Register(0x00);
 		}
 		LoRA_data[packet_length] = '\0';
+	    char rec[300];
+	    sprintf(rec, "received: %s\n", LoRA_data);
+	    CDC_Transmit_HS(rec, strlen(rec));
 		return packet_length;
 	} else {
 		return 0;
@@ -677,7 +697,7 @@ int main(void) {
 	//char buffered_debug_data[MAX_PACKET_LENGTH];
 	char state[MAX_PACKET_LENGTH] = "DISARMED";
 	char command[MAX_PACKET_LENGTH];
-	char recieved_packet[MAX_PACKET_LENGTH];
+	char recieved_packet[MAX_PACKET_LENGTH] = "";
 	char previous_packet[MAX_PACKET_LENGTH];
 	char response_packet[MAX_PACKET_LENGTH];
 	char packets_streamed[MAX_PACKET_LENGTH];
@@ -702,11 +722,11 @@ int main(void) {
 	uint32_t debugTime = HAL_GetTick();
 
 	while (1) {
-		if(HAL_GetTick()- debugTime > 1000) {
+		/*if(HAL_GetTick()- debugTime > 1000) {
 			debugTime = HAL_GetTick();
 			sprintf(response_packet, "Lora: %d, Sate: %s, Comms: %s\n", LoRA_Read_Register(REG_MODEM_CONFIG_1), state, communication_state);
 			CDC_Transmit_HS(response_packet, strlen(response_packet));
-		}
+		}*/
 
 		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
 
@@ -734,7 +754,7 @@ int main(void) {
 			} else if ((!have_recieved_anything && HAL_GetTick() - previousTime > 1000) ||
 					(have_recieved_anything && HAL_GetTick() - previousTime > 5000)) {
 				//CDC_Transmit_HS("hi5", strlen("hi5"));
-				CDC_Transmit_HS("reset\n", strlen("reset\n"));
+				//CDC_Transmit_HS("reset\n", strlen("reset\n"));
 				previousTime = HAL_GetTick();
 				//give up MASTER
 				sprintf(response_packet, "$ %s", state);
