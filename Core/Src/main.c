@@ -429,16 +429,30 @@ int LoRA_parsePacket(){
 }
 
 void LoRA_sendPacket(char * data){
-    LoRA_beginPacket();
-    for(int i = 0; i < strlen(data); i++){
-    	LoRA_Write_Register(REG_FIFO, data[i]);
-    }
-    LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
-    LoRA_endPacket();
+	LoRA_idle();
+	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+	/*char debug[250];
+	sprintf(debug, "here: %d\n", (irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK));
+	CDC_Transmit_HS(debug, strlen(debug));
+	HAL_Delay(100);*/
+	if(!((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0))
+	{
+		//CDC_Transmit_HS("here1\n", strlen("here1\n"));
+		LoRA_beginPacket();
+    	for(int i = 0; i < strlen(data); i++){
+    		LoRA_Write_Register(REG_FIFO, data[i]);
+    	}
+    	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
+    	LoRA_endPacket();
+	}
+	else {
+		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
+		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
+	}
 	char sent[300];
-	//sprintf(sent, "sent: %s\n", data);
-	//HAL_Delay(100);
-	//CDC_Transmit_HS(sent, strlen(sent));
+	sprintf(sent, "\nsent: %s\n", data);
+	HAL_Delay(100);
+	CDC_Transmit_HS(sent, strlen(sent));
 }
 
 int write_EEPROM(uint32_t address, uint8_t data){
@@ -524,9 +538,9 @@ int recv_packet(char* LoRA_data, int max_length)
     }
     LoRA_data[packet_length] = '\0';
 
-    /*char rec[300];
+    char rec[300];
     sprintf(rec, "received: %s\n", LoRA_data);
-    CDC_Transmit_HS(rec, strlen(rec));*/
+    CDC_Transmit_HS(rec, strlen(rec));
     return packet_length;
   }
   else{
@@ -844,7 +858,7 @@ while (1) {
       {
         previousTime = HAL_GetTick();
         //give up SENDING
-        HAL_Delay(100);
+        //HAL_Delay(100);
         LoRA_sendPacket("$");
       }
     }
