@@ -444,6 +444,10 @@ void LoRA_sendPacket(char * data){
     	}
     	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
     	LoRA_endPacket();
+    	char sent[300];
+    	sprintf(sent, "\nsent: %s\n", data);
+    	HAL_Delay(100);
+    	CDC_Transmit_HS(sent, strlen(sent));
 	}
 	else {
 		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
@@ -569,6 +573,10 @@ void reliable_send_packet(char *LoRA_data) {
 			lastTime = HAL_GetTick();
 		}
 	}
+}
+
+void aquire_sending() {
+	reliable_send()
 }
 
 void pyro_continuity_check()
