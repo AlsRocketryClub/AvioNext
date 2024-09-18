@@ -702,7 +702,6 @@ int main(void) {
 	char response_packet[MAX_PACKET_LENGTH];
 	char packets_streamed[MAX_PACKET_LENGTH];
 	int max_packet_count = 0;
-	int have_recieved_anything = 0;
 	int packetId;
 	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
 
@@ -733,7 +732,6 @@ int main(void) {
 
 			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-				have_recieved_anything = 1;
 				//CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
@@ -751,14 +749,6 @@ int main(void) {
 					strcpy(command, recieved_packet);
 					//CDC_Transmit_HS(command, strlen(command));
 				}
-			} else if ((!have_recieved_anything && HAL_GetTick() - previousTime > 1000) ||
-					(have_recieved_anything && HAL_GetTick() - previousTime > 5000)) {
-				//CDC_Transmit_HS("hi5", strlen("hi5"));
-				//CDC_Transmit_HS("reset\n", strlen("reset\n"));
-				previousTime = HAL_GetTick();
-				//give up MASTER
-				sprintf(response_packet, "$ %s", state);
-				LoRA_sendPacket(response_packet);
 			}
 		} else if (strcmp(communication_state, "RECEIVING STREAM") == 0){
 			if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
@@ -783,8 +773,7 @@ int main(void) {
 		} else if(strcmp(communication_state,"SENDING STREAM") == 0) {
 			if(max_packet_count == 0)
 			{
-				strcpy(communication_state,"RECEIVING RELIABLE");
-				have_recieved_anything = 0;
+				strcpy(communication_state,"TRANSITIONING");
 				sprintf(response_packet, "$ %s", state);
 				LoRA_sendPacket(response_packet);
 			}
@@ -866,9 +855,27 @@ int main(void) {
 			sprintf(response_packet, "$ %s", state);
 			LoRA_sendPacket(response_packet);
 			CDC_Transmit_HS("\nIamhere2\n", strlen("\nIamhere2\n"));
-			strcpy(communication_state, "RECEIVING RELIABLE");
-			have_recieved_anything = 0;
+			strcpy(communication_state, "TRANSITIONING");
 		}
+	    else if(strcmp(communication_state,"TRANSITIONING") == 0)
+	    {
+	        if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
+	        {
+	          previousTime = HAL_GetTick();
+	          if(strcmp(recieved_packet, "*")==0)
+	          {
+	        	strcpy(previous_packet, recieved_packet);
+	        	strcpy(communication_state, "RECEIVING RELIABLE");
+	            LoRA_sendPacket(recieved_packet);
+	          }
+	        }
+	        else if (HAL_GetTick()-previousTime > 1000)
+	        {
+	          previousTime = HAL_GetTick();
+			  sprintf(response_packet, "$ %s", state);
+			  LoRA_sendPacket(response_packet);
+	        }
+	    }
 
 	}
 
