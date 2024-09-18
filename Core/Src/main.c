@@ -575,10 +575,6 @@ void reliable_send_packet(char *LoRA_data) {
 	}
 }
 
-void aquire_sending() {
-	reliable_send()
-}
-
 void pyro_continuity_check()
 {
 	uint8_t CONTS[8];
