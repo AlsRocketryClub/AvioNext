@@ -732,7 +732,7 @@ int main(void) {
 
 			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-				//CDC_Transmit_HS("hi3", strlen("hi3"));
+				CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
 					//CDC_Transmit_HS("hi2", strlen("hi2"));
@@ -800,6 +800,7 @@ int main(void) {
 			
 		}
 		else if (strcmp(communication_state, "SENDING RELIABLE") == 0) {
+			reliable_send_packet("*");
 			if (strcmp(state, "DISARMED") == 0) {
 				if (strcmp(command, "ARM") == 0) {
 					CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
