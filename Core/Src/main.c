@@ -859,7 +859,7 @@ int main(void) {
 		}
 	    else if(strcmp(communication_state,"TRANSITIONING") == 0)
 	    {
-	        if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
+	        if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
 	        {
 	          previousTime = HAL_GetTick();
 	          if(strcmp(recieved_packet, "*")==0)
