@@ -444,10 +444,10 @@ void LoRA_sendPacket(char * data){
     	}
     	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
     	LoRA_endPacket();
-    	char sent[300];
+    	/*char sent[300];
     	sprintf(sent, "\nsent: %s\n", data);
     	HAL_Delay(100);
-    	CDC_Transmit_HS(sent, strlen(sent));
+    	CDC_Transmit_HS(sent, strlen(sent));*/
 	}
 	else {
 		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
@@ -906,9 +906,10 @@ while (1) {
     }
     else if(strcmp(communication_state,"SENDING RELIABLE") == 0)
     {
-    	sprintf(response_packet, "\nState of other board: %s", state);
+    	reliable_send_packet("*");
+    	sprintf(response_packet, "\nState of other board: %s\n", state);
 	  	CDC_Transmit_HS(response_packet, strlen(response_packet));
-
+	  	CDC_Transmit_HS("> ", strlen("> "));
     	//get input
     	char input[usbBufferLen];
     	//usbReceiveHandle(input);
@@ -919,7 +920,7 @@ while (1) {
       reliable_send_packet(input);
 
 	  	char debug[usbBufferLen+10];
-	  	sprintf(debug, "\nEntered: %s\n", input);
+	  	sprintf(debug, "%s\n", input);
 	  	CDC_Transmit_HS(debug, strlen(debug));
 
       if(strcmp(input,"FIRE")==0)
