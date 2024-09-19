@@ -703,7 +703,7 @@ int main(void) {
 	char packets_streamed[MAX_PACKET_LENGTH];
 	int max_packet_count = 0;
 	int packetId;
-	char communication_state[MAX_PACKET_LENGTH] = "RECEIVING RELIABLE";
+	char communication_state[MAX_PACKET_LENGTH] = "TRANSITIONING";
 
 	/*while(1){
 		//uint8_t version = LoRA_Read_Register(REG_VERSION);
