@@ -854,9 +854,9 @@ while (1) {
           //HAL_Delay(100);
           LoRA_sendPacket(recieved_packet);
           //HAL_Delay(100);
-          char debug[250];
-          sprintf(debug, "new packet: %s\n", recieved_packet);
-          CDC_Transmit_HS(debug, strlen(debug));
+          /*char debug[250];
+          sprintf(debug, "new packet: %s\n", recieved_packet);*/
+          CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
 
         }
       }
@@ -933,8 +933,10 @@ while (1) {
     }
     else if(strcmp(communication_state,"TRANSITIONING") == 0)
     {
+
         if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
         {
+          CDC_Transmit_HS("transitioning\n", strlen("transitioning\n"));
           previousTime = HAL_GetTick();
           if(strcmp(recieved_packet, "*")==0)
           {
@@ -943,7 +945,7 @@ while (1) {
             LoRA_sendPacket(recieved_packet);
           }
         }
-        else if (HAL_GetTick()-previousTime > 1000)
+        else if (HAL_GetTick()-previousTime > 1100)
         {
           previousTime = HAL_GetTick();
 		  sprintf(response_packet, "$ %s", state);
