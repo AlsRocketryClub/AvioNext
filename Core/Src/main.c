@@ -449,10 +449,10 @@ void LoRA_sendPacket(char *data) {
 		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
 		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 	}
-	char sent[300];
+	/*char sent[300];
 	sprintf(sent, "\nsent: %s\n", data);
 	HAL_Delay(100);
-	CDC_Transmit_HS(sent, strlen(sent));
+	CDC_Transmit_HS(sent, strlen(sent));*/
 }
 
 int write_EEPROM(uint32_t address, uint8_t data) {
@@ -544,9 +544,9 @@ int recv_packet(char *LoRA_data, int max_length) {
 			LoRA_data[i] = LoRA_Read_Register(0x00);
 		}
 		LoRA_data[packet_length] = '\0';
-	    char rec[300];
+	    /*char rec[300];
 	    sprintf(rec, "received: %s\n", LoRA_data);
-	    CDC_Transmit_HS(rec, strlen(rec));
+	    CDC_Transmit_HS(rec, strlen(rec));*/
 		return packet_length;
 	} else {
 		return 0;
@@ -554,9 +554,9 @@ int recv_packet(char *LoRA_data, int max_length) {
 }
 
 void reliable_send_packet(char *LoRA_data) {
-	char debug[300];
+	/*char debug[300];
 	sprintf(debug, "sending: %s", LoRA_data);
-	CDC_Transmit_HS(debug, strlen(debug));
+	CDC_Transmit_HS(debug, strlen(debug));*/
 
 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
 	char acknowledge[length];
@@ -732,7 +732,7 @@ int main(void) {
 
 			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-				CDC_Transmit_HS("hi3", strlen("hi3"));
+				//CDC_Transmit_HS("hi3", strlen("hi3"));
 				previousTime = HAL_GetTick();
 				if (strcmp(recieved_packet, "$") == 0) {
 					//CDC_Transmit_HS("hi2", strlen("hi2"));
@@ -803,7 +803,7 @@ int main(void) {
 			reliable_send_packet("*");
 			if (strcmp(state, "DISARMED") == 0) {
 				if (strcmp(command, "ARM") == 0) {
-					CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
+					//CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
 					if (!arm(state)) {
 						reliable_send_packet("ARM SUCCESS");
 					} else {
@@ -846,7 +846,7 @@ int main(void) {
 				} else if (strcmp(command, "FIRE") == 0) {
 					//strcpy(state, "STATIC_FIRE_LOGGING");
 				}
-				CDC_Transmit_HS("\nIamhere\n", strlen("\nIamhere\n"));
+				//CDC_Transmit_HS("\nIamhere\n", strlen("\nIamhere\n"));
 			} else {
 				LoRA_sendPacket("state wrong!");
 				HAL_Delay(100);
@@ -855,7 +855,7 @@ int main(void) {
 			//HAL_Delay(100);
 			sprintf(response_packet, "$ %s", state);
 			LoRA_sendPacket(response_packet);
-			CDC_Transmit_HS("\nIamhere2\n", strlen("\nIamhere2\n"));
+			//CDC_Transmit_HS("\nIamhere2\n", strlen("\nIamhere2\n"));
 			strcpy(communication_state, "TRANSITIONING");
 		}
 	    else if(strcmp(communication_state,"TRANSITIONING") == 0)
