@@ -553,6 +553,7 @@ int recv_packet(char* LoRA_data, int max_length)
 }
 
 void reliable_send_packet(char *LoRA_data) {
+	//CDC_Transmit_HS("debug\n", strlen("debug\n"));
 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
 	char acknowledge[length];
 	uint32_t lastTime = HAL_GetTick();
@@ -569,6 +570,7 @@ void reliable_send_packet(char *LoRA_data) {
 		}
 
 		if (HAL_GetTick() - lastTime > 1000) {
+	    	//CDC_Transmit_HS("debug\n", strlen("debug\n"));
 			LoRA_sendPacket(LoRA_data);
 			lastTime = HAL_GetTick();
 		}
@@ -774,8 +776,7 @@ int main(void)
 //    		}
 //    	}
 //    	f_mount(&SDFatFS, (TCHAR const*)NULL, 0);
-	  LoRA_begin(868000000);
-/*
+	  /*LoRA_begin(868000000);
 	while(1) {
 		LoRA_sendPacket("whatever");
 		HAL_Delay(1000);
@@ -945,7 +946,7 @@ while (1) {
             LoRA_sendPacket(recieved_packet);
           }
         }
-        else if (HAL_GetTick()-previousTime > 1100)
+        else if (HAL_GetTick()-previousTime > 300)
         {
           previousTime = HAL_GetTick();
 		  sprintf(response_packet, "$ %s", state);
