@@ -949,8 +949,7 @@ while (1) {
         else if (HAL_GetTick()-previousTime > 300)
         {
           previousTime = HAL_GetTick();
-		  sprintf(response_packet, "$ %s", state);
-		  LoRA_sendPacket(response_packet);
+		  LoRA_sendPacket("$");
         }
     }
 
