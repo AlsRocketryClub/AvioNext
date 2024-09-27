@@ -290,6 +290,21 @@ double triangle_space(double x) {
 	}
 }
 
+uint32_t rand_range(uint32_t a, uint32_t b) {
+	uint32_t rand = 0;
+	uint32_t MAX = 4294967295;
+	if(b>a && HAL_RNG_GenerateRandomNumber(&hrng, &rand) == HAL_OK)
+	{
+		return a+rand/(MAX/(b-a));
+	}
+	else
+	{
+		HAL_Delay(100);
+		CDC_Transmit_HS("rng error\n", strlen("rng error\n"));
+	}
+	return -1;
+}
+
 uint8_t LoRA_Read_Register(uint8_t addr) {
 	uint8_t reg_value;
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
@@ -573,6 +588,7 @@ void reliable_send_packet(char *LoRA_data) {
 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
 	char acknowledge[length];
 	uint32_t lastTime = HAL_GetTick();
+	uint32_t wait_time = 700;
 	LoRA_sendPacket(LoRA_data);
 	while (1) {
 
@@ -585,7 +601,8 @@ void reliable_send_packet(char *LoRA_data) {
 			}
 		}
 
-		if (HAL_GetTick() - lastTime > 2000) {
+		if (HAL_GetTick() - lastTime > wait_time) {
+			wait_time = rand_range(3, 13)*100;
 			LoRA_sendPacket(LoRA_data);
 			lastTime = HAL_GetTick();
 		}
@@ -616,21 +633,6 @@ double magnitude(double vector[4]) {
 	return sqrt(
 			vector[0] * vector[0] + vector[1] * vector[1]
 					+ vector[2] * vector[2] + vector[3] * vector[3]);
-}
-
-uint32_t rand_range(uint32_t a, uint32_t b) {
-	uint32_t rand = 0;
-	uint32_t MAX = 4294967295;
-	if(b>a && HAL_RNG_GenerateRandomNumber(&hrng, &rand) == HAL_OK)
-	{
-		return a+rand/(MAX/(b-a));
-	}
-	else
-	{
-		HAL_Delay(100);
-		CDC_Transmit_HS("rng error\n", strlen("rng error\n"));
-	}
-	return -1;
 }
 
 /* USER CODE END 0 */
@@ -748,7 +750,7 @@ int main(void)
 		HAL_Delay(1000);
 	}*/
 	uint32_t previousTime = HAL_GetTick();
-	uint32_t debugTime = HAL_GetTick();
+	uint32_t wait_time = 1000;
 
 	while (1) {
 		/*if(HAL_GetTick()- debugTime > 1000) {
@@ -758,8 +760,6 @@ int main(void)
 		}*/
 
 		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
-
-
 			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
 			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
 				//CDC_Transmit_HS("hi3", strlen("hi3"));
@@ -793,8 +793,9 @@ int main(void)
 					CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
 				}
 			}
-			else if(HAL_GetTick()-previousTime > 1000)
+			else if(HAL_GetTick()-previousTime > wait_time)
 			{
+			  wait_time = rand_range(3, 13)*100;
 			  previousTime = HAL_GetTick();
 			  //give up SENDING
 			  sprintf(response_packet, "! %d", packets_streamed);
@@ -900,8 +901,9 @@ int main(void)
 	            LoRA_sendPacket(recieved_packet);
 	          }
 	        }
-	        else if (HAL_GetTick()-previousTime > 1100)
+	        else if (HAL_GetTick()-previousTime > wait_time)
 	        {
+	          wait_time = rand_range(3, 13)*100;
 	          previousTime = HAL_GetTick();
 			  sprintf(response_packet, "$ %s", state);
 			  LoRA_sendPacket(response_packet);
