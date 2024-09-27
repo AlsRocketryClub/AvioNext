@@ -112,6 +112,8 @@ FDCAN_HandleTypeDef hfdcan3;
 
 I2C_HandleTypeDef hi2c2;
 
+RNG_HandleTypeDef hrng;
+
 SD_HandleTypeDef hsd2;
 
 SPI_HandleTypeDef hspi1;
@@ -156,6 +158,7 @@ static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -280,7 +283,20 @@ double triangle_space(double x)
 	}
 }
 
-
+uint32_t rand_range(uint32_t a, uint32_t b) {
+	uint32_t rand = 0;
+	uint32_t MAX = 4294967295;
+	if(b>a && HAL_RNG_GenerateRandomNumber(&hrng, &rand) == HAL_OK)
+	{
+		return a+rand/(MAX/(b-a));
+	}
+	else
+	{
+		HAL_Delay(100);
+		CDC_Transmit_HS("rng error\n", strlen("rng error\n"));
+	}
+	return -1;
+}
 
 uint8_t LoRA_Read_Register(uint8_t addr){
 	uint8_t reg_value;
@@ -682,6 +698,7 @@ int main(void)
   MX_FATFS_Init();
   MX_SDMMC2_SD_Init();
   MX_TIM13_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
 	const int MAX = 50;
@@ -1492,6 +1509,33 @@ static void MX_I2C2_Init(void)
   /* USER CODE BEGIN I2C2_Init 2 */
 
   /* USER CODE END I2C2_Init 2 */
+
+}
+
+/**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
 
 }
 
