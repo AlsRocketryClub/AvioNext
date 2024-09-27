@@ -430,6 +430,16 @@ int LoRA_parsePacket(){
 
 void LoRA_sendPacket(char * data){
 	LoRA_idle();
+
+	char debug[MAX_PAYLOAD_LENGHT];
+	if(recv_packet(debug, MAX_PAYLOAD_LENGHT)) {
+		HAL_Delay(100);
+		strcat(debug, " was thrown away");
+		CDC_Transmit_HS(debug, strlen(debug));
+	}
+
+
+
 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
 	/*char debug[250];
 	sprintf(debug, "here: %d\n", (irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK));
