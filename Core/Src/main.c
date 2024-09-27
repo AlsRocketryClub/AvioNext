@@ -583,10 +583,12 @@ void reliable_send_packet(char *LoRA_data) {
 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
 	char acknowledge[length];
 	uint32_t lastTime = HAL_GetTick();
+	uint32_t wait_time = rand_range(3, 13)*100;
 	LoRA_sendPacket(LoRA_data);
 	while (1) {
 
 		if (recv_packet(acknowledge, length)) {
+
 			//cehck crc
 			if (strcmp(acknowledge, LoRA_data) != 0) {
 				LoRA_sendPacket(LoRA_data);
@@ -595,8 +597,9 @@ void reliable_send_packet(char *LoRA_data) {
 			}
 		}
 
-		if (HAL_GetTick() - lastTime > 1000) {
+		if (HAL_GetTick() - lastTime > wait_time) {
 	    	//CDC_Transmit_HS("debug\n", strlen("debug\n"));
+			wait_time = rand_range(3, 13)*100;
 			LoRA_sendPacket(LoRA_data);
 			lastTime = HAL_GetTick();
 		}
@@ -834,6 +837,7 @@ int main(void)
   int have_recieved_anything = 0;
   char communication_state[50] = "SENDING RELIABLE";
   uint32_t previousTime = HAL_GetTick();
+  uint32_t wait_time = rand_range(3, 13)*100;
   disarm(state);
   LoRA_begin(868000000);
 
@@ -903,8 +907,9 @@ while (1) {
           CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
         }
       }
-      else if(HAL_GetTick()-previousTime > 1000)
+      else if(HAL_GetTick()-previousTime > wait_time)
       {
+    	wait_time = rand_range(3, 13)*100;
         previousTime = HAL_GetTick();
         //give up SENDING
         sprintf(sendMessage, "! %d", packets_streamed);
@@ -973,8 +978,9 @@ while (1) {
             LoRA_sendPacket(recieved_packet);
           }
         }
-        else if (HAL_GetTick()-previousTime > 300)
+        else if (HAL_GetTick()-previousTime > wait_time)
         {
+          wait_time = rand_range(3, 13)*100;
           previousTime = HAL_GetTick();
 		  LoRA_sendPacket("$");
         }
