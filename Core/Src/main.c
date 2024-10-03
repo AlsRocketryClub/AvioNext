@@ -34,6 +34,12 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define RECEIVING_RELIABLE 0
+#define RECEIVING_STREAM 1
+#define SENDING_RELIABLE 2
+#define SENDING_STREAM 3
+#define TRANSITIONING 4
+
 #define NUM_LEDS_0 5
 #define NUM_LEDS_1 5
 #define NUM_LEDS_2 2
@@ -647,6 +653,235 @@ int usbReceiveHandle(char* output){
 	}
 	return temp;
 }
+
+struct ReliableSendConfig {
+	int mode;
+	int streamable_packets;
+	char** messages;
+	int messages_count;
+};
+
+void groundstationReliableReceiveHandle(char* received_packet) {
+	CDC_Transmit_HS(received_packet, strlen(received_packet));
+}
+
+void groundstationStreamReceiveHandle(char* received_packet) {
+	CDC_Transmit_HS(received_packet, strlen(received_packet));
+}
+
+char* groundstationStreamSendHandle(int remainingPacketCount) {
+	return "Ground station shouldn't be streaming!\n";
+};
+
+char input[usbBufferLen];
+char* groundstation_messages[1];
+
+struct ReliableSendConfig groundstationReliableSendHandle() {
+	struct ReliableSendConfig config;
+    CDC_Transmit_HS("\nState of other board: \n> ", strlen("\nState of other board: \n> "));
+    //get input
+
+    while(!usbReceiveHandle(input))
+    {}
+
+    groundstation_messages[0]=input;
+    config.messages = groundstation_messages;
+    config.messages_count = 1;
+    config.streamable_packets = 0;
+    //reliable_send_packet(input);
+
+    char debug[usbBufferLen+10];
+    sprintf(debug, "%s\n", input);
+    CDC_Transmit_HS(debug, strlen(debug));
+
+    if(strcmp(input,"FIRE")==0)
+    {
+      config.mode = RECEIVING_STREAM;
+      config.streamable_packets = 50;
+      /*communication_state = RECEIVING_STREAM;
+      sprintf(sendMessage, "! %d", 50);
+      LoRA_sendPacket(sendMessage);*/
+    }
+    else
+    {
+      config.mode = TRANSITIONING;
+      /*communication_state = TRANSITIONING;
+      HAL_Delay(100);
+      LoRA_sendPacket("$");*/
+    }
+    return config;
+}
+
+void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveHandle(char*), char* streamSendHandle(int), struct ReliableSendConfig reliableSendHandle(), int initial_communication_state) {
+  //just for testing
+  char sendMessage[MAX_PAYLOAD_LENGHT];
+  char state[MAX_PAYLOAD_LENGHT] = "";
+  char response_packet[MAX_PAYLOAD_LENGHT] = "";
+  //from here it's okay
+  int communication_state = initial_communication_state;
+  int max_packet_count = 0;
+  char previous_packet[MAX_PAYLOAD_LENGHT] = "";
+  char received_packet[MAX_PAYLOAD_LENGHT] = "";
+  char general_buffer[MAX_PAYLOAD_LENGHT] = "";
+  uint32_t previousTime = HAL_GetTick();
+  uint32_t wait_time = rand_range(3, 13)*100;
+
+  while (1) {
+      if(communication_state == RECEIVING_RELIABLE)
+      {
+        if(recv_packet(received_packet, MAX_PAYLOAD_LENGHT))
+        {
+          previousTime = HAL_GetTick();
+
+          if(sscanf(received_packet, "$ %s", state) == 1)
+          {
+            communication_state = SENDING_RELIABLE;
+          }
+          else if(sscanf(received_packet, "! %d", &max_packet_count) == 1)
+          {
+            communication_state = SENDING_STREAM;
+          }
+          else if(strcmp(received_packet, previous_packet)==0)
+          {
+            //send acknowledge again
+            LoRA_sendPacket(received_packet);
+          }
+          else
+          {
+        	//send acknowledge
+            strcpy(previous_packet, received_packet);
+            LoRA_sendPacket(received_packet);
+
+            reliableReceiveHandle(received_packet);
+
+          }
+        }
+      }
+      else if(communication_state == RECEIVING_STREAM)
+      {
+        if(recv_packet(received_packet, MAX_PAYLOAD_LENGHT))
+        {
+          previousTime = HAL_GetTick();
+          if(sscanf(received_packet, "$ %s", state) == 1)
+          {
+            communication_state = SENDING_RELIABLE;
+          }
+          else
+          {
+        	streamReceiveHandle(received_packet);
+          }
+        }
+        else if(HAL_GetTick()-previousTime > wait_time)
+        {
+          wait_time = rand_range(3, 13)*100;
+          previousTime = HAL_GetTick();
+          //give up SENDING
+          sprintf(general_buffer, "! %d", max_packet_count);
+          LoRA_sendPacket(general_buffer);
+        }
+      }
+      else if(communication_state == SENDING_STREAM)
+      {
+        if(max_packet_count == 0)
+        {
+          communication_state = TRANSITIONING;
+          LoRA_sendPacket("$");
+        }
+        else
+        {
+          //send whatever
+          char* msg = streamSendHandle(max_packet_count);
+          LoRA_sendPacket(msg);
+          max_packet_count--;
+        }
+
+      }
+      else if(communication_state == SENDING_RELIABLE)
+      {
+        reliable_send_packet("*");
+        struct ReliableSendConfig config = reliableSendHandle();
+        for(int i = 0; i < config.messages_count; i++)
+        {
+        	if(config.messages[i][0] == '$' || config.messages[i][0] == '*' || config.messages[i][0] == '!')
+        	{
+        		HAL_Delay(100);
+        		CDC_Transmit_HS("Can't send control commands! ('$', '*', '!')\n", strlen("Can't send control commands! ('$', '*', '!')\n"));
+        	}
+        	else
+        	{
+        		reliable_send_packet(config.messages[i]);
+        	}
+        }
+        if(config.mode==RECEIVING_STREAM)
+        {
+          communication_state = RECEIVING_STREAM;
+          max_packet_count = config.streamable_packets;
+          //to do rename this:
+          sprintf(sendMessage, "! %d", max_packet_count);
+          LoRA_sendPacket(sendMessage);
+        }
+        else if(config.mode==TRANSITIONING)
+        {
+          communication_state = TRANSITIONING;
+          LoRA_sendPacket("$");
+        }
+        else
+        {
+            HAL_Delay(100);
+        	CDC_Transmit_HS("Shouldn't try to transition to this mode.\n", strlen("Shouldn't try to transition to this mode.\n"));
+        }
+        /*
+        sprintf(response_packet, "\nState of other board: %s\n> ", state);
+        CDC_Transmit_HS(response_packet, strlen(response_packet));
+        //get input
+        char input[usbBufferLen];
+        //usbReceiveHandle(input);
+
+        while(!usbReceiveHandle(input))
+        {}
+
+        reliable_send_packet(input);
+
+        char debug[usbBufferLen+10];
+        sprintf(debug, "%s\n", input);
+        CDC_Transmit_HS(debug, strlen(debug));
+
+        if(strcmp(input,"FIRE")==0)
+        {
+          communication_state = RECEIVING_STREAM;
+          sprintf(sendMessage, "! %d", 50);
+          LoRA_sendPacket(sendMessage);
+        }
+        else
+        {
+          communication_state = TRANSITIONING;
+          HAL_Delay(100);
+          LoRA_sendPacket("$");
+        }
+        */
+      }
+      else if(communication_state == TRANSITIONING)
+      {
+
+          if(recv_packet(received_packet, MAX_PAYLOAD_LENGHT))
+          {
+            previousTime = HAL_GetTick();
+            if(strcmp(received_packet, "*")==0)
+            {
+              strcpy(previous_packet, received_packet);
+              communication_state = RECEIVING_RELIABLE;
+              LoRA_sendPacket(received_packet);
+            }
+          }
+          else if (HAL_GetTick()-previousTime > wait_time)
+          {
+            wait_time = rand_range(3, 13)*100;
+            previousTime = HAL_GetTick();
+            LoRA_sendPacket("$");
+          }
+      }
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -822,25 +1057,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
 
-  int max_packet_count = 0;
-  int stream_counter = 0;
   char state[MAX_PAYLOAD_LENGHT] = "";
-  char command[MAX_PAYLOAD_LENGHT];
-  char acknowledge[MAX_PAYLOAD_LENGHT];
-  char previous_packet[MAX_PAYLOAD_LENGHT] = "";
-  char recieved_packet[MAX_PAYLOAD_LENGHT];
-  char response_packet[MAX_PAYLOAD_LENGHT];
-  char sendMessage[MAX_PAYLOAD_LENGHT];
-  int last = 0;
-  int packets_streamed = 50;
-  int packetId;
-  int have_recieved_anything = 0;
-  char communication_state[50] = "SENDING RELIABLE";
-  uint32_t previousTime = HAL_GetTick();
-  uint32_t wait_time = rand_range(3, 13)*100;
   disarm(state);
   LoRA_begin(868000000);
-
+  CDC_Transmit_HS("New way forward\n", strlen("New way forward\n"));
+  communicationHandler(groundstationReliableReceiveHandle, groundstationStreamReceiveHandle, groundstationStreamSendHandle, groundstationReliableSendHandle, SENDING_RELIABLE);
+  HAL_Delay(100);
+  CDC_Transmit_HS("Old way forward\n", strlen("Old way forward\n"));
   /*while (1) {
   	char input[usbBufferLen];
   	//usbReceiveHandle(input);
@@ -855,136 +1078,6 @@ int main(void)
 	CDC_Transmit_HS(debug, strlen(debug));
   }*/
 
-while (1) {
-    if(strcmp(communication_state,"RECEIVING RELIABLE") == 0)
-    {
-      if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
-      {
-    	have_recieved_anything = 1;
-        previousTime = HAL_GetTick();
-        //HAL_Delay(100);
-        //CDC_Transmit_HS("is arm 0succ\n", strlen("is arm 0succ\n"));
-        //HAL_Delay(100);
-        if(sscanf(recieved_packet, "$ %s", state) == 1)
-        {
-          strcpy(communication_state,"SENDING RELIABLE");
-        }
-        else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1)
-        {
-          strcpy(communication_state,"SENDING STREAM");
-        }
-        else if(strcmp(recieved_packet, previous_packet)==0)
-        {
-          //send acknowledge again
-          LoRA_sendPacket(recieved_packet);
-        }
-        else
-        {
-          //CDC_Transmit_HS("is arm 1succ\n", strlen("is arm 1succ\n"));
-          //HAL_Delay(100);
-          strcpy(previous_packet, recieved_packet);
-          //HAL_Delay(100);
-          LoRA_sendPacket(recieved_packet);
-          //HAL_Delay(100);
-          /*char debug[250];
-          sprintf(debug, "new packet: %s\n", recieved_packet);*/
-          CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-
-        }
-      }
-    }
-    else if(strcmp(communication_state,"RECEIVING STREAM") == 0)
-    {
-      if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
-      {
-        previousTime = HAL_GetTick();
-        if(sscanf(recieved_packet, "$ %s", state) == 1)
-        {
-          strcpy(communication_state,"SENDING RELIABLE");
-        }
-        else
-        {
-          CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-        }
-      }
-      else if(HAL_GetTick()-previousTime > wait_time)
-      {
-    	wait_time = rand_range(3, 13)*100;
-        previousTime = HAL_GetTick();
-        //give up SENDING
-        sprintf(sendMessage, "! %d", packets_streamed);
-        LoRA_sendPacket(sendMessage);
-      }
-    }
-    else if(strcmp(communication_state,"SENDING STREAM") == 0)
-    {
-      if(max_packet_count == 0)
-      {
-        strcpy(communication_state,"TRANSITIONING");
-        have_recieved_anything = 0;
-        LoRA_sendPacket("$");
-      }
-      else
-      {
-        //send whatever
-        max_packet_count--;
-      }
-
-    }
-    else if(strcmp(communication_state,"SENDING RELIABLE") == 0)
-    {
-    	reliable_send_packet("*");
-    	sprintf(response_packet, "\nState of other board: %s\n> ", state);
-	  	CDC_Transmit_HS(response_packet, strlen(response_packet));
-	  	//CDC_Transmit_HS("", strlen("> "));
-    	//get input
-    	char input[usbBufferLen];
-    	//usbReceiveHandle(input);
-
-    	while(!usbReceiveHandle(input))
-    	{}
-
-      reliable_send_packet(input);
-
-	  	char debug[usbBufferLen+10];
-	  	sprintf(debug, "%s\n", input);
-	  	CDC_Transmit_HS(debug, strlen(debug));
-
-      if(strcmp(input,"FIRE")==0)
-      {
-        strcpy(communication_state,"RECEIVING STREAM");
-        sprintf(sendMessage, "! %d", packets_streamed);
-        LoRA_sendPacket(sendMessage);
-      }
-      else
-      {
-        strcpy(communication_state,"TRANSITIONING");
-        have_recieved_anything = 0;
-        HAL_Delay(100);
-        LoRA_sendPacket("$");
-      }
-    }
-    else if(strcmp(communication_state,"TRANSITIONING") == 0)
-    {
-
-        if(recv_packet(recieved_packet, MAX_PAYLOAD_LENGHT))
-        {
-          CDC_Transmit_HS("transitioning\n", strlen("transitioning\n"));
-          previousTime = HAL_GetTick();
-          if(strcmp(recieved_packet, "*")==0)
-          {
-        	strcpy(previous_packet, recieved_packet);
-        	strcpy(communication_state, "RECEIVING RELIABLE");
-            LoRA_sendPacket(recieved_packet);
-          }
-        }
-        else if (HAL_GetTick()-previousTime > wait_time)
-        {
-          wait_time = rand_range(3, 13)*100;
-          previousTime = HAL_GetTick();
-		  LoRA_sendPacket("$");
-        }
-    }
 
 
   //HAL_Delay(3000);
@@ -1194,7 +1287,6 @@ while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	}
   /* USER CODE END 3 */
 }
 
