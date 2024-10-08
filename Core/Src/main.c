@@ -23,8 +23,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "LoRA"
 #include "AvioNEXT.h"
+#include "communication_protocol.h"
+#include "ground_station_comms.h"
+#include "random.h"
+
+//#include "LoRA.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,22 +38,22 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define RECEIVING_RELIABLE 0
+/*#define RECEIVING_RELIABLE 0
 #define RECEIVING_STREAM 1
 #define SENDING_RELIABLE 2
 #define SENDING_STREAM 3
-#define TRANSITIONING 4
+#define TRANSITIONING 4*/
 
 #define NUM_LEDS_0 5
 #define NUM_LEDS_1 5
 #define NUM_LEDS_2 2
 #define NUM_LEDS_3 2
-#define usbBufferLen 256
+//#define usbBufferLen 256
 
-#define MAX_PAYLOAD_LENGHT 250
+//#define MAX_PAYLOAD_LENGHT 250
 
-uint8_t usbDataBuffer[usbBufferLen];
-uint32_t usbBytesReady = 0;
+/*uint8_t usbDataBuffer[usbBufferLen];
+uint32_t usbBytesReady = 0;*/
 
 //first coordinate defines on which string the LED is positioned, second determines the position
 const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
@@ -118,13 +122,16 @@ FDCAN_HandleTypeDef hfdcan3;
 
 I2C_HandleTypeDef hi2c2;
 
+/*
 RNG_HandleTypeDef hrng;
+*/
 
 SD_HandleTypeDef hsd2;
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
+
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -164,7 +171,6 @@ static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
-static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -289,6 +295,7 @@ double triangle_space(double x)
 	}
 }
 
+/*
 uint32_t rand_range(uint32_t a, uint32_t b) {
 	uint32_t rand = 0;
 	uint32_t MAX = 4294967295;
@@ -303,8 +310,9 @@ uint32_t rand_range(uint32_t a, uint32_t b) {
 	}
 	return -1;
 }
+*/
 
-uint8_t LoRA_Read_Register(uint8_t addr){
+/*uint8_t LoRA_Read_Register(uint8_t addr){
 	uint8_t reg_value;
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
 
@@ -463,10 +471,6 @@ void LoRA_sendPacket(char * data){
 
 
 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-	/*char debug[250];
-	sprintf(debug, "here: %d\n", (irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK));
-	CDC_Transmit_HS(debug, strlen(debug));
-	HAL_Delay(100);*/
 	if(!((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0))
 	{
 		//CDC_Transmit_HS("here1\n", strlen("here1\n"));
@@ -477,19 +481,12 @@ void LoRA_sendPacket(char * data){
     	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
     	LoRA_endPacket();
     	/*char sent[300];
-    	sprintf(sent, "\nsent: %s\n", data);
-    	HAL_Delay(100);
-    	CDC_Transmit_HS(sent, strlen(sent));*/
 	}
 	else {
 		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
 		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
 	}
-	/*char sent[300];
-	sprintf(sent, "\nsent: %s\n", data);
-	HAL_Delay(100);
-	CDC_Transmit_HS(sent, strlen(sent));*/
-}
+}*/
 
 int write_EEPROM(uint32_t address, uint8_t data){
 	if(address > 0x1FFFF){
@@ -561,6 +558,7 @@ int arm(char* state)
   return 0;
 }
 
+/*
 int recv_packet(char* LoRA_data, int max_length)
 {
   int packet_length = LoRA_parsePacket();
@@ -574,9 +572,6 @@ int recv_packet(char* LoRA_data, int max_length)
     }
     LoRA_data[packet_length] = '\0';
 
-    /*char rec[300];
-    sprintf(rec, "received: %s\n", LoRA_data);
-    CDC_Transmit_HS(rec, strlen(rec));*/
     return packet_length;
   }
   else{
@@ -610,7 +605,7 @@ void reliable_send_packet(char *LoRA_data) {
 			lastTime = HAL_GetTick();
 		}
 	}
-}
+}*/
 
 void pyro_continuity_check()
 {
@@ -640,6 +635,7 @@ void pyro_continuity_check()
 	}
 }
 
+/*
 int usbReceiveHandle(char* output){
 	uint32_t temp = usbBytesReady;
 
@@ -652,8 +648,9 @@ int usbReceiveHandle(char* output){
 		usbBytesReady = 0;
 	}
 	return temp;
-}
+}*/
 
+/*
 struct ReliableSendConfig {
 	int mode;
 	int streamable_packets;
@@ -698,16 +695,10 @@ struct ReliableSendConfig groundstationReliableSendHandle() {
     {
       config.mode = RECEIVING_STREAM;
       config.streamable_packets = 50;
-      /*communication_state = RECEIVING_STREAM;
-      sprintf(sendMessage, "! %d", 50);
-      LoRA_sendPacket(sendMessage);*/
     }
     else
     {
       config.mode = TRANSITIONING;
-      /*communication_state = TRANSITIONING;
-      HAL_Delay(100);
-      LoRA_sendPacket("$");*/
     }
     return config;
 }
@@ -830,35 +821,6 @@ void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveH
             HAL_Delay(100);
         	CDC_Transmit_HS("Shouldn't try to transition to this mode.\n", strlen("Shouldn't try to transition to this mode.\n"));
         }
-        /*
-        sprintf(response_packet, "\nState of other board: %s\n> ", state);
-        CDC_Transmit_HS(response_packet, strlen(response_packet));
-        //get input
-        char input[usbBufferLen];
-        //usbReceiveHandle(input);
-
-        while(!usbReceiveHandle(input))
-        {}
-
-        reliable_send_packet(input);
-
-        char debug[usbBufferLen+10];
-        sprintf(debug, "%s\n", input);
-        CDC_Transmit_HS(debug, strlen(debug));
-
-        if(strcmp(input,"FIRE")==0)
-        {
-          communication_state = RECEIVING_STREAM;
-          sprintf(sendMessage, "! %d", 50);
-          LoRA_sendPacket(sendMessage);
-        }
-        else
-        {
-          communication_state = TRANSITIONING;
-          HAL_Delay(100);
-          LoRA_sendPacket("$");
-        }
-        */
       }
       else if(communication_state == TRANSITIONING)
       {
@@ -881,7 +843,7 @@ void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveH
           }
       }
   }
-}
+}*/
 /* USER CODE END 0 */
 
 /**
@@ -1610,32 +1572,7 @@ static void MX_I2C2_Init(void)
 
 }
 
-/**
-  * @brief RNG Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_RNG_Init(void)
-{
 
-  /* USER CODE BEGIN RNG_Init 0 */
-
-  /* USER CODE END RNG_Init 0 */
-
-  /* USER CODE BEGIN RNG_Init 1 */
-
-  /* USER CODE END RNG_Init 1 */
-  hrng.Instance = RNG;
-  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
-  if (HAL_RNG_Init(&hrng) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN RNG_Init 2 */
-
-  /* USER CODE END RNG_Init 2 */
-
-}
 
 /**
   * @brief SDMMC2 Initialization Function

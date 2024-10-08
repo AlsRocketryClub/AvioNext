@@ -54,7 +54,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/sd_diskio.h \
  ../USB_DEVICE/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../USB_DEVICE/Target/usbd_conf.h ../Core/Src/LoRA ../Core/Inc/AvioNEXT.h
+ ../USB_DEVICE/Target/usbd_conf.h ../Core/Inc/AvioNEXT.h \
+ ../Core/Inc/communication_protocol.h ../Core/Inc/ground_station_comms.h \
+ ../Core/Inc/communication_protocol.h ../Core/Inc/random.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -116,5 +118,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../USB_DEVICE/App/usb_device.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 ../USB_DEVICE/Target/usbd_conf.h:
-../Core/Src/LoRA:
 ../Core/Inc/AvioNEXT.h:
+../Core/Inc/communication_protocol.h:
+../Core/Inc/ground_station_comms.h:
+../Core/Inc/communication_protocol.h:
+../Core/Inc/random.h:
