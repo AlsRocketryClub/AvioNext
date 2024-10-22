@@ -4,9 +4,7 @@
 
 void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveHandle(char*), char* streamSendHandle(int), struct ReliableSendConfig reliableSendHandle(), int initial_communication_state) {
   //just for testing
-  char sendMessage[MAX_PKT_LENGTH];
   char state[MAX_PKT_LENGTH] = "";
-  char response_packet[MAX_PKT_LENGTH] = "";
   //from here it's okay
   int communication_state = initial_communication_state;
   int max_packet_count = 0;
@@ -106,9 +104,8 @@ void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveH
         {
           communication_state = RECEIVING_STREAM;
           max_packet_count = config.streamable_packets;
-          //to do rename this:
-          sprintf(sendMessage, "! %d", max_packet_count);
-          LoRA_sendPacket(sendMessage);
+          sprintf(general_buffer, "! %d", max_packet_count);
+          LoRA_sendPacket(general_buffer);
         }
         else if(config.mode==TRANSITIONING)
         {

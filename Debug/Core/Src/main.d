@@ -56,7 +56,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../USB_DEVICE/Target/usbd_conf.h ../Core/Inc/AvioNEXT.h \
  ../Core/Inc/communication_protocol.h ../Core/Inc/ground_station_comms.h \
- ../Core/Inc/communication_protocol.h ../Core/Inc/random.h
+ ../Core/Inc/random.h ../Core/Inc/LoRA.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -121,5 +121,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/AvioNEXT.h:
 ../Core/Inc/communication_protocol.h:
 ../Core/Inc/ground_station_comms.h:
-../Core/Inc/communication_protocol.h:
 ../Core/Inc/random.h:
+../Core/Inc/LoRA.h:

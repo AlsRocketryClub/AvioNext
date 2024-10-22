@@ -1,13 +1,10 @@
-#ifndef COMMUNICATION_PROTOCOL_H
-#define COMMUNICATION_PROTOCOL_H
+#pragma once
 
 #define RECEIVING_RELIABLE 0
 #define RECEIVING_STREAM 1
 #define SENDING_RELIABLE 2
 #define SENDING_STREAM 3
 #define TRANSITIONING 4
-
-#define MAX_PAYLOAD_LENGHT 250
 
 
 struct ReliableSendConfig {
@@ -24,5 +21,3 @@ void communicationHandler(
 		struct ReliableSendConfig reliableSendHandle(),
 		int initial_communication_state
 );
-
-#endif
