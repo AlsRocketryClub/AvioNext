@@ -37,9 +37,8 @@ char* groundstation_messages[1];
 
 struct ReliableSendConfig groundstationReliableSendHandle() {
 	struct ReliableSendConfig config;
-    CDC_Transmit_HS("\nState of other board: \n> ", strlen("\nState of other board: \n> "));
-    //get input
 
+    //get input
     while(!usbReceiveHandle(input))
     {}
 
@@ -57,16 +56,10 @@ struct ReliableSendConfig groundstationReliableSendHandle() {
     {
       config.mode = RECEIVING_STREAM;
       config.streamable_packets = 50;
-      /*communication_state = RECEIVING_STREAM;
-      sprintf(sendMessage, "! %d", 50);
-      LoRA_sendPacket(sendMessage);*/
     }
     else
     {
       config.mode = RECEIVING_RELIABLE;
-      /*communication_state = TRANSITIONING;
-      HAL_Delay(100);
-      LoRA_sendPacket("$");*/
     }
     return config;
 }
