@@ -63,7 +63,7 @@ struct ReliableSendConfig groundstationReliableSendHandle() {
     }
     else
     {
-      config.mode = TRANSITIONING;
+      config.mode = RECEIVING_RELIABLE;
       /*communication_state = TRANSITIONING;
       HAL_Delay(100);
       LoRA_sendPacket("$");*/
