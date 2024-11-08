@@ -72,6 +72,7 @@ char continuities[8][50];
 char status[50];
 char command[MAX_PKT_LENGTH];
 char streamed_data[100];
+char state_message[100];
 //length is an arbitrary number, but it's unlikely to have more than 200
 char* rocket_messages[200];
 
@@ -105,6 +106,8 @@ char* rocketStreamSendHandle(int remainingPacketCount) {
 struct ReliableSendConfig rocketReliableSendHandle() {
 	struct ReliableSendConfig config;
 	int message_count=0;
+	//reserve first place for the state message
+	message_count++;
 	if (strcmp(state, "DISARMED") == 0) {
 		if (strcmp(command, "ARM") == 0) {
 
@@ -160,9 +163,11 @@ struct ReliableSendConfig rocketReliableSendHandle() {
 		strcpy(status, "state wrong!");
 		rocket_messages[message_count] = status;
 		message_count++;
-		rocket_messages[message_count] = state;
-		message_count++;
 	}
+
+	//first message is state
+	sprintf(state_message, "Current state: %s\n", state);
+	rocket_messages[0] = state_message;
 
 	config.messages_count = message_count;
 	config.messages = rocket_messages;
