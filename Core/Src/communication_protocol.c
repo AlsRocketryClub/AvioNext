@@ -1,8 +1,8 @@
 #include "communication_protocol.h"
 #include "LoRA.h"
 
+//should move variables to global, remove the loop and call the function in main loop (communicationHandle)
 void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveHandle(char*), char* streamSendHandle(int), struct ReliableSendConfig reliableSendHandle(), int initial_communication_state) {
-  //from here it's okay
   int communication_state = initial_communication_state;
   int max_packet_count = 0;
   char previous_packet[MAX_PKT_LENGTH] = "";
