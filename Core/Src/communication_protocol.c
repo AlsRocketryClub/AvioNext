@@ -3,8 +3,6 @@
 #include "usb_device.h"
 
 void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveHandle(char*), char* streamSendHandle(int), struct ReliableSendConfig reliableSendHandle(), int initial_communication_state) {
-  //just for testing
-  char state[MAX_PKT_LENGTH] = "";
   //from here it's okay
   int communication_state = initial_communication_state;
   int max_packet_count = 0;
@@ -21,7 +19,7 @@ void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveH
         {
           previousTime = HAL_GetTick();
 
-          if(sscanf(received_packet, "$ %s", state) == 1)
+          if(strcmp(received_packet, "$") == 0)
           {
             communication_state = SENDING_RELIABLE;
           }
@@ -50,7 +48,7 @@ void communicationHandler(void reliableReceiveHandle(char*), void streamReceiveH
         if(recv_packet(received_packet, MAX_PKT_LENGTH))
         {
           previousTime = HAL_GetTick();
-          if(sscanf(received_packet, "$ %s", state) == 1)
+          if(strcmp(received_packet, "$") == 0)
           {
             communication_state = SENDING_RELIABLE;
           }
