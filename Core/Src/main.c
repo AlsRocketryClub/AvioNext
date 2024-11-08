@@ -20,10 +20,11 @@
 #include "main.h"
 #include "fatfs.h"
 #include "usb_device.h"
-
+#include "communication_protocol.h"
+#include "rocket_comms.h"
+#include "random.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "LoRA"
 #include "AvioNEXT.h"
 /* USER CODE END Includes */
 
@@ -34,14 +35,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define NUM_LEDS_0 5
-#define NUM_LEDS_1 5
-#define NUM_LEDS_2 2
-#define NUM_LEDS_3 2
 
 #define PI 3.14159265359
 
-#define MAX_PACKET_LENGTH 250
+//#define MAX_PACKET_LENGTH 250
 
 //first coordinate defines on which string the LED is positioned, second determines the position
 const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
@@ -108,8 +105,6 @@ FDCAN_HandleTypeDef hfdcan3;
 
 I2C_HandleTypeDef hi2c2;
 
-RNG_HandleTypeDef hrng;
-
 SD_HandleTypeDef hsd2;
 
 SPI_HandleTypeDef hspi1;
@@ -156,7 +151,6 @@ static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
 static void MX_TIM14_Init(void);
-static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -290,198 +284,6 @@ double triangle_space(double x) {
 	}
 }
 
-uint32_t rand_range(uint32_t a, uint32_t b) {
-	uint32_t rand = 0;
-	uint32_t MAX = 4294967295;
-	if(b>a && HAL_RNG_GenerateRandomNumber(&hrng, &rand) == HAL_OK)
-	{
-		return a+rand/(MAX/(b-a));
-	}
-	else
-	{
-		HAL_Delay(100);
-		CDC_Transmit_HS("rng error\n", strlen("rng error\n"));
-	}
-	return -1;
-}
-
-uint8_t LoRA_Read_Register(uint8_t addr) {
-	uint8_t reg_value;
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
-
-	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi3, &reg_value, 1, 100);
-
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-	return reg_value;
-}
-
-void LoRA_Write_Register(uint8_t addr, uint8_t data) {
-	addr |= (1 << 7);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
-	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
-	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-}
-
-void LoRA_sleep(void) {
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
-}
-
-void LoRA_set_frequency(long frequency) {
-	uint64_t frf = ((uint64_t) frequency << 19) / 32000000;
-
-	LoRA_Write_Register(REG_FRF_MSB, (uint8_t) (frf >> 16));
-	LoRA_Write_Register(REG_FRF_MID, (uint8_t) (frf >> 8));
-	LoRA_Write_Register(REG_FRF_LSB, (uint8_t) (frf >> 0));
-}
-
-void LoRA_idle() {
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
-}
-
-void LoRA_setOCP(uint8_t mA) {
-	uint8_t ocpTrim = 27;
-
-	if (mA <= 120) {
-		ocpTrim = (mA - 45) / 5;
-	} else if (mA <= 240) {
-		ocpTrim = (mA + 30) / 10;
-	}
-
-	LoRA_Write_Register(REG_OCP, 0x20 | (0x1F & ocpTrim));
-}
-
-void LoRA_setTxPower(int level) {
-	// PA BOOST
-	if (level > 17) {
-		if (level > 20) {
-			level = 20;
-		}
-
-		// subtract 3 from level, so 18 - 20 maps to 15 - 17
-		level -= 3;
-
-		// High Power +20 dBm Operation (Semtech SX1276/77/78/79 5.4.3.)
-		LoRA_Write_Register(REG_PA_DAC, 0x87);
-		LoRA_setOCP(140);
-	} else {
-		if (level < 2) {
-			level = 2;
-		}
-		//Default value PA_HF/LF or +17dBm
-		LoRA_Write_Register(REG_PA_DAC, 0x84);
-		LoRA_setOCP(100);
-	}
-
-	LoRA_Write_Register(REG_PA_CONFIG, PA_BOOST | (level - 2));
-}
-
-void LoRA_explicit_header_mode() {
-	LoRA_Write_Register(REG_MODEM_CONFIG_1,
-			LoRA_Read_Register(REG_MODEM_CONFIG_1) & 0xFE);
-}
-
-void LoRA_begin(long frequency) {
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-	uint8_t version = LoRA_Read_Register(REG_VERSION);
-
-	LoRA_sleep();
-	LoRA_set_frequency(868000000);
-
-	LoRA_Write_Register(REG_FIFO_RX_BASE_ADDR, 0);
-	LoRA_Write_Register(REG_FIFO_TX_BASE_ADDR, 0);
-
-	LoRA_Write_Register(REG_LNA, LoRA_Read_Register(REG_LNA) | 0x03); //LNA settings
-
-	LoRA_Write_Register(REG_MODEM_CONFIG_3, 0x04);
-
-	LoRA_setTxPower(17);
-
-}
-
-void LoRA_beginPacket() {
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
-}
-
-void LoRA_endPacket(){
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
-
-	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
-
-	}
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
-
-}
-
-
-int LoRA_parsePacket(){
-	int packetLenght = 0;
-	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
-
-	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
-		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
-
-		//LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS)){
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
-	}
-	return packetLenght;
-
-}
-
-void LoRA_sendPacket(char *data) {
-	LoRA_idle();
-
-	char debug[MAX_PACKET_LENGTH];
-	if(recv_packet(debug, MAX_PACKET_LENGTH)) {
-		HAL_Delay(100);
-		strcat(debug, " was thrown away");
-		CDC_Transmit_HS(debug, strlen(debug));
-	}
-
-	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-	/*char debug[250];
-	sprintf(debug, "here: %d\n", (irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK));
-	CDC_Transmit_HS(debug, strlen(debug));
-	HAL_Delay(100);*/
-	if(!((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0))
-	{
-		//CDC_Transmit_HS("here1\n", strlen("here1\n"));
-		LoRA_beginPacket();
-    	for(int i = 0; i < strlen(data); i++){
-    		LoRA_Write_Register(REG_FIFO, data[i]);
-    	}
-    	LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
-    	LoRA_endPacket();
-	}
-	else {
-		//CDC_Transmit_HS("here2\n", strlen("here2\n"));
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_CONTINUOUS);
-	}
-	/*char sent[300];
-	sprintf(sent, "\nsent: %s\n", data);
-	HAL_Delay(100);
-	CDC_Transmit_HS(sent, strlen(sent));*/
-}
-
 int write_EEPROM(uint32_t address, uint8_t data) {
 	if (address > 0x1FFFF) {
 		return -1;
@@ -515,100 +317,6 @@ int mount_SD() {
 	return status;
 }
 
-int disarm(char *state) {
-	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-	//HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
-	HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
-	HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
-	HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
-	HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
-	HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
-	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
-
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	setServo(1, 0);
-
-	LED_Color_Data[7][0] = 255;
-	LED_Color_Data[7][1] = 0;
-	LED_Color_Data[7][2] = 0;
-
-	LED_Color_Data[2][0] = 255;
-	LED_Color_Data[2][1] = 0;
-	LED_Color_Data[2][2] = 0;
-	setLEDs();
-
-	strcpy(state, "DISARMED");
-	return 0;
-}
-
-int arm(char *state) {
-	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
-//HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
-
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	setServo(1, 100);
-
-	strcpy(state, "ARMED");
-	LED_Color_Data[7][0] = 0;
-	LED_Color_Data[7][1] = 255;
-	LED_Color_Data[7][2] = 0;
-	setLEDs();
-	return 0;
-}
-
-int recv_packet(char *LoRA_data, int max_length) {
-	int packet_length = LoRA_parsePacket();
-	if (max_length - 1 < packet_length) //-1 for the null terminator
-			{
-		return 0;
-	}
-	if (packet_length) {
-		for (int i = 0; i < packet_length; i++) {
-			LoRA_data[i] = LoRA_Read_Register(0x00);
-		}
-		LoRA_data[packet_length] = '\0';
-	    /*char rec[300];
-	    sprintf(rec, "received: %s\n", LoRA_data);
-	    CDC_Transmit_HS(rec, strlen(rec));*/
-		return packet_length;
-	} else {
-		return 0;
-	}
-}
-
-void reliable_send_packet(char *LoRA_data) {
-	/*char debug[300];
-	sprintf(debug, "sending: %s", LoRA_data);
-	CDC_Transmit_HS(debug, strlen(debug));*/
-
-	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
-	char acknowledge[length];
-	uint32_t lastTime = HAL_GetTick();
-	uint32_t wait_time = 700;
-	LoRA_sendPacket(LoRA_data);
-	while (1) {
-
-		if (recv_packet(acknowledge, length)) {
-			//cehck crc
-			if (strcmp(acknowledge, LoRA_data) != 0) {
-				LoRA_sendPacket(LoRA_data);
-			} else {
-				break;
-			}
-		}
-
-		if (HAL_GetTick() - lastTime > wait_time) {
-			wait_time = rand_range(3, 13)*100;
-			LoRA_sendPacket(LoRA_data);
-			lastTime = HAL_GetTick();
-		}
-	}
-}
-
 double x[4];
 double y[4];
 double z[4];
@@ -635,6 +343,9 @@ double magnitude(double vector[4]) {
 					+ vector[2] * vector[2] + vector[3] * vector[3]);
 }
 
+FATFS FatFs;
+FIL Fil;
+FRESULT FR_Status;
 /* USER CODE END 0 */
 
 /**
@@ -692,9 +403,7 @@ int main(void)
 	char dummy[50];
 	disarm(dummy);
 
-	FATFS FatFs;
-	FIL Fil;
-	FRESULT FR_Status;
+
 	FR_Status = f_mount(&FatFs, SDPath, 1);
 
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
@@ -705,212 +414,15 @@ int main(void)
 	f_close(&Fil);
 
 	LoRA_begin(868000000);
-	/*while(1){
-		uint8_t version = LoRA_Read_Register(REG_VERSION);
-		char debug[50];
-		sprintf(debug, "%x\n", version);
-		CDC_Transmit_HS(debug, strlen(debug));
-		if(LoRA_parsePacket()){
+	communicationHandler(
+			  rocketReliableReceiveHandle,
+			  rocketStreamReceiveHandle,
+			  rocketStreamSendHandle,
+			  rocketReliableSendHandle,
+			  RECEIVING_RELIABLE
+	  );
 
-			CDC_Transmit_HS("packet", strlen("packet"));
-		}
-		HAL_Delay(1000);
-		LoRA_sendPacket("SENDIT");
-	}*/
 
-	int connected = 0;
-	long last_packet = 0;
-	int ARMED = 0;
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
-	//char buffered_debug_data[MAX_PACKET_LENGTH];
-	char state[MAX_PACKET_LENGTH] = "DISARMED";
-	char command[MAX_PACKET_LENGTH];
-	char recieved_packet[MAX_PACKET_LENGTH] = "";
-	char previous_packet[MAX_PACKET_LENGTH];
-	char response_packet[MAX_PACKET_LENGTH];
-	char packets_streamed[MAX_PACKET_LENGTH];
-	int max_packet_count = 0;
-	int packetId;
-	char communication_state[MAX_PACKET_LENGTH] = "TRANSITIONING";
-
-	/*while(1){
-		//uint8_t version = LoRA_Read_Register(REG_VERSION);
-		//char data[50];
-		//if(recv_packet(data, 50)){
-		//	sprintf(data, "bajojajo");
-		//	CDC_Transmit_HS(data, strlen(data));
-		//}
-		//sprintf(data, "%x", version);
-		//CDC_Transmit_HS(data, strlen(data));
-		LoRA_sendPacket("hello\n");
-		HAL_Delay(1000);
-	}*/
-	uint32_t previousTime = HAL_GetTick();
-	uint32_t wait_time = 1000;
-
-	while (1) {
-		/*if(HAL_GetTick()- debugTime > 1000) {
-			debugTime = HAL_GetTick();
-			sprintf(response_packet, "Lora: %d, Sate: %s, Comms: %s\n", LoRA_Read_Register(REG_MODEM_CONFIG_1), state, communication_state);
-			CDC_Transmit_HS(response_packet, strlen(response_packet));
-		}*/
-
-		if (strcmp(communication_state, "RECEIVING RELIABLE") == 0) {
-			//CDC_Transmit_HS("hi4\n", strlen("hi4\n"));
-			if (recv_packet(recieved_packet, MAX_PACKET_LENGTH)) {
-				//CDC_Transmit_HS("hi3", strlen("hi3"));
-				previousTime = HAL_GetTick();
-				if (strcmp(recieved_packet, "$") == 0) {
-					//CDC_Transmit_HS("hi2", strlen("hi2"));
-					strcpy(communication_state, "SENDING RELIABLE");
-				} else if(sscanf(recieved_packet, "! %d", &max_packet_count) == 1) {
-					strcpy(communication_state,"SENDING STREAM");
-				} else if (strcmp(recieved_packet, previous_packet) == 0) {
-					//send acknowledge again
-					LoRA_sendPacket(recieved_packet);
-				} else {
-					//CDC_Transmit_HS("hi1", strlen("hi1"));
-					strcpy(previous_packet, recieved_packet);
-					LoRA_sendPacket(recieved_packet);
-					strcpy(command, recieved_packet);
-					//CDC_Transmit_HS(command, strlen(command));
-				}
-			}
-		} else if (strcmp(communication_state, "RECEIVING STREAM") == 0){
-			if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
-			{
-				previousTime = HAL_GetTick();
-				if(sscanf(recieved_packet, "$ %s", state) == 1)
-				{
-					strcpy(communication_state,"SENDING RELIABLE");
-				}
-				else
-				{
-					CDC_Transmit_HS(recieved_packet, strlen(recieved_packet));
-				}
-			}
-			else if(HAL_GetTick()-previousTime > wait_time)
-			{
-			  wait_time = rand_range(3, 13)*100;
-			  previousTime = HAL_GetTick();
-			  //give up SENDING
-			  sprintf(response_packet, "! %d", packets_streamed);
-			  LoRA_sendPacket(response_packet);
-			}
-		} else if(strcmp(communication_state,"SENDING STREAM") == 0) {
-			if(max_packet_count == 0)
-			{
-				strcpy(communication_state,"TRANSITIONING");
-				sprintf(response_packet, "$ %s", state);
-				LoRA_sendPacket(response_packet);
-			}
-			else
-			{
-				//send whatever
-				if (strcmp(state, "ARMED") == 0) {
-					if (strcmp(command, "FIRE") == 0) {
-						HAL_ADC_Start(&hadc1); // start the adc
-						HAL_ADC_PollForConversion(&hadc1, 100); // poll for conversion
-						char debug_data[100];
-						uint16_t adc_val = HAL_ADC_GetValue(&hadc1); // get the adc value
-						sprintf(debug_data, "%d, %d\n", HAL_GetTick(), adc_val);
-						FR_Status = f_open(&Fil, "MyTextFile.txt",
-								FA_OPEN_APPEND | FA_WRITE);
-						f_puts(debug_data, &Fil);
-						f_close(&Fil);
-						HAL_ADC_Stop(&hadc1); // stop adc
-						LoRA_sendPacket(debug_data);
-					}
-				}
-				max_packet_count--;
-			}
-			
-		}
-		else if (strcmp(communication_state, "SENDING RELIABLE") == 0) {
-			reliable_send_packet("*");
-			if (strcmp(state, "DISARMED") == 0) {
-				if (strcmp(command, "ARM") == 0) {
-					//CDC_Transmit_HS("HELLO 2", strlen("HELLO 2"));
-					if (!arm(state)) {
-						reliable_send_packet("ARM SUCCESS");
-					} else {
-						reliable_send_packet("ARM UNSUCCESSFUL");
-					}
-				} else if (strcmp(command, "DISARM") == 0) {
-					reliable_send_packet("ALREADY DISARMED");
-				} else if (strcmp(command, "CONT") == 0) {
-					uint8_t CONTS[8];
-					CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
-					CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
-					CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
-					CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
-					CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
-					CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
-					CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
-					CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
-
-					char message[100];
-					for (int i = 0; i < 8; i++) {
-						if (CONTS[i]) {
-							sprintf(message, "PYRO %d DOESN'T HAVE CONTINUITY",
-									i + 1);
-						} else {
-							sprintf(message, "PYRO %d HAS CONTINUITY", i + 1);
-						}
-
-						reliable_send_packet(message);
-					}
-				}
-			} else if (strcmp(state, "ARMED") == 0) {
-				if (strcmp(command, "DISARM") == 0) {
-					if (!disarm(state)) {
-						reliable_send_packet("DISARM SUCCESS");
-					} else {
-						reliable_send_packet("DISARM UNSUCCESS");
-					}
-				} else if (strcmp(command, "ARM") == 0) {
-					reliable_send_packet("ALREADY ARMED");
-				} else if (strcmp(command, "FIRE") == 0) {
-					//strcpy(state, "STATIC_FIRE_LOGGING");
-				}
-				//CDC_Transmit_HS("\nIamhere\n", strlen("\nIamhere\n"));
-			} else {
-				LoRA_sendPacket("state wrong!");
-				HAL_Delay(100);
-				LoRA_sendPacket(state);
-			}
-			//HAL_Delay(100);
-			sprintf(response_packet, "$ %s", state);
-			LoRA_sendPacket(response_packet);
-			//CDC_Transmit_HS("\nIamhere2\n", strlen("\nIamhere2\n"));
-			strcpy(communication_state, "TRANSITIONING");
-		}
-	    else if(strcmp(communication_state,"TRANSITIONING") == 0)
-	    {
-	        if(recv_packet(recieved_packet, MAX_PACKET_LENGTH))
-	        {
-	          previousTime = HAL_GetTick();
-	          if(strcmp(recieved_packet, "*")==0)
-	          {
-	        	strcpy(previous_packet, recieved_packet);
-	        	strcpy(communication_state, "RECEIVING RELIABLE");
-	            LoRA_sendPacket(recieved_packet);
-	          }
-	        }
-	        else if (HAL_GetTick()-previousTime > wait_time)
-	        {
-	          wait_time = rand_range(3, 13)*100;
-	          previousTime = HAL_GetTick();
-			  sprintf(response_packet, "$ %s", state);
-			  LoRA_sendPacket(response_packet);
-	        }
-	    }
-
-	}
 
 
 //WS2812_Send();
@@ -1441,32 +953,6 @@ static void MX_I2C2_Init(void)
 
 }
 
-/**
-  * @brief RNG Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_RNG_Init(void)
-{
-
-  /* USER CODE BEGIN RNG_Init 0 */
-
-  /* USER CODE END RNG_Init 0 */
-
-  /* USER CODE BEGIN RNG_Init 1 */
-
-  /* USER CODE END RNG_Init 1 */
-  hrng.Instance = RNG;
-  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
-  if (HAL_RNG_Init(&hrng) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN RNG_Init 2 */
-
-  /* USER CODE END RNG_Init 2 */
-
-}
 
 /**
   * @brief SDMMC2 Initialization Function

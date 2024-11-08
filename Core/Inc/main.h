@@ -97,7 +97,10 @@ void Error_Handler(void);
 #define CONT8_GPIO_Port GPIOE
 #define Servo_ARM_CHECK_Pin GPIO_PIN_4
 #define Servo_ARM_CHECK_GPIO_Port GPIOG
-
+#define NUM_LEDS_0 5
+#define NUM_LEDS_1 5
+#define NUM_LEDS_2 2
+#define NUM_LEDS_3 2
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
