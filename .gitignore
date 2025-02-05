@@ -3,3 +3,5 @@ Debug/
 
 tools/*.obj
 tools/*.o
+
+*.prefs
