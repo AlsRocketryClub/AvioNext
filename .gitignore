@@ -5,3 +5,4 @@ tools/*.obj
 tools/*.o
 
 *.prefs
+.settings/
