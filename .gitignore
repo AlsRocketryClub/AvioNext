@@ -6,3 +6,4 @@ tools/*.o
 
 *.prefs
 .settings/
+Debug/
