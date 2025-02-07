@@ -11,5 +11,6 @@
 void flightActions(double altitude, int *state);
 void flightActionsLedTest(int *state);
 void fillAltitude(double altitude);
+void init_presets();
 
 #endif /* INC_FLIGHT_ACTIONS_H_ */

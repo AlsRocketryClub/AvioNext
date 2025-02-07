@@ -7,13 +7,22 @@
 #define DESCENT 2
 #define MAIN_PARACHUTE 3
 #define CANSAT_DEPLOYMENT 4
+#define array_size 50
 
-double last_altitudes[50];
 int arr_index = 0;
-int array_size = sizeof(last_altitudes) / sizeof(last_altitudes[0]);
-double ascent_preset = 9;
-double parachute_preset = 12;
+double last_altitudes[array_size];
+double ascent_preset = 21;
+double parachute_preset = 23;
 
+void init_presets() {
+  double sum = 0;
+  for (int i = 0; i < array_size; i++) {
+    sum += last_altitudes[i];
+  }
+  double avg = sum / array_size;
+  ascent_preset = avg + 3;
+  parachute_preset = avg + 3;
+}
 
 double min(double altitudes[]) {
 	double min = altitudes[0];
@@ -31,14 +40,12 @@ void fillAltitude(double altitude) {
 }
 
 void flightActions(double altitude, int* state) {
-
-	fillAltitude(altitude);
 	double min_altitude = min(last_altitudes);
 	//double min_altitude = 12;
 
 	if (*state == WAITING) {
     	if (altitude > ascent_preset) {
-        	*state = ASCENT;
+        *state = ASCENT;
 
     		char debug[50];
     		sprintf(debug, "ASCENT: %f, ASCENT_PRESET: %f\n", altitude, ascent_preset);
@@ -73,6 +80,7 @@ void flightActions(double altitude, int* state) {
 	else if (*state == MAIN_PARACHUTE) {
 		// LOGIC FOR CANSAT DEPLOYMENT
 	}
+	fillAltitude(altitude);
 }
 
 const float action_brightness = 0.4;

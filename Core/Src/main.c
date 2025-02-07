@@ -286,7 +286,7 @@ int main(void)
 	Baro2_Configure();
 
 	double temperature = 276;
-	double sea_level_pressure = 103.8;
+	double sea_level_pressure = 103.5;
 
 	int index = 0;
 	double avg_tab[100];
@@ -300,16 +300,15 @@ int main(void)
 	//disarm(state);
 	setLEDs(LED_Color_Data);
 	setStatus("CAN", 1);
-	for(int i = 0; i < 100; i++){
-		int32_t int_pressure = Baro2_Get_Pressure();
-		double float_pressure = (double)int_pressure / (40960.0 * 256.0);
-		avg_tab[i] = float_pressure;
-	}
+  HAL_Delay(3000);
 
 	int flight_state = 0;
-	for (int i = 0; i < 500; i++) {
-			int32_t int_pressure = Baro2_Get_Pressure();
 
+	for(int i = 0; i < 100; i++){
+		int32_t int_pressure = Baro2_Get_Pressure();
+    HAL_Delay(10);
+		double float_pressure = (double)int_pressure / (40960.0 * 256.0);
+		avg_tab[i%100] = float_pressure;
 	}
 
 	for (int i = 0; i < 50; i++) {
@@ -319,7 +318,10 @@ int main(void)
 		fillAltitude(altitude);
 		avg_tab[index] = float_pressure;
 		index++;
+    HAL_Delay(20);
 	}
+
+  init_presets();
 
 	while (1) {
 		int32_t int_pressure = Baro2_Get_Pressure();
@@ -345,9 +347,10 @@ int main(void)
 		char debug[50];
 
 		double test = LG_Get_Acc_Z();
+    sprintf(debug, "%f\n", altitude);
 		//sprintf(debug, "%f, %f\n", float_pressure, altitude);
-		///CDC_Transmit_HS(debug, strlen(debug));
-		//HAL_Delay(20);
+		CDC_Transmit_HS(debug, strlen(debug));
+		HAL_Delay(20);
 		//updateStatus();
 
 	}
