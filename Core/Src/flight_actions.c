@@ -1,6 +1,7 @@
 #include <AvioNEXT.h>
 #include <main.h>
-#include <usbd_cdc_if.h>;
+#include <usbd_cdc_if.h>
+#include <flight_actions.h>
 
 #define WAITING 0
 #define ASCENT 1
@@ -13,6 +14,7 @@ int arr_index = 0;
 double last_altitudes[array_size];
 double ascent_preset = 21;
 double parachute_preset = 23;
+float accelerometer_threshold = 10.2;
 
 void init_presets() {
   double sum = 0;
@@ -39,20 +41,21 @@ void fillAltitude(double altitude) {
 	arr_index = (arr_index + 1) % array_size;
 }
 
-void flightActions(double altitude, int* state) {
+void flightActions(double altitude, float mag, int* state) {
 	double min_altitude = min(last_altitudes);
 	//double min_altitude = 12;
 
 	if (*state == WAITING) {
-    	if (altitude > ascent_preset) {
+    	if (accelerometer_threshold < mag) {
         *state = ASCENT;
 
     		char debug[50];
     		sprintf(debug, "ASCENT: %f, ASCENT_PRESET: %f\n", altitude, ascent_preset);
     		CDC_Transmit_HS(debug, strlen(debug));
+        flightActionsLedTest(state);
     		HAL_Delay(20);
 
-        	return;
+        return;
     	}
 	}
 	else if (*state == ASCENT) {
@@ -62,6 +65,7 @@ void flightActions(double altitude, int* state) {
     		char debug[50];
     		sprintf(debug, "DESCENT: %f, Min: %f\n", altitude, min_altitude);
     		CDC_Transmit_HS(debug, strlen(debug));
+        flightActionsLedTest(state);
     		HAL_Delay(20);
     		return;
     	}
@@ -73,6 +77,7 @@ void flightActions(double altitude, int* state) {
     		char debug[50];
     		sprintf(debug, "MAIN_PARACHUTE: %f, PARACHUTE_PRESET: %f\n", altitude, parachute_preset);
     		CDC_Transmit_HS(debug, strlen(debug));
+        flightActionsLedTest(state);
     		HAL_Delay(20);
     		return;
     	}

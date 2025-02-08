@@ -323,7 +323,24 @@ int main(void)
 
   init_presets();
 
-	while (1) {
+ // while(1) {
+ //   float X = LG_Get_Acc_X();
+ //   float Y = LG_Get_Acc_Y();
+ //   float Z = LG_Get_Acc_Z();
+ //   float mag = sqrt(X * X + Y * Y + Z * Z);
+ //   
+ //   char debug[50];
+ //   sprintf(debug, "%f\n", mag);
+ //   CDC_Transmit_HS(debug, strlen(debug));
+ //   HAL_Delay(20);
+ // }
+
+	while (1) {  
+    float X = LG_Get_Acc_X();
+    float Y = LG_Get_Acc_Y();
+    float Z = LG_Get_Acc_Z();
+    float mag = sqrt(X * X + Y * Y + Z * Z);
+
 		int32_t int_pressure = Baro2_Get_Pressure();
 		double float_pressure = (double)int_pressure / (40960.0 * 256.0);
 		avg_tab[index] = float_pressure;
@@ -341,12 +358,12 @@ int main(void)
 		double altitude = (temperature/0.0065) *(1- pow((sum/sea_level_pressure), (1/5.256)));
 
 
-		flightActions(altitude,&flight_state);
-		flightActionsLedTest(&flight_state);
+		flightActions(altitude, mag, &flight_state);
+		//flightActionsLedTest(&flight_state);
 
 		char debug[50];
 
-		double test = LG_Get_Acc_Z();
+		//double test = LG_Get_Acc_Z();
     sprintf(debug, "%f\n", altitude);
 		//sprintf(debug, "%f, %f\n", float_pressure, altitude);
 		CDC_Transmit_HS(debug, strlen(debug));
