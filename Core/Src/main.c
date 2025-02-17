@@ -90,7 +90,6 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI3_Init(void);
-static void MX_FDCAN3_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM4_Init(void);
@@ -104,6 +103,7 @@ static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
+static void MX_FDCAN3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -273,7 +273,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI3_Init();
-  MX_FDCAN3_Init();
   MX_USART6_UART_Init();
   MX_ADC1_Init();
   MX_TIM4_Init();
@@ -289,22 +288,24 @@ int main(void)
   MX_FATFS_Init();
   MX_SDMMC2_SD_Init();
   MX_TIM13_Init();
+  MX_FDCAN3_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_8, 0);
   FDCAN_FilterTypeDef sFilterConfig;
 
   sFilterConfig.IdType = FDCAN_STANDARD_ID;
   sFilterConfig.FilterIndex = 0;
-  sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+  sFilterConfig.FilterType = FDCAN_FILTER_DUAL;
   sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-  sFilterConfig.FilterID1 = 0x12;
-  sFilterConfig.FilterID2 = 0x12;
+  sFilterConfig.FilterID1 = 0xFFF;
+  sFilterConfig.FilterID2 = 0x11;
   sFilterConfig.RxBufferIndex = 0;
   if (HAL_FDCAN_ConfigFilter(&hfdcan3, &sFilterConfig) != HAL_OK)
   {
     /* Filter configuration Error */
     Error_Handler();
   }
+  HAL_FDCAN_ConfigGlobalFilter(&hfdcan3, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
 
   if(HAL_FDCAN_Start(&hfdcan3)!= HAL_OK)
   {
@@ -331,16 +332,18 @@ int main(void)
   {
    for (int i=0; i<12; i++)
    {
-    TxData[i] = 0x22;
+    TxData[i] = 0x19;
    }
 
 
-   TxData[0] = 0x22;
-   if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3, &TxHeader, TxData)!= HAL_OK)
-   {
-    Error_Handler();
-
-   }
+   TxData[0] = 0x10;
+//   if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3, &TxHeader, TxData)!= HAL_OK)
+//   {
+//	   CDC_Transmit_HS("badT", 4);
+//	   HAL_Delay (1000);
+//
+//
+//   }
 		CDC_Transmit_HS("hi", 2);
 
    HAL_Delay (1000);
@@ -978,7 +981,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_HSI, RCC_MCODIV_1);
 }
 
 /**
@@ -1155,16 +1157,16 @@ static void MX_FDCAN3_Init(void)
 
   /* USER CODE END FDCAN3_Init 1 */
   hfdcan3.Instance = FDCAN3;
-  hfdcan3.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
+  hfdcan3.Init.FrameFormat = FDCAN_FRAME_FD_NO_BRS;
   hfdcan3.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan3.Init.AutoRetransmission = ENABLE;
   hfdcan3.Init.TransmitPause = DISABLE;
   hfdcan3.Init.ProtocolException = DISABLE;
-  hfdcan3.Init.NominalPrescaler = 1;
-  hfdcan3.Init.NominalSyncJumpWidth = 13;
-  hfdcan3.Init.NominalTimeSeg1 = 86;
-  hfdcan3.Init.NominalTimeSeg2 = 13;
-  hfdcan3.Init.DataPrescaler = 25;
+  hfdcan3.Init.NominalPrescaler = 16;
+  hfdcan3.Init.NominalSyncJumpWidth = 1;
+  hfdcan3.Init.NominalTimeSeg1 = 2;
+  hfdcan3.Init.NominalTimeSeg2 = 2;
+  hfdcan3.Init.DataPrescaler = 1;
   hfdcan3.Init.DataSyncJumpWidth = 1;
   hfdcan3.Init.DataTimeSeg1 = 1;
   hfdcan3.Init.DataTimeSeg2 = 1;
@@ -1907,14 +1909,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(Servo_ARM_CHECK_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PA8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
