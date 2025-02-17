@@ -66,6 +66,7 @@ void I2C2_EV_IRQHandler(void);
 void DMA2_Stream7_IRQHandler(void);
 void OTG_HS_IRQHandler(void);
 void SDMMC2_IRQHandler(void);
+void FDCAN3_IT0_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

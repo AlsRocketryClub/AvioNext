@@ -58,6 +58,7 @@
 extern PCD_HandleTypeDef hpcd_USB_OTG_HS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern DMA_HandleTypeDef hdma_adc3;
+extern FDCAN_HandleTypeDef hfdcan3;
 extern I2C_HandleTypeDef hi2c2;
 extern SD_HandleTypeDef hsd2;
 extern DMA_HandleTypeDef hdma_tim2_ch3;
@@ -360,6 +361,20 @@ void SDMMC2_IRQHandler(void)
   /* USER CODE BEGIN SDMMC2_IRQn 1 */
 
   /* USER CODE END SDMMC2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles FDCAN3 interrupt 0.
+  */
+void FDCAN3_IT0_IRQHandler(void)
+{
+  /* USER CODE BEGIN FDCAN3_IT0_IRQn 0 */
+
+  /* USER CODE END FDCAN3_IT0_IRQn 0 */
+  HAL_FDCAN_IRQHandler(&hfdcan3);
+  /* USER CODE BEGIN FDCAN3_IT0_IRQn 1 */
+
+  /* USER CODE END FDCAN3_IT0_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
