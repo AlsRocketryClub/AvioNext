@@ -85,14 +85,6 @@ void HG2_Get_Acc(int16_t* data){
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
 }
 
-
-
-
-
-
-
-
-
 uint8_t LoRA_Read_Register(uint8_t addr){
 	uint8_t reg_value;
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
