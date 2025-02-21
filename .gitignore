@@ -6,6 +6,5 @@ tools/*.o
 
 *.prefs
 .settings/
-Debug/
 
 make/
