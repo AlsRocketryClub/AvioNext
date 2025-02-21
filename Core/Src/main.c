@@ -410,7 +410,8 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
 
-	FR_Status = f_open(&Fil, "MyTextFile.txt", FA_CREATE_NEW);
+	FR_Status = f_open(&Fil, "MyTextFile.txt", FA_WRITE | FA_READ | FA_CREATE_ALWAYS);
+	f_puts("testing 1 2\n", &Fil);
 	f_close(&Fil);
 
 	LoRA_begin(868000000);
