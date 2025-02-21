@@ -1,0 +1,3097 @@
+ARM GAS  /tmp/ccH2036k.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"AvioNEXT.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text.HG2_Read_Register,"ax",%progbits
+  17              		.align	1
+  18              		.global	HG2_Read_Register
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv5-d16
+  25              	HG2_Read_Register:
+  26              	.LVL0:
+  27              	.LFB350:
+  28              		.file 1 "Core/Src/AvioNEXT.c"
+   1:Core/Src/AvioNEXT.c **** #include "main.h"
+   2:Core/Src/AvioNEXT.c **** #include "LoRA"
+   3:Core/Src/AvioNEXT.c **** extern SPI_HandleTypeDef hspi2;
+   4:Core/Src/AvioNEXT.c **** extern SPI_HandleTypeDef hspi3;
+   5:Core/Src/AvioNEXT.c **** extern I2C_HandleTypeDef hi2c2;
+   6:Core/Src/AvioNEXT.c **** extern TIM_HandleTypeDef htim2;
+   7:Core/Src/AvioNEXT.c **** extern TIM_HandleTypeDef htim3;
+   8:Core/Src/AvioNEXT.c **** extern TIM_HandleTypeDef htim5;
+   9:Core/Src/AvioNEXT.c **** 
+  10:Core/Src/AvioNEXT.c **** 
+  11:Core/Src/AvioNEXT.c **** #define NUM_LEDS_0 5
+  12:Core/Src/AvioNEXT.c **** #define NUM_LEDS_1 5
+  13:Core/Src/AvioNEXT.c **** #define NUM_LEDS_2 2
+  14:Core/Src/AvioNEXT.c **** #define NUM_LEDS_3 2
+  15:Core/Src/AvioNEXT.c **** 
+  16:Core/Src/AvioNEXT.c **** //first coordinate defines on which string the LED is positioned, second determines the position
+  17:Core/Src/AvioNEXT.c **** const int LEDS_lookup[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][2] = {
+  18:Core/Src/AvioNEXT.c **** 		{ 2, 1 }, //LED0: CAN
+  19:Core/Src/AvioNEXT.c **** 		{ 2, 0 }, //LED1: GPS
+  20:Core/Src/AvioNEXT.c **** 		{ 3, 0 }, //LED2: LoRA
+  21:Core/Src/AvioNEXT.c **** 		{ 3, 1 }, //LED3: SD Card
+  22:Core/Src/AvioNEXT.c **** 		{ 0, 0 }, //LED4: HG1
+  23:Core/Src/AvioNEXT.c **** 		{ 0, 1 }, //LED5: LG1
+  24:Core/Src/AvioNEXT.c **** 		{ 0, 2 }, //LED6: BAR1
+  25:Core/Src/AvioNEXT.c **** 		{ 1, 0 }, //LED7: ARM
+  26:Core/Src/AvioNEXT.c **** 		{ 1, 1 }, //LED8: HG2
+  27:Core/Src/AvioNEXT.c **** 		{ 1, 2 }, //LED9: LG2
+  28:Core/Src/AvioNEXT.c **** 		{ 1, 3 }, //LED10: BAR2
+  29:Core/Src/AvioNEXT.c **** 		{ 0, 3 }, //LED11: REG1
+  30:Core/Src/AvioNEXT.c **** 		{ 1, 4 }, //LED12: REG2
+ARM GAS  /tmp/ccH2036k.s 			page 2
+
+
+  31:Core/Src/AvioNEXT.c **** 		{ 0, 4 }  //LED13: BATT
+  32:Core/Src/AvioNEXT.c **** 
+  33:Core/Src/AvioNEXT.c **** };
+  34:Core/Src/AvioNEXT.c **** const int LED_num_max = 6;
+  35:Core/Src/AvioNEXT.c **** const int LED_order[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3] = { 0, //LED0: CAN
+  36:Core/Src/AvioNEXT.c **** 		0, //LED1: GPS
+  37:Core/Src/AvioNEXT.c **** 		0, //LED2: LoRA
+  38:Core/Src/AvioNEXT.c **** 		1, //LED3: SD Card
+  39:Core/Src/AvioNEXT.c **** 		2, //LED4: HG1
+  40:Core/Src/AvioNEXT.c **** 		3, //LED5: LG1
+  41:Core/Src/AvioNEXT.c **** 		4, //LED6: BAR1
+  42:Core/Src/AvioNEXT.c **** 		3, //LED7: ARM
+  43:Core/Src/AvioNEXT.c **** 		4, //LED8: HG2
+  44:Core/Src/AvioNEXT.c **** 		3, //LED9: LG2
+  45:Core/Src/AvioNEXT.c **** 		2, //LED10: BAR2
+  46:Core/Src/AvioNEXT.c **** 		5, //LED11: REG1
+  47:Core/Src/AvioNEXT.c **** 		5, //LED12: REG2
+  48:Core/Src/AvioNEXT.c **** 		6  //LED13: BATT
+  49:Core/Src/AvioNEXT.c **** 		};
+  50:Core/Src/AvioNEXT.c **** 
+  51:Core/Src/AvioNEXT.c **** 
+  52:Core/Src/AvioNEXT.c **** uint8_t HG2_Read_Register(uint8_t addr){
+  29              		.loc 1 52 40 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 16
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 52 40 is_stmt 0 view .LVU1
+  34 0000 30B5     		push	{r4, r5, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 12
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 85B0     		sub	sp, sp, #20
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 32
+  53:Core/Src/AvioNEXT.c **** 	uint8_t reg_value;
+  43              		.loc 1 53 2 is_stmt 1 view .LVU2
+  54:Core/Src/AvioNEXT.c **** 	addr |= (1<<7);
+  44              		.loc 1 54 2 view .LVU3
+  45              		.loc 1 54 7 is_stmt 0 view .LVU4
+  46 0004 60F07F00 		orn	r0, r0, #127
+  47              	.LVL1:
+  48              		.loc 1 54 7 view .LVU5
+  49 0008 8DF80700 		strb	r0, [sp, #7]
+  55:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+  50              		.loc 1 55 2 is_stmt 1 view .LVU6
+  51 000c 0F4C     		ldr	r4, .L3
+  52 000e 0022     		movs	r2, #0
+  53 0010 4FF40071 		mov	r1, #512
+  54 0014 2046     		mov	r0, r4
+  55 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  56              	.LVL2:
+  56:Core/Src/AvioNEXT.c **** 
+  57:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+  57              		.loc 1 57 2 view .LVU7
+  58 001a 0D4D     		ldr	r5, .L3+4
+ARM GAS  /tmp/ccH2036k.s 			page 3
+
+
+  59 001c 6423     		movs	r3, #100
+  60 001e 0122     		movs	r2, #1
+  61 0020 0DF10701 		add	r1, sp, #7
+  62 0024 2846     		mov	r0, r5
+  63 0026 FFF7FEFF 		bl	HAL_SPI_Transmit
+  64              	.LVL3:
+  58:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+  65              		.loc 1 58 2 view .LVU8
+  66 002a 6423     		movs	r3, #100
+  67 002c 0122     		movs	r2, #1
+  68 002e 0DF10F01 		add	r1, sp, #15
+  69 0032 2846     		mov	r0, r5
+  70 0034 FFF7FEFF 		bl	HAL_SPI_Receive
+  71              	.LVL4:
+  59:Core/Src/AvioNEXT.c **** 
+  60:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+  72              		.loc 1 60 2 view .LVU9
+  73 0038 0122     		movs	r2, #1
+  74 003a 4FF40071 		mov	r1, #512
+  75 003e 2046     		mov	r0, r4
+  76 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  77              	.LVL5:
+  61:Core/Src/AvioNEXT.c **** 
+  62:Core/Src/AvioNEXT.c **** 	return reg_value;
+  78              		.loc 1 62 2 view .LVU10
+  63:Core/Src/AvioNEXT.c **** }
+  79              		.loc 1 63 1 is_stmt 0 view .LVU11
+  80 0044 9DF80F00 		ldrb	r0, [sp, #15]	@ zero_extendqisi2
+  81 0048 05B0     		add	sp, sp, #20
+  82              	.LCFI2:
+  83              		.cfi_def_cfa_offset 12
+  84              		@ sp needed
+  85 004a 30BD     		pop	{r4, r5, pc}
+  86              	.L4:
+  87              		.align	2
+  88              	.L3:
+  89 004c 000C0258 		.word	1476529152
+  90 0050 00000000 		.word	hspi2
+  91              		.cfi_endproc
+  92              	.LFE350:
+  94              		.section	.text.HG2_Write_Register,"ax",%progbits
+  95              		.align	1
+  96              		.global	HG2_Write_Register
+  97              		.syntax unified
+  98              		.thumb
+  99              		.thumb_func
+ 100              		.fpu fpv5-d16
+ 102              	HG2_Write_Register:
+ 103              	.LVL6:
+ 104              	.LFB351:
+  64:Core/Src/AvioNEXT.c **** 
+  65:Core/Src/AvioNEXT.c **** void HG2_Write_Register(uint8_t addr, uint8_t data){
+ 105              		.loc 1 65 52 is_stmt 1 view -0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 8
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		.loc 1 65 52 is_stmt 0 view .LVU13
+ARM GAS  /tmp/ccH2036k.s 			page 4
+
+
+ 110 0000 30B5     		push	{r4, r5, lr}
+ 111              	.LCFI3:
+ 112              		.cfi_def_cfa_offset 12
+ 113              		.cfi_offset 4, -12
+ 114              		.cfi_offset 5, -8
+ 115              		.cfi_offset 14, -4
+ 116 0002 83B0     		sub	sp, sp, #12
+ 117              	.LCFI4:
+ 118              		.cfi_def_cfa_offset 24
+ 119 0004 8DF80700 		strb	r0, [sp, #7]
+ 120 0008 8DF80610 		strb	r1, [sp, #6]
+  66:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+ 121              		.loc 1 66 2 is_stmt 1 view .LVU14
+ 122 000c 0E4C     		ldr	r4, .L7
+ 123 000e 0022     		movs	r2, #0
+ 124 0010 4FF40071 		mov	r1, #512
+ 125              	.LVL7:
+ 126              		.loc 1 66 2 is_stmt 0 view .LVU15
+ 127 0014 2046     		mov	r0, r4
+ 128              	.LVL8:
+ 129              		.loc 1 66 2 view .LVU16
+ 130 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 131              	.LVL9:
+  67:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 132              		.loc 1 67 2 is_stmt 1 view .LVU17
+ 133 001a 0C4D     		ldr	r5, .L7+4
+ 134 001c 6423     		movs	r3, #100
+ 135 001e 0122     		movs	r2, #1
+ 136 0020 0DF10701 		add	r1, sp, #7
+ 137 0024 2846     		mov	r0, r5
+ 138 0026 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 139              	.LVL10:
+  68:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
+ 140              		.loc 1 68 2 view .LVU18
+ 141 002a 6423     		movs	r3, #100
+ 142 002c 0122     		movs	r2, #1
+ 143 002e 0DF10601 		add	r1, sp, #6
+ 144 0032 2846     		mov	r0, r5
+ 145 0034 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 146              	.LVL11:
+  69:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+ 147              		.loc 1 69 2 view .LVU19
+ 148 0038 0122     		movs	r2, #1
+ 149 003a 4FF40071 		mov	r1, #512
+ 150 003e 2046     		mov	r0, r4
+ 151 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 152              	.LVL12:
+  70:Core/Src/AvioNEXT.c **** 
+  71:Core/Src/AvioNEXT.c **** }
+ 153              		.loc 1 71 1 is_stmt 0 view .LVU20
+ 154 0044 03B0     		add	sp, sp, #12
+ 155              	.LCFI5:
+ 156              		.cfi_def_cfa_offset 12
+ 157              		@ sp needed
+ 158 0046 30BD     		pop	{r4, r5, pc}
+ 159              	.L8:
+ 160              		.align	2
+ARM GAS  /tmp/ccH2036k.s 			page 5
+
+
+ 161              	.L7:
+ 162 0048 000C0258 		.word	1476529152
+ 163 004c 00000000 		.word	hspi2
+ 164              		.cfi_endproc
+ 165              	.LFE351:
+ 167              		.section	.text.HG2_Get_Acc,"ax",%progbits
+ 168              		.align	1
+ 169              		.global	HG2_Get_Acc
+ 170              		.syntax unified
+ 171              		.thumb
+ 172              		.thumb_func
+ 173              		.fpu fpv5-d16
+ 175              	HG2_Get_Acc:
+ 176              	.LVL13:
+ 177              	.LFB352:
+  72:Core/Src/AvioNEXT.c **** 
+  73:Core/Src/AvioNEXT.c **** 
+  74:Core/Src/AvioNEXT.c **** void HG2_Get_Acc(int16_t* data){
+ 178              		.loc 1 74 32 is_stmt 1 view -0
+ 179              		.cfi_startproc
+ 180              		@ args = 0, pretend = 0, frame = 8
+ 181              		@ frame_needed = 0, uses_anonymous_args = 0
+ 182              		.loc 1 74 32 is_stmt 0 view .LVU22
+ 183 0000 70B5     		push	{r4, r5, r6, lr}
+ 184              	.LCFI6:
+ 185              		.cfi_def_cfa_offset 16
+ 186              		.cfi_offset 4, -16
+ 187              		.cfi_offset 5, -12
+ 188              		.cfi_offset 6, -8
+ 189              		.cfi_offset 14, -4
+ 190 0002 82B0     		sub	sp, sp, #8
+ 191              	.LCFI7:
+ 192              		.cfi_def_cfa_offset 24
+ 193 0004 0446     		mov	r4, r0
+  75:Core/Src/AvioNEXT.c **** 	uint8_t addr = 0x08 | (1<<7);
+ 194              		.loc 1 75 2 is_stmt 1 view .LVU23
+ 195              		.loc 1 75 10 is_stmt 0 view .LVU24
+ 196 0006 8823     		movs	r3, #136
+ 197 0008 8DF80730 		strb	r3, [sp, #7]
+  76:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 0);
+ 198              		.loc 1 76 2 is_stmt 1 view .LVU25
+ 199 000c 204E     		ldr	r6, .L11
+ 200 000e 0022     		movs	r2, #0
+ 201 0010 4FF40071 		mov	r1, #512
+ 202 0014 3046     		mov	r0, r6
+ 203              	.LVL14:
+ 204              		.loc 1 76 2 is_stmt 0 view .LVU26
+ 205 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 206              	.LVL15:
+  77:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 207              		.loc 1 77 2 is_stmt 1 view .LVU27
+ 208 001a 1E4D     		ldr	r5, .L11+4
+ 209 001c 6423     		movs	r3, #100
+ 210 001e 0122     		movs	r2, #1
+ 211 0020 0DF10701 		add	r1, sp, #7
+ 212 0024 2846     		mov	r0, r5
+ 213 0026 FFF7FEFF 		bl	HAL_SPI_Transmit
+ARM GAS  /tmp/ccH2036k.s 			page 6
+
+
+ 214              	.LVL16:
+  78:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[0], 1, 100);
+ 215              		.loc 1 78 2 view .LVU28
+ 216 002a 6423     		movs	r3, #100
+ 217 002c 0122     		movs	r2, #1
+ 218 002e B4F90010 		ldrsh	r1, [r4]
+ 219 0032 2846     		mov	r0, r5
+ 220 0034 FFF7FEFF 		bl	HAL_SPI_Receive
+ 221              	.LVL17:
+  79:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[1], 1, 100);
+ 222              		.loc 1 79 2 view .LVU29
+ 223 0038 6423     		movs	r3, #100
+ 224 003a 0122     		movs	r2, #1
+ 225 003c B4F90210 		ldrsh	r1, [r4, #2]
+ 226 0040 2846     		mov	r0, r5
+ 227 0042 FFF7FEFF 		bl	HAL_SPI_Receive
+ 228              	.LVL18:
+  80:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[2], 1, 100);
+ 229              		.loc 1 80 2 view .LVU30
+ 230 0046 6423     		movs	r3, #100
+ 231 0048 0122     		movs	r2, #1
+ 232 004a B4F90410 		ldrsh	r1, [r4, #4]
+ 233 004e 2846     		mov	r0, r5
+ 234 0050 FFF7FEFF 		bl	HAL_SPI_Receive
+ 235              	.LVL19:
+  81:Core/Src/AvioNEXT.c **** 
+  82:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[3], 1, 100);
+ 236              		.loc 1 82 2 view .LVU31
+ 237 0054 6423     		movs	r3, #100
+ 238 0056 0122     		movs	r2, #1
+ 239 0058 B4F90610 		ldrsh	r1, [r4, #6]
+ 240 005c 2846     		mov	r0, r5
+ 241 005e FFF7FEFF 		bl	HAL_SPI_Receive
+ 242              	.LVL20:
+  83:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[4], 1, 100);
+ 243              		.loc 1 83 2 view .LVU32
+ 244 0062 6423     		movs	r3, #100
+ 245 0064 0122     		movs	r2, #1
+ 246 0066 B4F90810 		ldrsh	r1, [r4, #8]
+ 247 006a 2846     		mov	r0, r5
+ 248 006c FFF7FEFF 		bl	HAL_SPI_Receive
+ 249              	.LVL21:
+  84:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi2, data[5], 1, 100);
+ 250              		.loc 1 84 2 view .LVU33
+ 251 0070 6423     		movs	r3, #100
+ 252 0072 0122     		movs	r2, #1
+ 253 0074 B4F90A10 		ldrsh	r1, [r4, #10]
+ 254 0078 2846     		mov	r0, r5
+ 255 007a FFF7FEFF 		bl	HAL_SPI_Receive
+ 256              	.LVL22:
+  85:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
+ 257              		.loc 1 85 2 view .LVU34
+ 258 007e 0122     		movs	r2, #1
+ 259 0080 4FF40071 		mov	r1, #512
+ 260 0084 3046     		mov	r0, r6
+ 261 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 262              	.LVL23:
+ARM GAS  /tmp/ccH2036k.s 			page 7
+
+
+  86:Core/Src/AvioNEXT.c **** }
+ 263              		.loc 1 86 1 is_stmt 0 view .LVU35
+ 264 008a 02B0     		add	sp, sp, #8
+ 265              	.LCFI8:
+ 266              		.cfi_def_cfa_offset 16
+ 267              		@ sp needed
+ 268 008c 70BD     		pop	{r4, r5, r6, pc}
+ 269              	.LVL24:
+ 270              	.L12:
+ 271              		.loc 1 86 1 view .LVU36
+ 272 008e 00BF     		.align	2
+ 273              	.L11:
+ 274 0090 000C0258 		.word	1476529152
+ 275 0094 00000000 		.word	hspi2
+ 276              		.cfi_endproc
+ 277              	.LFE352:
+ 279              		.section	.text.LoRA_Read_Register,"ax",%progbits
+ 280              		.align	1
+ 281              		.global	LoRA_Read_Register
+ 282              		.syntax unified
+ 283              		.thumb
+ 284              		.thumb_func
+ 285              		.fpu fpv5-d16
+ 287              	LoRA_Read_Register:
+ 288              	.LVL25:
+ 289              	.LFB353:
+  87:Core/Src/AvioNEXT.c **** 
+  88:Core/Src/AvioNEXT.c **** 
+  89:Core/Src/AvioNEXT.c **** 
+  90:Core/Src/AvioNEXT.c **** 
+  91:Core/Src/AvioNEXT.c **** 
+  92:Core/Src/AvioNEXT.c **** 
+  93:Core/Src/AvioNEXT.c **** 
+  94:Core/Src/AvioNEXT.c **** 
+  95:Core/Src/AvioNEXT.c **** 
+  96:Core/Src/AvioNEXT.c **** uint8_t LoRA_Read_Register(uint8_t addr){
+ 290              		.loc 1 96 41 is_stmt 1 view -0
+ 291              		.cfi_startproc
+ 292              		@ args = 0, pretend = 0, frame = 16
+ 293              		@ frame_needed = 0, uses_anonymous_args = 0
+ 294              		.loc 1 96 41 is_stmt 0 view .LVU38
+ 295 0000 30B5     		push	{r4, r5, lr}
+ 296              	.LCFI9:
+ 297              		.cfi_def_cfa_offset 12
+ 298              		.cfi_offset 4, -12
+ 299              		.cfi_offset 5, -8
+ 300              		.cfi_offset 14, -4
+ 301 0002 85B0     		sub	sp, sp, #20
+ 302              	.LCFI10:
+ 303              		.cfi_def_cfa_offset 32
+ 304 0004 8DF80700 		strb	r0, [sp, #7]
+  97:Core/Src/AvioNEXT.c **** 	uint8_t reg_value;
+ 305              		.loc 1 97 2 is_stmt 1 view .LVU39
+  98:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
+ 306              		.loc 1 98 2 view .LVU40
+ 307 0008 0F4C     		ldr	r4, .L15
+ 308 000a 0022     		movs	r2, #0
+ARM GAS  /tmp/ccH2036k.s 			page 8
+
+
+ 309 000c 4FF40041 		mov	r1, #32768
+ 310 0010 2046     		mov	r0, r4
+ 311              	.LVL26:
+ 312              		.loc 1 98 2 is_stmt 0 view .LVU41
+ 313 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 314              	.LVL27:
+  99:Core/Src/AvioNEXT.c **** 
+ 100:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
+ 315              		.loc 1 100 2 is_stmt 1 view .LVU42
+ 316 0016 0D4D     		ldr	r5, .L15+4
+ 317 0018 6423     		movs	r3, #100
+ 318 001a 0122     		movs	r2, #1
+ 319 001c 0DF10701 		add	r1, sp, #7
+ 320 0020 2846     		mov	r0, r5
+ 321 0022 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 322              	.LVL28:
+ 101:Core/Src/AvioNEXT.c **** 	HAL_SPI_Receive(&hspi3, &reg_value, 1, 100);
+ 323              		.loc 1 101 2 view .LVU43
+ 324 0026 6423     		movs	r3, #100
+ 325 0028 0122     		movs	r2, #1
+ 326 002a 0DF10F01 		add	r1, sp, #15
+ 327 002e 2846     		mov	r0, r5
+ 328 0030 FFF7FEFF 		bl	HAL_SPI_Receive
+ 329              	.LVL29:
+ 102:Core/Src/AvioNEXT.c **** 
+ 103:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+ 330              		.loc 1 103 2 view .LVU44
+ 331 0034 0122     		movs	r2, #1
+ 332 0036 4FF40041 		mov	r1, #32768
+ 333 003a 2046     		mov	r0, r4
+ 334 003c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 335              	.LVL30:
+ 104:Core/Src/AvioNEXT.c **** 
+ 105:Core/Src/AvioNEXT.c **** 	return reg_value;
+ 336              		.loc 1 105 2 view .LVU45
+ 106:Core/Src/AvioNEXT.c **** }
+ 337              		.loc 1 106 1 is_stmt 0 view .LVU46
+ 338 0040 9DF80F00 		ldrb	r0, [sp, #15]	@ zero_extendqisi2
+ 339 0044 05B0     		add	sp, sp, #20
+ 340              	.LCFI11:
+ 341              		.cfi_def_cfa_offset 12
+ 342              		@ sp needed
+ 343 0046 30BD     		pop	{r4, r5, pc}
+ 344              	.L16:
+ 345              		.align	2
+ 346              	.L15:
+ 347 0048 00000258 		.word	1476526080
+ 348 004c 00000000 		.word	hspi3
+ 349              		.cfi_endproc
+ 350              	.LFE353:
+ 352              		.section	.text.LoRA_Write_Register,"ax",%progbits
+ 353              		.align	1
+ 354              		.global	LoRA_Write_Register
+ 355              		.syntax unified
+ 356              		.thumb
+ 357              		.thumb_func
+ 358              		.fpu fpv5-d16
+ARM GAS  /tmp/ccH2036k.s 			page 9
+
+
+ 360              	LoRA_Write_Register:
+ 361              	.LVL31:
+ 362              	.LFB354:
+ 107:Core/Src/AvioNEXT.c **** 
+ 108:Core/Src/AvioNEXT.c **** void LoRA_Write_Register(uint8_t addr, uint8_t data){
+ 363              		.loc 1 108 53 is_stmt 1 view -0
+ 364              		.cfi_startproc
+ 365              		@ args = 0, pretend = 0, frame = 8
+ 366              		@ frame_needed = 0, uses_anonymous_args = 0
+ 367              		.loc 1 108 53 is_stmt 0 view .LVU48
+ 368 0000 30B5     		push	{r4, r5, lr}
+ 369              	.LCFI12:
+ 370              		.cfi_def_cfa_offset 12
+ 371              		.cfi_offset 4, -12
+ 372              		.cfi_offset 5, -8
+ 373              		.cfi_offset 14, -4
+ 374 0002 83B0     		sub	sp, sp, #12
+ 375              	.LCFI13:
+ 376              		.cfi_def_cfa_offset 24
+ 377 0004 8DF80610 		strb	r1, [sp, #6]
+ 109:Core/Src/AvioNEXT.c **** 	addr |= (1<<7);
+ 378              		.loc 1 109 2 is_stmt 1 view .LVU49
+ 379              		.loc 1 109 7 is_stmt 0 view .LVU50
+ 380 0008 60F07F00 		orn	r0, r0, #127
+ 381              	.LVL32:
+ 382              		.loc 1 109 7 view .LVU51
+ 383 000c 8DF80700 		strb	r0, [sp, #7]
+ 110:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
+ 384              		.loc 1 110 2 is_stmt 1 view .LVU52
+ 385 0010 0E4C     		ldr	r4, .L19
+ 386 0012 0022     		movs	r2, #0
+ 387 0014 4FF40041 		mov	r1, #32768
+ 388              	.LVL33:
+ 389              		.loc 1 110 2 is_stmt 0 view .LVU53
+ 390 0018 2046     		mov	r0, r4
+ 391 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 392              	.LVL34:
+ 111:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
+ 393              		.loc 1 111 2 is_stmt 1 view .LVU54
+ 394 001e 0C4D     		ldr	r5, .L19+4
+ 395 0020 6423     		movs	r3, #100
+ 396 0022 0122     		movs	r2, #1
+ 397 0024 0DF10701 		add	r1, sp, #7
+ 398 0028 2846     		mov	r0, r5
+ 399 002a FFF7FEFF 		bl	HAL_SPI_Transmit
+ 400              	.LVL35:
+ 112:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
+ 401              		.loc 1 112 2 view .LVU55
+ 402 002e 6423     		movs	r3, #100
+ 403 0030 0122     		movs	r2, #1
+ 404 0032 0DF10601 		add	r1, sp, #6
+ 405 0036 2846     		mov	r0, r5
+ 406 0038 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 407              	.LVL36:
+ 113:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+ 408              		.loc 1 113 2 view .LVU56
+ 409 003c 0122     		movs	r2, #1
+ARM GAS  /tmp/ccH2036k.s 			page 10
+
+
+ 410 003e 4FF40041 		mov	r1, #32768
+ 411 0042 2046     		mov	r0, r4
+ 412 0044 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 413              	.LVL37:
+ 114:Core/Src/AvioNEXT.c **** 
+ 115:Core/Src/AvioNEXT.c **** }
+ 414              		.loc 1 115 1 is_stmt 0 view .LVU57
+ 415 0048 03B0     		add	sp, sp, #12
+ 416              	.LCFI14:
+ 417              		.cfi_def_cfa_offset 12
+ 418              		@ sp needed
+ 419 004a 30BD     		pop	{r4, r5, pc}
+ 420              	.L20:
+ 421              		.align	2
+ 422              	.L19:
+ 423 004c 00000258 		.word	1476526080
+ 424 0050 00000000 		.word	hspi3
+ 425              		.cfi_endproc
+ 426              	.LFE354:
+ 428              		.section	.text.LoRA_sleep,"ax",%progbits
+ 429              		.align	1
+ 430              		.global	LoRA_sleep
+ 431              		.syntax unified
+ 432              		.thumb
+ 433              		.thumb_func
+ 434              		.fpu fpv5-d16
+ 436              	LoRA_sleep:
+ 437              	.LFB355:
+ 116:Core/Src/AvioNEXT.c **** 
+ 117:Core/Src/AvioNEXT.c **** 
+ 118:Core/Src/AvioNEXT.c **** void LoRA_sleep(void){
+ 438              		.loc 1 118 22 is_stmt 1 view -0
+ 439              		.cfi_startproc
+ 440              		@ args = 0, pretend = 0, frame = 0
+ 441              		@ frame_needed = 0, uses_anonymous_args = 0
+ 442 0000 08B5     		push	{r3, lr}
+ 443              	.LCFI15:
+ 444              		.cfi_def_cfa_offset 8
+ 445              		.cfi_offset 3, -8
+ 446              		.cfi_offset 14, -4
+ 119:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+ 447              		.loc 1 119 2 view .LVU59
+ 448 0002 8021     		movs	r1, #128
+ 449 0004 0120     		movs	r0, #1
+ 450 0006 FFF7FEFF 		bl	LoRA_Write_Register
+ 451              	.LVL38:
+ 120:Core/Src/AvioNEXT.c **** }
+ 452              		.loc 1 120 1 is_stmt 0 view .LVU60
+ 453 000a 08BD     		pop	{r3, pc}
+ 454              		.cfi_endproc
+ 455              	.LFE355:
+ 457              		.global	__aeabi_uldivmod
+ 458              		.section	.text.LoRA_set_frequency,"ax",%progbits
+ 459              		.align	1
+ 460              		.global	LoRA_set_frequency
+ 461              		.syntax unified
+ 462              		.thumb
+ARM GAS  /tmp/ccH2036k.s 			page 11
+
+
+ 463              		.thumb_func
+ 464              		.fpu fpv5-d16
+ 466              	LoRA_set_frequency:
+ 467              	.LVL39:
+ 468              	.LFB356:
+ 121:Core/Src/AvioNEXT.c **** 
+ 122:Core/Src/AvioNEXT.c **** void LoRA_set_frequency(long frequency){
+ 469              		.loc 1 122 40 is_stmt 1 view -0
+ 470              		.cfi_startproc
+ 471              		@ args = 0, pretend = 0, frame = 0
+ 472              		@ frame_needed = 0, uses_anonymous_args = 0
+ 473              		.loc 1 122 40 is_stmt 0 view .LVU62
+ 474 0000 10B5     		push	{r4, lr}
+ 475              	.LCFI16:
+ 476              		.cfi_def_cfa_offset 8
+ 477              		.cfi_offset 4, -8
+ 478              		.cfi_offset 14, -4
+ 479 0002 0146     		mov	r1, r0
+ 123:Core/Src/AvioNEXT.c **** 	uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+ 480              		.loc 1 123 2 is_stmt 1 view .LVU63
+ 481              		.loc 1 123 11 is_stmt 0 view .LVU64
+ 482 0004 0A4A     		ldr	r2, .L25
+ 483 0006 0023     		movs	r3, #0
+ 484 0008 C004     		lsls	r0, r0, #19
+ 485              	.LVL40:
+ 486              		.loc 1 123 11 view .LVU65
+ 487 000a 4913     		asrs	r1, r1, #13
+ 488              	.LVL41:
+ 489              		.loc 1 123 11 view .LVU66
+ 490 000c FFF7FEFF 		bl	__aeabi_uldivmod
+ 491              	.LVL42:
+ 492 0010 0446     		mov	r4, r0
+ 493              	.LVL43:
+ 124:Core/Src/AvioNEXT.c **** 
+ 125:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FRF_MSB, (uint8_t)(frf >> 16));
+ 494              		.loc 1 125 2 is_stmt 1 view .LVU67
+ 495 0012 C0F30741 		ubfx	r1, r0, #16, #8
+ 496              	.LVL44:
+ 497              		.loc 1 125 2 is_stmt 0 view .LVU68
+ 498 0016 0620     		movs	r0, #6
+ 499              		.loc 1 125 2 view .LVU69
+ 500 0018 FFF7FEFF 		bl	LoRA_Write_Register
+ 501              	.LVL45:
+ 126:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FRF_MID, (uint8_t)(frf >> 8));
+ 502              		.loc 1 126 2 is_stmt 1 view .LVU70
+ 503 001c C4F30721 		ubfx	r1, r4, #8, #8
+ 504 0020 0720     		movs	r0, #7
+ 505 0022 FFF7FEFF 		bl	LoRA_Write_Register
+ 506              	.LVL46:
+ 127:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FRF_LSB, (uint8_t)(frf >> 0));
+ 507              		.loc 1 127 2 view .LVU71
+ 508 0026 E1B2     		uxtb	r1, r4
+ 509 0028 0820     		movs	r0, #8
+ 510 002a FFF7FEFF 		bl	LoRA_Write_Register
+ 511              	.LVL47:
+ 128:Core/Src/AvioNEXT.c **** }
+ 512              		.loc 1 128 1 is_stmt 0 view .LVU72
+ARM GAS  /tmp/ccH2036k.s 			page 12
+
+
+ 513 002e 10BD     		pop	{r4, pc}
+ 514              	.L26:
+ 515              		.loc 1 128 1 view .LVU73
+ 516              		.align	2
+ 517              	.L25:
+ 518 0030 0048E801 		.word	32000000
+ 519              		.cfi_endproc
+ 520              	.LFE356:
+ 522              		.section	.text.LoRA_idle,"ax",%progbits
+ 523              		.align	1
+ 524              		.global	LoRA_idle
+ 525              		.syntax unified
+ 526              		.thumb
+ 527              		.thumb_func
+ 528              		.fpu fpv5-d16
+ 530              	LoRA_idle:
+ 531              	.LFB357:
+ 129:Core/Src/AvioNEXT.c **** 
+ 130:Core/Src/AvioNEXT.c **** void LoRA_idle(){
+ 532              		.loc 1 130 17 is_stmt 1 view -0
+ 533              		.cfi_startproc
+ 534              		@ args = 0, pretend = 0, frame = 0
+ 535              		@ frame_needed = 0, uses_anonymous_args = 0
+ 536 0000 08B5     		push	{r3, lr}
+ 537              	.LCFI17:
+ 538              		.cfi_def_cfa_offset 8
+ 539              		.cfi_offset 3, -8
+ 540              		.cfi_offset 14, -4
+ 131:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+ 541              		.loc 1 131 2 view .LVU75
+ 542 0002 8121     		movs	r1, #129
+ 543 0004 0120     		movs	r0, #1
+ 544 0006 FFF7FEFF 		bl	LoRA_Write_Register
+ 545              	.LVL48:
+ 132:Core/Src/AvioNEXT.c **** }
+ 546              		.loc 1 132 1 is_stmt 0 view .LVU76
+ 547 000a 08BD     		pop	{r3, pc}
+ 548              		.cfi_endproc
+ 549              	.LFE357:
+ 551              		.section	.text.LoRA_setOCP,"ax",%progbits
+ 552              		.align	1
+ 553              		.global	LoRA_setOCP
+ 554              		.syntax unified
+ 555              		.thumb
+ 556              		.thumb_func
+ 557              		.fpu fpv5-d16
+ 559              	LoRA_setOCP:
+ 560              	.LVL49:
+ 561              	.LFB358:
+ 133:Core/Src/AvioNEXT.c **** 
+ 134:Core/Src/AvioNEXT.c **** void LoRA_setOCP(uint8_t mA){
+ 562              		.loc 1 134 29 is_stmt 1 view -0
+ 563              		.cfi_startproc
+ 564              		@ args = 0, pretend = 0, frame = 0
+ 565              		@ frame_needed = 0, uses_anonymous_args = 0
+ 566              		.loc 1 134 29 is_stmt 0 view .LVU78
+ 567 0000 08B5     		push	{r3, lr}
+ARM GAS  /tmp/ccH2036k.s 			page 13
+
+
+ 568              	.LCFI18:
+ 569              		.cfi_def_cfa_offset 8
+ 570              		.cfi_offset 3, -8
+ 571              		.cfi_offset 14, -4
+ 135:Core/Src/AvioNEXT.c **** 	  uint8_t ocpTrim = 27;
+ 572              		.loc 1 135 4 is_stmt 1 view .LVU79
+ 573              	.LVL50:
+ 136:Core/Src/AvioNEXT.c **** 
+ 137:Core/Src/AvioNEXT.c **** 	  if (mA <= 120) {
+ 574              		.loc 1 137 4 view .LVU80
+ 575              		.loc 1 137 7 is_stmt 0 view .LVU81
+ 576 0002 7828     		cmp	r0, #120
+ 577 0004 0FD8     		bhi	.L30
+ 138:Core/Src/AvioNEXT.c **** 	    ocpTrim = (mA - 45) / 5;
+ 578              		.loc 1 138 6 is_stmt 1 view .LVU82
+ 579              		.loc 1 138 20 is_stmt 0 view .LVU83
+ 580 0006 2D38     		subs	r0, r0, #45
+ 581              	.LVL51:
+ 582              		.loc 1 138 26 view .LVU84
+ 583 0008 0C49     		ldr	r1, .L34
+ 584 000a 81FB0031 		smull	r3, r1, r1, r0
+ 585 000e C017     		asrs	r0, r0, #31
+ 586 0010 C0EB6101 		rsb	r1, r0, r1, asr #1
+ 587              		.loc 1 138 14 view .LVU85
+ 588 0014 C9B2     		uxtb	r1, r1
+ 589              	.LVL52:
+ 590              	.L31:
+ 139:Core/Src/AvioNEXT.c **** 	  } else if (mA <=240) {
+ 140:Core/Src/AvioNEXT.c **** 	    ocpTrim = (mA + 30) / 10;
+ 141:Core/Src/AvioNEXT.c **** 	  }
+ 142:Core/Src/AvioNEXT.c **** 
+ 143:Core/Src/AvioNEXT.c **** 	  LoRA_Write_Register(REG_OCP, 0x20 | (0x1F & ocpTrim));
+ 591              		.loc 1 143 4 is_stmt 1 view .LVU86
+ 592 0016 01F01F01 		and	r1, r1, #31
+ 593              	.LVL53:
+ 594              		.loc 1 143 4 is_stmt 0 view .LVU87
+ 595 001a 41F02001 		orr	r1, r1, #32
+ 596 001e 0B20     		movs	r0, #11
+ 597 0020 FFF7FEFF 		bl	LoRA_Write_Register
+ 598              	.LVL54:
+ 144:Core/Src/AvioNEXT.c **** }
+ 599              		.loc 1 144 1 view .LVU88
+ 600 0024 08BD     		pop	{r3, pc}
+ 601              	.LVL55:
+ 602              	.L30:
+ 139:Core/Src/AvioNEXT.c **** 	  } else if (mA <=240) {
+ 603              		.loc 1 139 11 is_stmt 1 view .LVU89
+ 139:Core/Src/AvioNEXT.c **** 	  } else if (mA <=240) {
+ 604              		.loc 1 139 14 is_stmt 0 view .LVU90
+ 605 0026 F028     		cmp	r0, #240
+ 606 0028 06D8     		bhi	.L32
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ 607              		.loc 1 140 6 is_stmt 1 view .LVU91
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ 608              		.loc 1 140 20 is_stmt 0 view .LVU92
+ 609 002a 00F11E01 		add	r1, r0, #30
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ARM GAS  /tmp/ccH2036k.s 			page 14
+
+
+ 610              		.loc 1 140 26 view .LVU93
+ 611 002e 0348     		ldr	r0, .L34
+ 612              	.LVL56:
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ 613              		.loc 1 140 26 view .LVU94
+ 614 0030 80FB0131 		smull	r3, r1, r0, r1
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ 615              		.loc 1 140 14 view .LVU95
+ 616 0034 8908     		lsrs	r1, r1, #2
+ 617              	.LVL57:
+ 140:Core/Src/AvioNEXT.c **** 	  }
+ 618              		.loc 1 140 14 view .LVU96
+ 619 0036 EEE7     		b	.L31
+ 620              	.LVL58:
+ 621              	.L32:
+ 135:Core/Src/AvioNEXT.c **** 
+ 622              		.loc 1 135 12 view .LVU97
+ 623 0038 1B21     		movs	r1, #27
+ 624 003a ECE7     		b	.L31
+ 625              	.L35:
+ 626              		.align	2
+ 627              	.L34:
+ 628 003c 67666666 		.word	1717986919
+ 629              		.cfi_endproc
+ 630              	.LFE358:
+ 632              		.section	.text.LoRA_setTxPower,"ax",%progbits
+ 633              		.align	1
+ 634              		.global	LoRA_setTxPower
+ 635              		.syntax unified
+ 636              		.thumb
+ 637              		.thumb_func
+ 638              		.fpu fpv5-d16
+ 640              	LoRA_setTxPower:
+ 641              	.LVL59:
+ 642              	.LFB359:
+ 145:Core/Src/AvioNEXT.c **** 
+ 146:Core/Src/AvioNEXT.c **** void LoRA_setTxPower(int level){
+ 643              		.loc 1 146 32 is_stmt 1 view -0
+ 644              		.cfi_startproc
+ 645              		@ args = 0, pretend = 0, frame = 0
+ 646              		@ frame_needed = 0, uses_anonymous_args = 0
+ 647              		.loc 1 146 32 is_stmt 0 view .LVU99
+ 648 0000 10B5     		push	{r4, lr}
+ 649              	.LCFI19:
+ 650              		.cfi_def_cfa_offset 8
+ 651              		.cfi_offset 4, -8
+ 652              		.cfi_offset 14, -4
+ 653 0002 0446     		mov	r4, r0
+ 147:Core/Src/AvioNEXT.c ****     // PA BOOST
+ 148:Core/Src/AvioNEXT.c ****     if (level > 17) {
+ 654              		.loc 1 148 5 is_stmt 1 view .LVU100
+ 655              		.loc 1 148 8 is_stmt 0 view .LVU101
+ 656 0004 1128     		cmp	r0, #17
+ 657 0006 13DD     		ble	.L37
+ 149:Core/Src/AvioNEXT.c ****       if (level > 20) {
+ 658              		.loc 1 149 7 is_stmt 1 view .LVU102
+ 659              		.loc 1 149 10 is_stmt 0 view .LVU103
+ARM GAS  /tmp/ccH2036k.s 			page 15
+
+
+ 660 0008 1428     		cmp	r0, #20
+ 661 000a 00DD     		ble	.L38
+ 150:Core/Src/AvioNEXT.c ****         level = 20;
+ 662              		.loc 1 150 15 view .LVU104
+ 663 000c 1424     		movs	r4, #20
+ 664              	.L38:
+ 665              	.LVL60:
+ 151:Core/Src/AvioNEXT.c ****       }
+ 152:Core/Src/AvioNEXT.c **** 
+ 153:Core/Src/AvioNEXT.c ****       // subtract 3 from level, so 18 - 20 maps to 15 - 17
+ 154:Core/Src/AvioNEXT.c ****       level -= 3;
+ 666              		.loc 1 154 7 is_stmt 1 view .LVU105
+ 667              		.loc 1 154 13 is_stmt 0 view .LVU106
+ 668 000e 033C     		subs	r4, r4, #3
+ 669              	.LVL61:
+ 155:Core/Src/AvioNEXT.c **** 
+ 156:Core/Src/AvioNEXT.c ****       // High Power +20 dBm Operation (Semtech SX1276/77/78/79 5.4.3.)
+ 157:Core/Src/AvioNEXT.c ****       LoRA_Write_Register(REG_PA_DAC, 0x87);
+ 670              		.loc 1 157 7 is_stmt 1 view .LVU107
+ 671 0010 8721     		movs	r1, #135
+ 672 0012 4D20     		movs	r0, #77
+ 673 0014 FFF7FEFF 		bl	LoRA_Write_Register
+ 674              	.LVL62:
+ 158:Core/Src/AvioNEXT.c ****       LoRA_setOCP(140);
+ 675              		.loc 1 158 7 view .LVU108
+ 676 0018 8C20     		movs	r0, #140
+ 677 001a FFF7FEFF 		bl	LoRA_setOCP
+ 678              	.LVL63:
+ 679              	.L39:
+ 159:Core/Src/AvioNEXT.c ****     } else {
+ 160:Core/Src/AvioNEXT.c ****       if (level < 2) {
+ 161:Core/Src/AvioNEXT.c ****         level = 2;
+ 162:Core/Src/AvioNEXT.c ****       }
+ 163:Core/Src/AvioNEXT.c ****       //Default value PA_HF/LF or +17dBm
+ 164:Core/Src/AvioNEXT.c ****       LoRA_Write_Register(REG_PA_DAC, 0x84);
+ 165:Core/Src/AvioNEXT.c ****       LoRA_setOCP(100);
+ 166:Core/Src/AvioNEXT.c ****     }
+ 167:Core/Src/AvioNEXT.c **** 
+ 168:Core/Src/AvioNEXT.c ****     LoRA_Write_Register(REG_PA_CONFIG, PA_BOOST | (level - 2));
+ 680              		.loc 1 168 5 view .LVU109
+ 681              		.loc 1 168 58 is_stmt 0 view .LVU110
+ 682 001e A11E     		subs	r1, r4, #2
+ 683 0020 49B2     		sxtb	r1, r1
+ 684              		.loc 1 168 49 view .LVU111
+ 685 0022 61F07F01 		orn	r1, r1, #127
+ 686              		.loc 1 168 5 view .LVU112
+ 687 0026 C9B2     		uxtb	r1, r1
+ 688 0028 0920     		movs	r0, #9
+ 689 002a FFF7FEFF 		bl	LoRA_Write_Register
+ 690              	.LVL64:
+ 169:Core/Src/AvioNEXT.c **** }
+ 691              		.loc 1 169 1 view .LVU113
+ 692 002e 10BD     		pop	{r4, pc}
+ 693              	.LVL65:
+ 694              	.L37:
+ 160:Core/Src/AvioNEXT.c ****         level = 2;
+ 695              		.loc 1 160 7 is_stmt 1 view .LVU114
+ARM GAS  /tmp/ccH2036k.s 			page 16
+
+
+ 160:Core/Src/AvioNEXT.c ****         level = 2;
+ 696              		.loc 1 160 10 is_stmt 0 view .LVU115
+ 697 0030 0128     		cmp	r0, #1
+ 698 0032 07DD     		ble	.L44
+ 699              	.L40:
+ 700              	.LVL66:
+ 164:Core/Src/AvioNEXT.c ****       LoRA_setOCP(100);
+ 701              		.loc 1 164 7 is_stmt 1 view .LVU116
+ 702 0034 8421     		movs	r1, #132
+ 703 0036 4D20     		movs	r0, #77
+ 704 0038 FFF7FEFF 		bl	LoRA_Write_Register
+ 705              	.LVL67:
+ 165:Core/Src/AvioNEXT.c ****     }
+ 706              		.loc 1 165 7 view .LVU117
+ 707 003c 6420     		movs	r0, #100
+ 708 003e FFF7FEFF 		bl	LoRA_setOCP
+ 709              	.LVL68:
+ 710 0042 ECE7     		b	.L39
+ 711              	.LVL69:
+ 712              	.L44:
+ 161:Core/Src/AvioNEXT.c ****       }
+ 713              		.loc 1 161 15 is_stmt 0 view .LVU118
+ 714 0044 0224     		movs	r4, #2
+ 715 0046 F5E7     		b	.L40
+ 716              		.cfi_endproc
+ 717              	.LFE359:
+ 719              		.section	.text.LoRA_explicit_header_mode,"ax",%progbits
+ 720              		.align	1
+ 721              		.global	LoRA_explicit_header_mode
+ 722              		.syntax unified
+ 723              		.thumb
+ 724              		.thumb_func
+ 725              		.fpu fpv5-d16
+ 727              	LoRA_explicit_header_mode:
+ 728              	.LFB360:
+ 170:Core/Src/AvioNEXT.c **** 
+ 171:Core/Src/AvioNEXT.c **** void LoRA_explicit_header_mode(){
+ 729              		.loc 1 171 33 is_stmt 1 view -0
+ 730              		.cfi_startproc
+ 731              		@ args = 0, pretend = 0, frame = 0
+ 732              		@ frame_needed = 0, uses_anonymous_args = 0
+ 733 0000 08B5     		push	{r3, lr}
+ 734              	.LCFI20:
+ 735              		.cfi_def_cfa_offset 8
+ 736              		.cfi_offset 3, -8
+ 737              		.cfi_offset 14, -4
+ 172:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_MODEM_CONFIG_1, LoRA_Read_Register(REG_MODEM_CONFIG_1) & 0xFE);
+ 738              		.loc 1 172 2 view .LVU120
+ 739              		.loc 1 172 42 is_stmt 0 view .LVU121
+ 740 0002 1D20     		movs	r0, #29
+ 741 0004 FFF7FEFF 		bl	LoRA_Read_Register
+ 742              	.LVL70:
+ 743              		.loc 1 172 2 view .LVU122
+ 744 0008 00F0FE01 		and	r1, r0, #254
+ 745 000c 1D20     		movs	r0, #29
+ 746 000e FFF7FEFF 		bl	LoRA_Write_Register
+ 747              	.LVL71:
+ARM GAS  /tmp/ccH2036k.s 			page 17
+
+
+ 173:Core/Src/AvioNEXT.c **** }
+ 748              		.loc 1 173 1 view .LVU123
+ 749 0012 08BD     		pop	{r3, pc}
+ 750              		.cfi_endproc
+ 751              	.LFE360:
+ 753              		.section	.rodata.LoRA_begin.str1.4,"aMS",%progbits,1
+ 754              		.align	2
+ 755              	.LC0:
+ 756 0000 25780A00 		.ascii	"%x\012\000"
+ 757              		.section	.text.LoRA_begin,"ax",%progbits
+ 758              		.align	1
+ 759              		.global	LoRA_begin
+ 760              		.syntax unified
+ 761              		.thumb
+ 762              		.thumb_func
+ 763              		.fpu fpv5-d16
+ 765              	LoRA_begin:
+ 766              	.LVL72:
+ 767              	.LFB361:
+ 174:Core/Src/AvioNEXT.c **** 
+ 175:Core/Src/AvioNEXT.c **** void LoRA_begin(long frequency){
+ 768              		.loc 1 175 32 is_stmt 1 view -0
+ 769              		.cfi_startproc
+ 770              		@ args = 0, pretend = 0, frame = 104
+ 771              		@ frame_needed = 0, uses_anonymous_args = 0
+ 772              		.loc 1 175 32 is_stmt 0 view .LVU125
+ 773 0000 10B5     		push	{r4, lr}
+ 774              	.LCFI21:
+ 775              		.cfi_def_cfa_offset 8
+ 776              		.cfi_offset 4, -8
+ 777              		.cfi_offset 14, -4
+ 778 0002 9AB0     		sub	sp, sp, #104
+ 779              	.LCFI22:
+ 780              		.cfi_def_cfa_offset 112
+ 781 0004 0446     		mov	r4, r0
+ 176:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
+ 782              		.loc 1 176 2 is_stmt 1 view .LVU126
+ 783 0006 0122     		movs	r2, #1
+ 784 0008 1146     		mov	r1, r2
+ 785 000a 1B48     		ldr	r0, .L49
+ 786              	.LVL73:
+ 787              		.loc 1 176 2 is_stmt 0 view .LVU127
+ 788 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 789              	.LVL74:
+ 177:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
+ 790              		.loc 1 177 2 is_stmt 1 view .LVU128
+ 791 0010 0122     		movs	r2, #1
+ 792 0012 4FF40041 		mov	r1, #32768
+ 793 0016 1948     		ldr	r0, .L49+4
+ 794 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 795              	.LVL75:
+ 178:Core/Src/AvioNEXT.c **** 
+ 179:Core/Src/AvioNEXT.c **** 	uint8_t version = LoRA_Read_Register(REG_VERSION);
+ 796              		.loc 1 179 2 view .LVU129
+ 797              		.loc 1 179 20 is_stmt 0 view .LVU130
+ 798 001c 4220     		movs	r0, #66
+ 799 001e FFF7FEFF 		bl	LoRA_Read_Register
+ARM GAS  /tmp/ccH2036k.s 			page 18
+
+
+ 800              	.LVL76:
+ 801 0022 0246     		mov	r2, r0
+ 802              	.LVL77:
+ 180:Core/Src/AvioNEXT.c ****     char data_debug[100];
+ 803              		.loc 1 180 5 is_stmt 1 view .LVU131
+ 181:Core/Src/AvioNEXT.c **** 	sprintf( data_debug,  "%x\n", version);
+ 804              		.loc 1 181 2 view .LVU132
+ 805 0024 1649     		ldr	r1, .L49+8
+ 806 0026 01A8     		add	r0, sp, #4
+ 807 0028 FFF7FEFF 		bl	sprintf
+ 808              	.LVL78:
+ 182:Core/Src/AvioNEXT.c **** 	CDC_Transmit_HS(data_debug, strlen(data_debug));
+ 809              		.loc 1 182 2 view .LVU133
+ 810 002c 01A8     		add	r0, sp, #4
+ 811 002e FFF7FEFF 		bl	strlen
+ 812              	.LVL79:
+ 813 0032 0146     		mov	r1, r0
+ 814 0034 01A8     		add	r0, sp, #4
+ 815 0036 FFF7FEFF 		bl	CDC_Transmit_HS
+ 816              	.LVL80:
+ 183:Core/Src/AvioNEXT.c **** 
+ 184:Core/Src/AvioNEXT.c **** 	LoRA_sleep();
+ 817              		.loc 1 184 2 view .LVU134
+ 818 003a FFF7FEFF 		bl	LoRA_sleep
+ 819              	.LVL81:
+ 185:Core/Src/AvioNEXT.c **** 	LoRA_set_frequency(frequency);
+ 820              		.loc 1 185 2 view .LVU135
+ 821 003e 2046     		mov	r0, r4
+ 822 0040 FFF7FEFF 		bl	LoRA_set_frequency
+ 823              	.LVL82:
+ 186:Core/Src/AvioNEXT.c **** 
+ 187:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FIFO_RX_BASE_ADDR, 0);
+ 824              		.loc 1 187 2 view .LVU136
+ 825 0044 0021     		movs	r1, #0
+ 826 0046 0F20     		movs	r0, #15
+ 827 0048 FFF7FEFF 		bl	LoRA_Write_Register
+ 828              	.LVL83:
+ 188:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FIFO_TX_BASE_ADDR, 0);
+ 829              		.loc 1 188 2 view .LVU137
+ 830 004c 0021     		movs	r1, #0
+ 831 004e 0E20     		movs	r0, #14
+ 832 0050 FFF7FEFF 		bl	LoRA_Write_Register
+ 833              	.LVL84:
+ 189:Core/Src/AvioNEXT.c **** 
+ 190:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_LNA, LoRA_Read_Register(REG_LNA) | 0x03); //LNA settings
+ 834              		.loc 1 190 2 view .LVU138
+ 835              		.loc 1 190 31 is_stmt 0 view .LVU139
+ 836 0054 0C20     		movs	r0, #12
+ 837 0056 FFF7FEFF 		bl	LoRA_Read_Register
+ 838              	.LVL85:
+ 839              		.loc 1 190 2 view .LVU140
+ 840 005a 40F00301 		orr	r1, r0, #3
+ 841 005e C9B2     		uxtb	r1, r1
+ 842 0060 0C20     		movs	r0, #12
+ 843 0062 FFF7FEFF 		bl	LoRA_Write_Register
+ 844              	.LVL86:
+ 191:Core/Src/AvioNEXT.c **** 
+ARM GAS  /tmp/ccH2036k.s 			page 19
+
+
+ 192:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_MODEM_CONFIG_3, 0x04);
+ 845              		.loc 1 192 2 is_stmt 1 view .LVU141
+ 846 0066 0421     		movs	r1, #4
+ 847 0068 2620     		movs	r0, #38
+ 848 006a FFF7FEFF 		bl	LoRA_Write_Register
+ 849              	.LVL87:
+ 193:Core/Src/AvioNEXT.c **** 
+ 194:Core/Src/AvioNEXT.c **** 	LoRA_setTxPower(17);
+ 850              		.loc 1 194 2 view .LVU142
+ 851 006e 1120     		movs	r0, #17
+ 852 0070 FFF7FEFF 		bl	LoRA_setTxPower
+ 853              	.LVL88:
+ 195:Core/Src/AvioNEXT.c **** 
+ 196:Core/Src/AvioNEXT.c **** }
+ 854              		.loc 1 196 1 is_stmt 0 view .LVU143
+ 855 0074 1AB0     		add	sp, sp, #104
+ 856              	.LCFI23:
+ 857              		.cfi_def_cfa_offset 8
+ 858              		@ sp needed
+ 859 0076 10BD     		pop	{r4, pc}
+ 860              	.LVL89:
+ 861              	.L50:
+ 862              		.loc 1 196 1 view .LVU144
+ 863              		.align	2
+ 864              	.L49:
+ 865 0078 000C0258 		.word	1476529152
+ 866 007c 00000258 		.word	1476526080
+ 867 0080 00000000 		.word	.LC0
+ 868              		.cfi_endproc
+ 869              	.LFE361:
+ 871              		.section	.text.LoRA_beginPacket,"ax",%progbits
+ 872              		.align	1
+ 873              		.global	LoRA_beginPacket
+ 874              		.syntax unified
+ 875              		.thumb
+ 876              		.thumb_func
+ 877              		.fpu fpv5-d16
+ 879              	LoRA_beginPacket:
+ 880              	.LFB362:
+ 197:Core/Src/AvioNEXT.c **** 
+ 198:Core/Src/AvioNEXT.c **** 
+ 199:Core/Src/AvioNEXT.c **** void LoRA_beginPacket(){
+ 881              		.loc 1 199 24 is_stmt 1 view -0
+ 882              		.cfi_startproc
+ 883              		@ args = 0, pretend = 0, frame = 0
+ 884              		@ frame_needed = 0, uses_anonymous_args = 0
+ 885 0000 08B5     		push	{r3, lr}
+ 886              	.LCFI24:
+ 887              		.cfi_def_cfa_offset 8
+ 888              		.cfi_offset 3, -8
+ 889              		.cfi_offset 14, -4
+ 200:Core/Src/AvioNEXT.c **** 	LoRA_explicit_header_mode();
+ 890              		.loc 1 200 2 view .LVU146
+ 891 0002 FFF7FEFF 		bl	LoRA_explicit_header_mode
+ 892              	.LVL90:
+ 201:Core/Src/AvioNEXT.c **** 
+ 202:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+ARM GAS  /tmp/ccH2036k.s 			page 20
+
+
+ 893              		.loc 1 202 2 view .LVU147
+ 894 0006 0021     		movs	r1, #0
+ 895 0008 0D20     		movs	r0, #13
+ 896 000a FFF7FEFF 		bl	LoRA_Write_Register
+ 897              	.LVL91:
+ 203:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
+ 898              		.loc 1 203 2 view .LVU148
+ 899 000e 0021     		movs	r1, #0
+ 900 0010 2220     		movs	r0, #34
+ 901 0012 FFF7FEFF 		bl	LoRA_Write_Register
+ 902              	.LVL92:
+ 204:Core/Src/AvioNEXT.c **** }
+ 903              		.loc 1 204 1 is_stmt 0 view .LVU149
+ 904 0016 08BD     		pop	{r3, pc}
+ 905              		.cfi_endproc
+ 906              	.LFE362:
+ 908              		.section	.text.LoRA_endPacket,"ax",%progbits
+ 909              		.align	1
+ 910              		.global	LoRA_endPacket
+ 911              		.syntax unified
+ 912              		.thumb
+ 913              		.thumb_func
+ 914              		.fpu fpv5-d16
+ 916              	LoRA_endPacket:
+ 917              	.LFB363:
+ 205:Core/Src/AvioNEXT.c **** 
+ 206:Core/Src/AvioNEXT.c **** void LoRA_endPacket(){
+ 918              		.loc 1 206 22 is_stmt 1 view -0
+ 919              		.cfi_startproc
+ 920              		@ args = 0, pretend = 0, frame = 0
+ 921              		@ frame_needed = 0, uses_anonymous_args = 0
+ 922 0000 08B5     		push	{r3, lr}
+ 923              	.LCFI25:
+ 924              		.cfi_def_cfa_offset 8
+ 925              		.cfi_offset 3, -8
+ 926              		.cfi_offset 14, -4
+ 207:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
+ 927              		.loc 1 207 2 view .LVU151
+ 928 0002 8321     		movs	r1, #131
+ 929 0004 0120     		movs	r0, #1
+ 930 0006 FFF7FEFF 		bl	LoRA_Write_Register
+ 931              	.LVL93:
+ 208:Core/Src/AvioNEXT.c **** 
+ 209:Core/Src/AvioNEXT.c **** 	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
+ 932              		.loc 1 209 2 view .LVU152
+ 933              	.L54:
+ 210:Core/Src/AvioNEXT.c **** 
+ 211:Core/Src/AvioNEXT.c **** 	}
+ 934              		.loc 1 211 2 discriminator 1 view .LVU153
+ 209:Core/Src/AvioNEXT.c **** 
+ 935              		.loc 1 209 7 discriminator 1 view .LVU154
+ 209:Core/Src/AvioNEXT.c **** 
+ 936              		.loc 1 209 9 is_stmt 0 discriminator 1 view .LVU155
+ 937 000a 1220     		movs	r0, #18
+ 938 000c FFF7FEFF 		bl	LoRA_Read_Register
+ 939              	.LVL94:
+ 209:Core/Src/AvioNEXT.c **** 
+ARM GAS  /tmp/ccH2036k.s 			page 21
+
+
+ 940              		.loc 1 209 7 discriminator 1 view .LVU156
+ 941 0010 10F0080F 		tst	r0, #8
+ 942 0014 F9D0     		beq	.L54
+ 212:Core/Src/AvioNEXT.c **** 
+ 213:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
+ 943              		.loc 1 213 2 is_stmt 1 view .LVU157
+ 944 0016 0821     		movs	r1, #8
+ 945 0018 1220     		movs	r0, #18
+ 946 001a FFF7FEFF 		bl	LoRA_Write_Register
+ 947              	.LVL95:
+ 214:Core/Src/AvioNEXT.c **** 
+ 215:Core/Src/AvioNEXT.c **** }
+ 948              		.loc 1 215 1 is_stmt 0 view .LVU158
+ 949 001e 08BD     		pop	{r3, pc}
+ 950              		.cfi_endproc
+ 951              	.LFE363:
+ 953              		.section	.text.LoRA_parsePacket,"ax",%progbits
+ 954              		.align	1
+ 955              		.global	LoRA_parsePacket
+ 956              		.syntax unified
+ 957              		.thumb
+ 958              		.thumb_func
+ 959              		.fpu fpv5-d16
+ 961              	LoRA_parsePacket:
+ 962              	.LFB364:
+ 216:Core/Src/AvioNEXT.c **** 
+ 217:Core/Src/AvioNEXT.c **** 
+ 218:Core/Src/AvioNEXT.c **** int LoRA_parsePacket(){
+ 963              		.loc 1 218 23 is_stmt 1 view -0
+ 964              		.cfi_startproc
+ 965              		@ args = 0, pretend = 0, frame = 0
+ 966              		@ frame_needed = 0, uses_anonymous_args = 0
+ 967 0000 10B5     		push	{r4, lr}
+ 968              	.LCFI26:
+ 969              		.cfi_def_cfa_offset 8
+ 970              		.cfi_offset 4, -8
+ 971              		.cfi_offset 14, -4
+ 219:Core/Src/AvioNEXT.c **** 	int packetLenght = 0;
+ 972              		.loc 1 219 2 view .LVU160
+ 973              	.LVL96:
+ 220:Core/Src/AvioNEXT.c **** 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+ 974              		.loc 1 220 2 view .LVU161
+ 975              		.loc 1 220 17 is_stmt 0 view .LVU162
+ 976 0002 1220     		movs	r0, #18
+ 977 0004 FFF7FEFF 		bl	LoRA_Read_Register
+ 978              	.LVL97:
+ 979 0008 0446     		mov	r4, r0
+ 980              	.LVL98:
+ 221:Core/Src/AvioNEXT.c **** 
+ 222:Core/Src/AvioNEXT.c **** 	LoRA_explicit_header_mode();
+ 981              		.loc 1 222 2 is_stmt 1 view .LVU163
+ 982 000a FFF7FEFF 		bl	LoRA_explicit_header_mode
+ 983              	.LVL99:
+ 223:Core/Src/AvioNEXT.c **** 
+ 224:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
+ 984              		.loc 1 224 2 view .LVU164
+ 985 000e 2146     		mov	r1, r4
+ARM GAS  /tmp/ccH2036k.s 			page 22
+
+
+ 986 0010 1220     		movs	r0, #18
+ 987 0012 FFF7FEFF 		bl	LoRA_Write_Register
+ 988              	.LVL100:
+ 225:Core/Src/AvioNEXT.c **** 
+ 226:Core/Src/AvioNEXT.c **** 	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
+ 989              		.loc 1 226 2 view .LVU165
+ 990              		.loc 1 226 5 is_stmt 0 view .LVU166
+ 991 0016 04F06004 		and	r4, r4, #96
+ 992              	.LVL101:
+ 993              		.loc 1 226 5 view .LVU167
+ 994 001a 402C     		cmp	r4, #64
+ 995 001c 06D0     		beq	.L61
+ 227:Core/Src/AvioNEXT.c **** 		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
+ 228:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+ 229:Core/Src/AvioNEXT.c **** 		LoRA_idle();
+ 230:Core/Src/AvioNEXT.c **** 	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+ 996              		.loc 1 230 9 is_stmt 1 view .LVU168
+ 997              		.loc 1 230 13 is_stmt 0 view .LVU169
+ 998 001e 0120     		movs	r0, #1
+ 999 0020 FFF7FEFF 		bl	LoRA_Read_Register
+ 1000              	.LVL102:
+ 1001              		.loc 1 230 12 view .LVU170
+ 1002 0024 8628     		cmp	r0, #134
+ 1003 0026 10D1     		bne	.L62
+ 219:Core/Src/AvioNEXT.c **** 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+ 1004              		.loc 1 219 6 view .LVU171
+ 1005 0028 0024     		movs	r4, #0
+ 231:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
+ 232:Core/Src/AvioNEXT.c **** 
+ 233:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
+ 234:Core/Src/AvioNEXT.c **** 	}
+ 235:Core/Src/AvioNEXT.c **** 	return packetLenght;
+ 1006              		.loc 1 235 2 is_stmt 1 view .LVU172
+ 1007              		.loc 1 235 9 is_stmt 0 view .LVU173
+ 1008 002a 0CE0     		b	.L56
+ 1009              	.L61:
+ 227:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+ 1010              		.loc 1 227 3 is_stmt 1 view .LVU174
+ 227:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+ 1011              		.loc 1 227 18 is_stmt 0 view .LVU175
+ 1012 002c 1320     		movs	r0, #19
+ 1013 002e FFF7FEFF 		bl	LoRA_Read_Register
+ 1014              	.LVL103:
+ 227:Core/Src/AvioNEXT.c **** 		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
+ 1015              		.loc 1 227 16 view .LVU176
+ 1016 0032 0446     		mov	r4, r0
+ 1017              	.LVL104:
+ 228:Core/Src/AvioNEXT.c **** 		LoRA_idle();
+ 1018              		.loc 1 228 3 is_stmt 1 view .LVU177
+ 1019 0034 1020     		movs	r0, #16
+ 1020              	.LVL105:
+ 228:Core/Src/AvioNEXT.c **** 		LoRA_idle();
+ 1021              		.loc 1 228 3 is_stmt 0 view .LVU178
+ 1022 0036 FFF7FEFF 		bl	LoRA_Read_Register
+ 1023              	.LVL106:
+ 1024 003a 0146     		mov	r1, r0
+ 1025 003c 0D20     		movs	r0, #13
+ARM GAS  /tmp/ccH2036k.s 			page 23
+
+
+ 1026 003e FFF7FEFF 		bl	LoRA_Write_Register
+ 1027              	.LVL107:
+ 229:Core/Src/AvioNEXT.c **** 	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
+ 1028              		.loc 1 229 3 is_stmt 1 view .LVU179
+ 1029 0042 FFF7FEFF 		bl	LoRA_idle
+ 1030              	.LVL108:
+ 1031              	.L56:
+ 236:Core/Src/AvioNEXT.c **** 
+ 237:Core/Src/AvioNEXT.c **** }
+ 1032              		.loc 1 237 1 is_stmt 0 view .LVU180
+ 1033 0046 2046     		mov	r0, r4
+ 1034 0048 10BD     		pop	{r4, pc}
+ 1035              	.LVL109:
+ 1036              	.L62:
+ 231:Core/Src/AvioNEXT.c **** 
+ 1037              		.loc 1 231 3 is_stmt 1 view .LVU181
+ 1038 004a 0021     		movs	r1, #0
+ 1039 004c 0D20     		movs	r0, #13
+ 1040 004e FFF7FEFF 		bl	LoRA_Write_Register
+ 1041              	.LVL110:
+ 233:Core/Src/AvioNEXT.c **** 	}
+ 1042              		.loc 1 233 3 view .LVU182
+ 1043 0052 8621     		movs	r1, #134
+ 1044 0054 0120     		movs	r0, #1
+ 1045 0056 FFF7FEFF 		bl	LoRA_Write_Register
+ 1046              	.LVL111:
+ 219:Core/Src/AvioNEXT.c **** 	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
+ 1047              		.loc 1 219 6 is_stmt 0 view .LVU183
+ 1048 005a 0024     		movs	r4, #0
+ 1049 005c F3E7     		b	.L56
+ 1050              		.cfi_endproc
+ 1051              	.LFE364:
+ 1053              		.section	.text.LoRA_sendPacket,"ax",%progbits
+ 1054              		.align	1
+ 1055              		.global	LoRA_sendPacket
+ 1056              		.syntax unified
+ 1057              		.thumb
+ 1058              		.thumb_func
+ 1059              		.fpu fpv5-d16
+ 1061              	LoRA_sendPacket:
+ 1062              	.LVL112:
+ 1063              	.LFB365:
+ 238:Core/Src/AvioNEXT.c **** 
+ 239:Core/Src/AvioNEXT.c **** void LoRA_sendPacket(char * data){
+ 1064              		.loc 1 239 34 is_stmt 1 view -0
+ 1065              		.cfi_startproc
+ 1066              		@ args = 0, pretend = 0, frame = 0
+ 1067              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1068              		.loc 1 239 34 is_stmt 0 view .LVU185
+ 1069 0000 38B5     		push	{r3, r4, r5, lr}
+ 1070              	.LCFI27:
+ 1071              		.cfi_def_cfa_offset 16
+ 1072              		.cfi_offset 3, -16
+ 1073              		.cfi_offset 4, -12
+ 1074              		.cfi_offset 5, -8
+ 1075              		.cfi_offset 14, -4
+ 1076 0002 0546     		mov	r5, r0
+ARM GAS  /tmp/ccH2036k.s 			page 24
+
+
+ 240:Core/Src/AvioNEXT.c ****     LoRA_beginPacket();
+ 1077              		.loc 1 240 5 is_stmt 1 view .LVU186
+ 1078 0004 FFF7FEFF 		bl	LoRA_beginPacket
+ 1079              	.LVL113:
+ 241:Core/Src/AvioNEXT.c ****     for(int i = 0; i < strlen(data); i++){
+ 1080              		.loc 1 241 5 view .LVU187
+ 1081              	.LBB2:
+ 1082              		.loc 1 241 9 view .LVU188
+ 1083              		.loc 1 241 13 is_stmt 0 view .LVU189
+ 1084 0008 0024     		movs	r4, #0
+ 1085              	.LVL114:
+ 1086              	.L64:
+ 1087              		.loc 1 241 20 is_stmt 1 discriminator 1 view .LVU190
+ 1088              		.loc 1 241 24 is_stmt 0 discriminator 1 view .LVU191
+ 1089 000a 2846     		mov	r0, r5
+ 1090 000c FFF7FEFF 		bl	strlen
+ 1091              	.LVL115:
+ 1092              		.loc 1 241 5 discriminator 1 view .LVU192
+ 1093 0010 A042     		cmp	r0, r4
+ 1094 0012 05D9     		bls	.L67
+ 242:Core/Src/AvioNEXT.c ****     	LoRA_Write_Register(REG_FIFO, data[i]);
+ 1095              		.loc 1 242 6 is_stmt 1 discriminator 3 view .LVU193
+ 1096 0014 295D     		ldrb	r1, [r5, r4]	@ zero_extendqisi2
+ 1097 0016 0020     		movs	r0, #0
+ 1098 0018 FFF7FEFF 		bl	LoRA_Write_Register
+ 1099              	.LVL116:
+ 241:Core/Src/AvioNEXT.c ****     for(int i = 0; i < strlen(data); i++){
+ 1100              		.loc 1 241 38 discriminator 3 view .LVU194
+ 241:Core/Src/AvioNEXT.c ****     for(int i = 0; i < strlen(data); i++){
+ 1101              		.loc 1 241 39 is_stmt 0 discriminator 3 view .LVU195
+ 1102 001c 0134     		adds	r4, r4, #1
+ 1103              	.LVL117:
+ 241:Core/Src/AvioNEXT.c ****     for(int i = 0; i < strlen(data); i++){
+ 1104              		.loc 1 241 39 discriminator 3 view .LVU196
+ 1105 001e F4E7     		b	.L64
+ 1106              	.L67:
+ 241:Core/Src/AvioNEXT.c ****     for(int i = 0; i < strlen(data); i++){
+ 1107              		.loc 1 241 39 discriminator 3 view .LVU197
+ 1108              	.LBE2:
+ 243:Core/Src/AvioNEXT.c ****     }
+ 244:Core/Src/AvioNEXT.c ****     LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
+ 1109              		.loc 1 244 5 is_stmt 1 view .LVU198
+ 1110 0020 C1B2     		uxtb	r1, r0
+ 1111 0022 2220     		movs	r0, #34
+ 1112 0024 FFF7FEFF 		bl	LoRA_Write_Register
+ 1113              	.LVL118:
+ 245:Core/Src/AvioNEXT.c ****     LoRA_endPacket();
+ 1114              		.loc 1 245 5 view .LVU199
+ 1115 0028 FFF7FEFF 		bl	LoRA_endPacket
+ 1116              	.LVL119:
+ 246:Core/Src/AvioNEXT.c **** }
+ 1117              		.loc 1 246 1 is_stmt 0 view .LVU200
+ 1118 002c 38BD     		pop	{r3, r4, r5, pc}
+ 1119              		.loc 1 246 1 view .LVU201
+ 1120              		.cfi_endproc
+ 1121              	.LFE365:
+ 1123              		.section	.text.recv_packet,"ax",%progbits
+ARM GAS  /tmp/ccH2036k.s 			page 25
+
+
+ 1124              		.align	1
+ 1125              		.global	recv_packet
+ 1126              		.syntax unified
+ 1127              		.thumb
+ 1128              		.thumb_func
+ 1129              		.fpu fpv5-d16
+ 1131              	recv_packet:
+ 1132              	.LVL120:
+ 1133              	.LFB366:
+ 247:Core/Src/AvioNEXT.c **** 
+ 248:Core/Src/AvioNEXT.c **** 
+ 249:Core/Src/AvioNEXT.c **** int recv_packet(char *LoRA_data, int max_length) {
+ 1134              		.loc 1 249 50 is_stmt 1 view -0
+ 1135              		.cfi_startproc
+ 1136              		@ args = 0, pretend = 0, frame = 0
+ 1137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1138              		.loc 1 249 50 is_stmt 0 view .LVU203
+ 1139 0000 70B5     		push	{r4, r5, r6, lr}
+ 1140              	.LCFI28:
+ 1141              		.cfi_def_cfa_offset 16
+ 1142              		.cfi_offset 4, -16
+ 1143              		.cfi_offset 5, -12
+ 1144              		.cfi_offset 6, -8
+ 1145              		.cfi_offset 14, -4
+ 1146 0002 0646     		mov	r6, r0
+ 1147 0004 0C46     		mov	r4, r1
+ 250:Core/Src/AvioNEXT.c **** 	int packet_length = LoRA_parsePacket();
+ 1148              		.loc 1 250 2 is_stmt 1 view .LVU204
+ 1149              		.loc 1 250 22 is_stmt 0 view .LVU205
+ 1150 0006 FFF7FEFF 		bl	LoRA_parsePacket
+ 1151              	.LVL121:
+ 251:Core/Src/AvioNEXT.c **** 	if (max_length - 1 < packet_length) //-1 for the null terminator
+ 1152              		.loc 1 251 2 is_stmt 1 view .LVU206
+ 1153              		.loc 1 251 5 is_stmt 0 view .LVU207
+ 1154 000a A042     		cmp	r0, r4
+ 1155 000c 0DDA     		bge	.L72
+ 1156 000e 0546     		mov	r5, r0
+ 252:Core/Src/AvioNEXT.c **** 			{
+ 253:Core/Src/AvioNEXT.c **** 		return 0;
+ 254:Core/Src/AvioNEXT.c **** 	}
+ 255:Core/Src/AvioNEXT.c **** 	if (packet_length) {
+ 1157              		.loc 1 255 2 is_stmt 1 view .LVU208
+ 1158              		.loc 1 255 5 is_stmt 0 view .LVU209
+ 1159 0010 60B1     		cbz	r0, .L68
+ 1160              	.LBB3:
+ 256:Core/Src/AvioNEXT.c **** 		for (int i = 0; i < packet_length; i++) {
+ 1161              		.loc 1 256 12 view .LVU210
+ 1162 0012 0024     		movs	r4, #0
+ 1163              	.LVL122:
+ 1164              	.L70:
+ 1165              		.loc 1 256 19 is_stmt 1 discriminator 1 view .LVU211
+ 1166              		.loc 1 256 3 is_stmt 0 discriminator 1 view .LVU212
+ 1167 0014 AC42     		cmp	r4, r5
+ 1168 0016 05DA     		bge	.L75
+ 257:Core/Src/AvioNEXT.c **** 			LoRA_data[i] = LoRA_Read_Register(0x00);
+ 1169              		.loc 1 257 4 is_stmt 1 discriminator 3 view .LVU213
+ 1170              		.loc 1 257 19 is_stmt 0 discriminator 3 view .LVU214
+ARM GAS  /tmp/ccH2036k.s 			page 26
+
+
+ 1171 0018 0020     		movs	r0, #0
+ 1172 001a FFF7FEFF 		bl	LoRA_Read_Register
+ 1173              	.LVL123:
+ 1174              		.loc 1 257 17 discriminator 3 view .LVU215
+ 1175 001e 3055     		strb	r0, [r6, r4]
+ 256:Core/Src/AvioNEXT.c **** 		for (int i = 0; i < packet_length; i++) {
+ 1176              		.loc 1 256 38 is_stmt 1 discriminator 3 view .LVU216
+ 256:Core/Src/AvioNEXT.c **** 		for (int i = 0; i < packet_length; i++) {
+ 1177              		.loc 1 256 39 is_stmt 0 discriminator 3 view .LVU217
+ 1178 0020 0134     		adds	r4, r4, #1
+ 1179              	.LVL124:
+ 256:Core/Src/AvioNEXT.c **** 		for (int i = 0; i < packet_length; i++) {
+ 1180              		.loc 1 256 39 discriminator 3 view .LVU218
+ 1181 0022 F7E7     		b	.L70
+ 1182              	.L75:
+ 256:Core/Src/AvioNEXT.c **** 		for (int i = 0; i < packet_length; i++) {
+ 1183              		.loc 1 256 39 discriminator 3 view .LVU219
+ 1184              	.LBE3:
+ 258:Core/Src/AvioNEXT.c **** 		}
+ 259:Core/Src/AvioNEXT.c **** 		LoRA_data[packet_length] = '\0';
+ 1185              		.loc 1 259 3 is_stmt 1 view .LVU220
+ 1186              		.loc 1 259 28 is_stmt 0 view .LVU221
+ 1187 0024 0023     		movs	r3, #0
+ 1188 0026 7355     		strb	r3, [r6, r5]
+ 260:Core/Src/AvioNEXT.c **** 		return packet_length;
+ 1189              		.loc 1 260 3 is_stmt 1 view .LVU222
+ 1190              		.loc 1 260 10 is_stmt 0 view .LVU223
+ 1191 0028 00E0     		b	.L68
+ 1192              	.LVL125:
+ 1193              	.L72:
+ 253:Core/Src/AvioNEXT.c **** 	}
+ 1194              		.loc 1 253 10 view .LVU224
+ 1195 002a 0025     		movs	r5, #0
+ 1196              	.LVL126:
+ 1197              	.L68:
+ 261:Core/Src/AvioNEXT.c **** 	} else {
+ 262:Core/Src/AvioNEXT.c **** 		return 0;
+ 263:Core/Src/AvioNEXT.c **** 	}
+ 264:Core/Src/AvioNEXT.c **** }
+ 1198              		.loc 1 264 1 view .LVU225
+ 1199 002c 2846     		mov	r0, r5
+ 1200 002e 70BD     		pop	{r4, r5, r6, pc}
+ 1201              		.loc 1 264 1 view .LVU226
+ 1202              		.cfi_endproc
+ 1203              	.LFE366:
+ 1205              		.section	.text.reliable_send_packet,"ax",%progbits
+ 1206              		.align	1
+ 1207              		.global	reliable_send_packet
+ 1208              		.syntax unified
+ 1209              		.thumb
+ 1210              		.thumb_func
+ 1211              		.fpu fpv5-d16
+ 1213              	reliable_send_packet:
+ 1214              	.LVL127:
+ 1215              	.LFB367:
+ 265:Core/Src/AvioNEXT.c **** 
+ 266:Core/Src/AvioNEXT.c **** void reliable_send_packet(char *LoRA_data) {
+ARM GAS  /tmp/ccH2036k.s 			page 27
+
+
+ 1216              		.loc 1 266 44 is_stmt 1 view -0
+ 1217              		.cfi_startproc
+ 1218              		@ args = 0, pretend = 0, frame = 0
+ 1219              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1220              		.loc 1 266 44 is_stmt 0 view .LVU228
+ 1221 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1222              	.LCFI29:
+ 1223              		.cfi_def_cfa_offset 24
+ 1224              		.cfi_offset 3, -24
+ 1225              		.cfi_offset 4, -20
+ 1226              		.cfi_offset 5, -16
+ 1227              		.cfi_offset 6, -12
+ 1228              		.cfi_offset 7, -8
+ 1229              		.cfi_offset 14, -4
+ 1230 0002 00AF     		add	r7, sp, #0
+ 1231              	.LCFI30:
+ 1232              		.cfi_def_cfa_register 7
+ 1233 0004 0646     		mov	r6, r0
+ 267:Core/Src/AvioNEXT.c **** 	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
+ 1234              		.loc 1 267 2 is_stmt 1 view .LVU229
+ 1235              		.loc 1 267 20 is_stmt 0 view .LVU230
+ 1236 0006 FFF7FEFF 		bl	strlen
+ 1237              	.LVL128:
+ 1238              		.loc 1 267 38 view .LVU231
+ 1239 000a 85B2     		uxth	r5, r0
+ 1240              		.loc 1 267 11 view .LVU232
+ 1241 000c 0135     		adds	r5, r5, #1
+ 1242 000e ADB2     		uxth	r5, r5
+ 268:Core/Src/AvioNEXT.c **** 	char acknowledge[length];
+ 1243              		.loc 1 268 2 is_stmt 1 view .LVU233
+ 1244              	.LVL129:
+ 1245              		.loc 1 268 7 is_stmt 0 view .LVU234
+ 1246 0010 EB1D     		adds	r3, r5, #7
+ 1247 0012 DB08     		lsrs	r3, r3, #3
+ 1248 0014 6A46     		mov	r2, sp
+ 1249 0016 A2EBC303 		sub	r3, r2, r3, lsl #3
+ 1250 001a 9D46     		mov	sp, r3
+ 1251 001c 6C46     		mov	r4, sp
+ 1252              	.LVL130:
+ 269:Core/Src/AvioNEXT.c **** 	LoRA_sendPacket(LoRA_data);
+ 1253              		.loc 1 269 2 is_stmt 1 view .LVU235
+ 1254 001e 3046     		mov	r0, r6
+ 1255 0020 FFF7FEFF 		bl	LoRA_sendPacket
+ 1256              	.LVL131:
+ 1257              	.L77:
+ 270:Core/Src/AvioNEXT.c **** 	while (1) {
+ 1258              		.loc 1 270 2 view .LVU236
+ 271:Core/Src/AvioNEXT.c **** 
+ 272:Core/Src/AvioNEXT.c **** 		if (recv_packet(acknowledge, length)) {
+ 1259              		.loc 1 272 3 view .LVU237
+ 1260              		.loc 1 272 7 is_stmt 0 view .LVU238
+ 1261 0024 2946     		mov	r1, r5
+ 1262 0026 2046     		mov	r0, r4
+ 1263 0028 FFF7FEFF 		bl	recv_packet
+ 1264              	.LVL132:
+ 1265              		.loc 1 272 6 view .LVU239
+ 1266 002c 0028     		cmp	r0, #0
+ARM GAS  /tmp/ccH2036k.s 			page 28
+
+
+ 1267 002e F9D0     		beq	.L77
+ 273:Core/Src/AvioNEXT.c **** 			//cehck crc
+ 274:Core/Src/AvioNEXT.c **** 			if (strcmp(acknowledge, LoRA_data) != 0) {
+ 1268              		.loc 1 274 4 is_stmt 1 view .LVU240
+ 1269              	.LBB4:
+ 1270              		.loc 1 274 8 is_stmt 0 view .LVU241
+ 1271 0030 3146     		mov	r1, r6
+ 1272 0032 2046     		mov	r0, r4
+ 1273 0034 FFF7FEFF 		bl	strcmp
+ 1274              	.LVL133:
+ 1275              		.loc 1 274 7 view .LVU242
+ 1276 0038 18B1     		cbz	r0, .L76
+ 275:Core/Src/AvioNEXT.c **** 				LoRA_sendPacket(LoRA_data);
+ 1277              		.loc 1 275 5 is_stmt 1 view .LVU243
+ 1278 003a 3046     		mov	r0, r6
+ 1279 003c FFF7FEFF 		bl	LoRA_sendPacket
+ 1280              	.LVL134:
+ 1281 0040 F0E7     		b	.L77
+ 1282              	.L76:
+ 1283              	.LBE4:
+ 276:Core/Src/AvioNEXT.c **** 			} else {
+ 277:Core/Src/AvioNEXT.c **** 				break;
+ 278:Core/Src/AvioNEXT.c **** 			}
+ 279:Core/Src/AvioNEXT.c **** 		}
+ 280:Core/Src/AvioNEXT.c **** 
+ 281:Core/Src/AvioNEXT.c **** 		//delay
+ 282:Core/Src/AvioNEXT.c **** 	}
+ 283:Core/Src/AvioNEXT.c **** }
+ 1284              		.loc 1 283 1 is_stmt 0 view .LVU244
+ 1285 0042 BD46     		mov	sp, r7
+ 1286              	.LCFI31:
+ 1287              		.cfi_def_cfa_register 13
+ 1288              		@ sp needed
+ 1289 0044 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1290              		.loc 1 283 1 view .LVU245
+ 1291              		.cfi_endproc
+ 1292              	.LFE367:
+ 1294              		.section	.text.setServo,"ax",%progbits
+ 1295              		.align	1
+ 1296              		.global	setServo
+ 1297              		.syntax unified
+ 1298              		.thumb
+ 1299              		.thumb_func
+ 1300              		.fpu fpv5-d16
+ 1302              	setServo:
+ 1303              	.LVL135:
+ 1304              	.LFB368:
+ 284:Core/Src/AvioNEXT.c **** 
+ 285:Core/Src/AvioNEXT.c **** void setServo(int servoNum, float angle) {
+ 1305              		.loc 1 285 42 is_stmt 1 view -0
+ 1306              		.cfi_startproc
+ 1307              		@ args = 0, pretend = 0, frame = 0
+ 1308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1309              		@ link register save eliminated.
+ 286:Core/Src/AvioNEXT.c **** 
+ 287:Core/Src/AvioNEXT.c **** 	uint16_t timerVal = (int) (3000 + (4000 * (angle / 180)));
+ 1310              		.loc 1 287 2 view .LVU247
+ARM GAS  /tmp/ccH2036k.s 			page 29
+
+
+ 1311              		.loc 1 287 51 is_stmt 0 view .LVU248
+ 1312 0000 9FED167A 		vldr.32	s14, .L88
+ 1313 0004 C0EE077A 		vdiv.f32	s15, s0, s14
+ 1314              		.loc 1 287 42 view .LVU249
+ 1315 0008 9FED157A 		vldr.32	s14, .L88+4
+ 1316 000c 67EE877A 		vmul.f32	s15, s15, s14
+ 1317              		.loc 1 287 34 view .LVU250
+ 1318 0010 9FED147A 		vldr.32	s14, .L88+8
+ 1319 0014 77EE877A 		vadd.f32	s15, s15, s14
+ 1320              		.loc 1 287 22 view .LVU251
+ 1321 0018 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 1322              	.LVL136:
+ 288:Core/Src/AvioNEXT.c **** 	switch (servoNum) {
+ 1323              		.loc 1 288 2 is_stmt 1 view .LVU252
+ 1324 001c 0138     		subs	r0, r0, #1
+ 1325              	.LVL137:
+ 1326              		.loc 1 288 2 is_stmt 0 view .LVU253
+ 1327 001e 0328     		cmp	r0, #3
+ 1328 0020 1AD8     		bhi	.L81
+ 1329 0022 DFE800F0 		tbb	[pc, r0]
+ 1330              	.L84:
+ 1331 0026 02       		.byte	(.L87-.L84)/2
+ 1332 0027 08       		.byte	(.L86-.L84)/2
+ 1333 0028 0E       		.byte	(.L85-.L84)/2
+ 1334 0029 14       		.byte	(.L83-.L84)/2
+ 1335              		.p2align 1
+ 1336              	.L87:
+ 289:Core/Src/AvioNEXT.c **** 	case 1:
+ 290:Core/Src/AvioNEXT.c **** 		TIM4->CCR4 = timerVal;
+ 1337              		.loc 1 290 3 is_stmt 1 view .LVU254
+ 1338              		.loc 1 290 14 is_stmt 0 view .LVU255
+ 1339 002a 17EE903A 		vmov	r3, s15	@ int
+ 1340 002e 9BB2     		uxth	r3, r3
+ 1341 0030 0D4A     		ldr	r2, .L88+12
+ 1342 0032 1364     		str	r3, [r2, #64]
+ 291:Core/Src/AvioNEXT.c **** 		break;
+ 1343              		.loc 1 291 3 is_stmt 1 view .LVU256
+ 1344 0034 7047     		bx	lr
+ 1345              	.L86:
+ 292:Core/Src/AvioNEXT.c **** 	case 2:
+ 293:Core/Src/AvioNEXT.c **** 		TIM4->CCR3 = timerVal;
+ 1346              		.loc 1 293 3 view .LVU257
+ 1347              		.loc 1 293 14 is_stmt 0 view .LVU258
+ 1348 0036 17EE903A 		vmov	r3, s15	@ int
+ 1349 003a 9BB2     		uxth	r3, r3
+ 1350 003c 0A4A     		ldr	r2, .L88+12
+ 1351 003e D363     		str	r3, [r2, #60]
+ 294:Core/Src/AvioNEXT.c **** 		break;
+ 1352              		.loc 1 294 3 is_stmt 1 view .LVU259
+ 1353 0040 7047     		bx	lr
+ 1354              	.L85:
+ 295:Core/Src/AvioNEXT.c **** 	case 3:
+ 296:Core/Src/AvioNEXT.c **** 		TIM4->CCR2 = timerVal;
+ 1355              		.loc 1 296 3 view .LVU260
+ 1356              		.loc 1 296 14 is_stmt 0 view .LVU261
+ 1357 0042 17EE903A 		vmov	r3, s15	@ int
+ 1358 0046 9BB2     		uxth	r3, r3
+ARM GAS  /tmp/ccH2036k.s 			page 30
+
+
+ 1359 0048 074A     		ldr	r2, .L88+12
+ 1360 004a 9363     		str	r3, [r2, #56]
+ 297:Core/Src/AvioNEXT.c **** 		break;
+ 1361              		.loc 1 297 3 is_stmt 1 view .LVU262
+ 1362 004c 7047     		bx	lr
+ 1363              	.L83:
+ 298:Core/Src/AvioNEXT.c **** 	case 4:
+ 299:Core/Src/AvioNEXT.c **** 		TIM4->CCR1 = timerVal;
+ 1364              		.loc 1 299 3 view .LVU263
+ 1365              		.loc 1 299 14 is_stmt 0 view .LVU264
+ 1366 004e 17EE903A 		vmov	r3, s15	@ int
+ 1367 0052 9BB2     		uxth	r3, r3
+ 1368 0054 044A     		ldr	r2, .L88+12
+ 1369 0056 5363     		str	r3, [r2, #52]
+ 300:Core/Src/AvioNEXT.c **** 		break;
+ 1370              		.loc 1 300 3 is_stmt 1 view .LVU265
+ 1371              	.L81:
+ 301:Core/Src/AvioNEXT.c **** 
+ 302:Core/Src/AvioNEXT.c **** 	default:
+ 303:Core/Src/AvioNEXT.c **** 		break;
+ 304:Core/Src/AvioNEXT.c **** 	}
+ 305:Core/Src/AvioNEXT.c **** }
+ 1372              		.loc 1 305 1 is_stmt 0 view .LVU266
+ 1373 0058 7047     		bx	lr
+ 1374              	.L89:
+ 1375 005a 00BF     		.align	2
+ 1376              	.L88:
+ 1377 005c 00003443 		.word	1127481344
+ 1378 0060 00007A45 		.word	1165623296
+ 1379 0064 00803B45 		.word	1161527296
+ 1380 0068 00080040 		.word	1073743872
+ 1381              		.cfi_endproc
+ 1382              	.LFE368:
+ 1384              		.section	.text.triangle_space,"ax",%progbits
+ 1385              		.align	1
+ 1386              		.global	triangle_space
+ 1387              		.syntax unified
+ 1388              		.thumb
+ 1389              		.thumb_func
+ 1390              		.fpu fpv5-d16
+ 1392              	triangle_space:
+ 1393              	.LVL138:
+ 1394              	.LFB369:
+ 306:Core/Src/AvioNEXT.c **** 
+ 307:Core/Src/AvioNEXT.c **** 
+ 308:Core/Src/AvioNEXT.c **** 
+ 309:Core/Src/AvioNEXT.c **** //this function looks like this: /\_/\_/\_/\_
+ 310:Core/Src/AvioNEXT.c **** //so it's triangles with spaces between them
+ 311:Core/Src/AvioNEXT.c **** double triangle_space(double x) {
+ 1395              		.loc 1 311 33 is_stmt 1 view -0
+ 1396              		.cfi_startproc
+ 1397              		@ args = 0, pretend = 0, frame = 0
+ 1398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1399              		.loc 1 311 33 is_stmt 0 view .LVU268
+ 1400 0000 08B5     		push	{r3, lr}
+ 1401              	.LCFI32:
+ 1402              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccH2036k.s 			page 31
+
+
+ 1403              		.cfi_offset 3, -8
+ 1404              		.cfi_offset 14, -4
+ 312:Core/Src/AvioNEXT.c **** 	const double LENGTH = 3;
+ 1405              		.loc 1 312 2 is_stmt 1 view .LVU269
+ 1406              	.LVL139:
+ 313:Core/Src/AvioNEXT.c **** 	double normalized = fmod(fabs(x), LENGTH);
+ 1407              		.loc 1 313 2 view .LVU270
+ 1408              		.loc 1 313 22 is_stmt 0 view .LVU271
+ 1409 0002 B0EE081B 		vmov.f64	d1, #3.0e+0
+ 1410 0006 B0EEC00B 		vabs.f64	d0, d0
+ 1411              	.LVL140:
+ 1412              		.loc 1 313 22 view .LVU272
+ 1413 000a FFF7FEFF 		bl	fmod
+ 1414              	.LVL141:
+ 314:Core/Src/AvioNEXT.c **** 	if (normalized <= LENGTH / 3) {
+ 1415              		.loc 1 314 2 is_stmt 1 view .LVU273
+ 1416              		.loc 1 314 5 is_stmt 0 view .LVU274
+ 1417 000e B7EE007B 		vmov.f64	d7, #1.0e+0
+ 1418 0012 B4EEC70B 		vcmpe.f64	d0, d7
+ 1419 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1420 001a 09D9     		bls	.L98
+ 315:Core/Src/AvioNEXT.c **** 		return LENGTH / 3 - normalized;
+ 316:Core/Src/AvioNEXT.c **** 	} else if (normalized <= LENGTH * 2 / 3) {
+ 1421              		.loc 1 316 9 is_stmt 1 view .LVU275
+ 1422              		.loc 1 316 12 is_stmt 0 view .LVU276
+ 1423 001c B0EE007B 		vmov.f64	d7, #2.0e+0
+ 1424 0020 B4EEC70B 		vcmpe.f64	d0, d7
+ 1425 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 1426 0028 05D9     		bls	.L94
+ 317:Core/Src/AvioNEXT.c **** 		return 0;
+ 318:Core/Src/AvioNEXT.c **** 	} else {
+ 319:Core/Src/AvioNEXT.c **** 		return normalized - LENGTH * 2 / 3;
+ 1427              		.loc 1 319 3 is_stmt 1 view .LVU277
+ 1428              		.loc 1 319 21 is_stmt 0 view .LVU278
+ 1429 002a 30EE470B 		vsub.f64	d0, d0, d7
+ 1430              	.LVL142:
+ 1431              	.L90:
+ 320:Core/Src/AvioNEXT.c **** 	}
+ 321:Core/Src/AvioNEXT.c **** }
+ 1432              		.loc 1 321 1 view .LVU279
+ 1433 002e 08BD     		pop	{r3, pc}
+ 1434              	.LVL143:
+ 1435              	.L98:
+ 315:Core/Src/AvioNEXT.c **** 	} else if (normalized <= LENGTH * 2 / 3) {
+ 1436              		.loc 1 315 3 is_stmt 1 view .LVU280
+ 315:Core/Src/AvioNEXT.c **** 	} else if (normalized <= LENGTH * 2 / 3) {
+ 1437              		.loc 1 315 21 is_stmt 0 view .LVU281
+ 1438 0030 37EE400B 		vsub.f64	d0, d7, d0
+ 1439              	.LVL144:
+ 315:Core/Src/AvioNEXT.c **** 	} else if (normalized <= LENGTH * 2 / 3) {
+ 1440              		.loc 1 315 21 view .LVU282
+ 1441 0034 FBE7     		b	.L90
+ 1442              	.LVL145:
+ 1443              	.L94:
+ 317:Core/Src/AvioNEXT.c **** 		return 0;
+ 1444              		.loc 1 317 10 view .LVU283
+ 1445 0036 9FED020B 		vldr.64	d0, .L99
+ARM GAS  /tmp/ccH2036k.s 			page 32
+
+
+ 1446              	.LVL146:
+ 317:Core/Src/AvioNEXT.c **** 		return 0;
+ 1447              		.loc 1 317 10 view .LVU284
+ 1448 003a F8E7     		b	.L90
+ 1449              	.L100:
+ 1450 003c AFF30080 		.align	3
+ 1451              	.L99:
+ 1452 0040 00000000 		.word	0
+ 1453 0044 00000000 		.word	0
+ 1454              		.cfi_endproc
+ 1455              	.LFE369:
+ 1457              		.section	.text.write_EEPROM,"ax",%progbits
+ 1458              		.align	1
+ 1459              		.global	write_EEPROM
+ 1460              		.syntax unified
+ 1461              		.thumb
+ 1462              		.thumb_func
+ 1463              		.fpu fpv5-d16
+ 1465              	write_EEPROM:
+ 1466              	.LVL147:
+ 1467              	.LFB370:
+ 322:Core/Src/AvioNEXT.c **** 
+ 323:Core/Src/AvioNEXT.c **** int write_EEPROM(uint32_t address, uint8_t data) {
+ 1468              		.loc 1 323 50 is_stmt 1 view -0
+ 1469              		.cfi_startproc
+ 1470              		@ args = 0, pretend = 0, frame = 8
+ 1471              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1472              		.loc 1 323 50 is_stmt 0 view .LVU286
+ 1473 0000 00B5     		push	{lr}
+ 1474              	.LCFI33:
+ 1475              		.cfi_def_cfa_offset 4
+ 1476              		.cfi_offset 14, -4
+ 1477 0002 87B0     		sub	sp, sp, #28
+ 1478              	.LCFI34:
+ 1479              		.cfi_def_cfa_offset 32
+ 1480 0004 8DF81710 		strb	r1, [sp, #23]
+ 324:Core/Src/AvioNEXT.c **** 	if (address > 0x1FFFF) {
+ 1481              		.loc 1 324 2 is_stmt 1 view .LVU287
+ 1482              		.loc 1 324 5 is_stmt 0 view .LVU288
+ 1483 0008 B0F5003F 		cmp	r0, #131072
+ 1484 000c 14D2     		bcs	.L103
+ 325:Core/Src/AvioNEXT.c **** 		return -1;
+ 326:Core/Src/AvioNEXT.c **** 	}
+ 327:Core/Src/AvioNEXT.c **** 
+ 328:Core/Src/AvioNEXT.c **** 	uint8_t writeAddress = (uint8_t) (0b10100000
+ 1485              		.loc 1 328 2 is_stmt 1 view .LVU289
+ 329:Core/Src/AvioNEXT.c **** 			| ((address >> 16) & 0b11111110));
+ 1486              		.loc 1 329 16 is_stmt 0 view .LVU290
+ 1487 000e 010C     		lsrs	r1, r0, #16
+ 1488              	.LVL148:
+ 1489              		.loc 1 329 4 view .LVU291
+ 1490 0010 01F05E01 		and	r1, r1, #94
+ 1491              	.LVL149:
+ 330:Core/Src/AvioNEXT.c **** 
+ 331:Core/Src/AvioNEXT.c **** 	uint16_t memAddr = (uint16_t) address;
+ 1492              		.loc 1 331 2 is_stmt 1 view .LVU292
+ 332:Core/Src/AvioNEXT.c **** 
+ARM GAS  /tmp/ccH2036k.s 			page 33
+
+
+ 333:Core/Src/AvioNEXT.c **** 	HAL_I2C_Mem_Write(&hi2c2, writeAddress, memAddr, I2C_MEMADD_SIZE_16BIT,
+ 1493              		.loc 1 333 2 view .LVU293
+ 1494 0014 6423     		movs	r3, #100
+ 1495 0016 0293     		str	r3, [sp, #8]
+ 1496 0018 0123     		movs	r3, #1
+ 1497 001a 0193     		str	r3, [sp, #4]
+ 1498 001c 0DF11703 		add	r3, sp, #23
+ 1499              	.LVL150:
+ 1500              		.loc 1 333 2 is_stmt 0 view .LVU294
+ 1501 0020 0093     		str	r3, [sp]
+ 1502 0022 0223     		movs	r3, #2
+ 1503              	.LVL151:
+ 1504              		.loc 1 333 2 view .LVU295
+ 1505 0024 82B2     		uxth	r2, r0
+ 1506 0026 41F0A001 		orr	r1, r1, #160
+ 1507              	.LVL152:
+ 1508              		.loc 1 333 2 view .LVU296
+ 1509 002a 0548     		ldr	r0, .L105
+ 1510              	.LVL153:
+ 1511              		.loc 1 333 2 view .LVU297
+ 1512 002c FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 1513              	.LVL154:
+ 334:Core/Src/AvioNEXT.c **** 			&data, 1, 100);
+ 335:Core/Src/AvioNEXT.c **** 	return 0;
+ 1514              		.loc 1 335 2 is_stmt 1 view .LVU298
+ 1515              		.loc 1 335 9 is_stmt 0 view .LVU299
+ 1516 0030 0020     		movs	r0, #0
+ 1517              	.LVL155:
+ 1518              	.L101:
+ 336:Core/Src/AvioNEXT.c **** }
+ 1519              		.loc 1 336 1 view .LVU300
+ 1520 0032 07B0     		add	sp, sp, #28
+ 1521              	.LCFI35:
+ 1522              		.cfi_remember_state
+ 1523              		.cfi_def_cfa_offset 4
+ 1524              		@ sp needed
+ 1525 0034 5DF804FB 		ldr	pc, [sp], #4
+ 1526              	.LVL156:
+ 1527              	.L103:
+ 1528              	.LCFI36:
+ 1529              		.cfi_restore_state
+ 325:Core/Src/AvioNEXT.c **** 	}
+ 1530              		.loc 1 325 10 view .LVU301
+ 1531 0038 4FF0FF30 		mov	r0, #-1
+ 1532              	.LVL157:
+ 325:Core/Src/AvioNEXT.c **** 	}
+ 1533              		.loc 1 325 10 view .LVU302
+ 1534 003c F9E7     		b	.L101
+ 1535              	.L106:
+ 1536 003e 00BF     		.align	2
+ 1537              	.L105:
+ 1538 0040 00000000 		.word	hi2c2
+ 1539              		.cfi_endproc
+ 1540              	.LFE370:
+ 1542              		.section	.text.read_EEPROM,"ax",%progbits
+ 1543              		.align	1
+ 1544              		.global	read_EEPROM
+ARM GAS  /tmp/ccH2036k.s 			page 34
+
+
+ 1545              		.syntax unified
+ 1546              		.thumb
+ 1547              		.thumb_func
+ 1548              		.fpu fpv5-d16
+ 1550              	read_EEPROM:
+ 1551              	.LVL158:
+ 1552              	.LFB371:
+ 337:Core/Src/AvioNEXT.c **** 
+ 338:Core/Src/AvioNEXT.c **** uint8_t read_EEPROM(uint32_t address) {
+ 1553              		.loc 1 338 39 is_stmt 1 view -0
+ 1554              		.cfi_startproc
+ 1555              		@ args = 0, pretend = 0, frame = 8
+ 1556              		@ frame_needed = 0, uses_anonymous_args = 0
+ 339:Core/Src/AvioNEXT.c **** 	if (address > 0x1FFFF) {
+ 1557              		.loc 1 339 2 view .LVU304
+ 1558              		.loc 1 339 5 is_stmt 0 view .LVU305
+ 1559 0000 B0F5003F 		cmp	r0, #131072
+ 1560 0004 16D2     		bcs	.L109
+ 338:Core/Src/AvioNEXT.c **** 	if (address > 0x1FFFF) {
+ 1561              		.loc 1 338 39 view .LVU306
+ 1562 0006 00B5     		push	{lr}
+ 1563              	.LCFI37:
+ 1564              		.cfi_def_cfa_offset 4
+ 1565              		.cfi_offset 14, -4
+ 1566 0008 87B0     		sub	sp, sp, #28
+ 1567              	.LCFI38:
+ 1568              		.cfi_def_cfa_offset 32
+ 340:Core/Src/AvioNEXT.c **** 		return -1;
+ 341:Core/Src/AvioNEXT.c **** 	}
+ 342:Core/Src/AvioNEXT.c **** 	uint8_t writeAddress = (uint8_t) (0b10100001 | ((address >> 16)));
+ 1569              		.loc 1 342 2 is_stmt 1 view .LVU307
+ 1570              		.loc 1 342 25 is_stmt 0 view .LVU308
+ 1571 000a C0F30741 		ubfx	r1, r0, #16, #8
+ 1572              	.LVL159:
+ 343:Core/Src/AvioNEXT.c **** 
+ 344:Core/Src/AvioNEXT.c **** 	uint16_t memAddr = (uint16_t) address;
+ 1573              		.loc 1 344 2 is_stmt 1 view .LVU309
+ 345:Core/Src/AvioNEXT.c **** 
+ 346:Core/Src/AvioNEXT.c **** 	uint8_t data;
+ 1574              		.loc 1 346 2 view .LVU310
+ 347:Core/Src/AvioNEXT.c **** 	HAL_I2C_Mem_Read(&hi2c2, writeAddress, memAddr, 2, &data, 1, 100);
+ 1575              		.loc 1 347 2 view .LVU311
+ 1576 000e 6423     		movs	r3, #100
+ 1577 0010 0293     		str	r3, [sp, #8]
+ 1578 0012 0123     		movs	r3, #1
+ 1579 0014 0193     		str	r3, [sp, #4]
+ 1580 0016 0DF11703 		add	r3, sp, #23
+ 1581 001a 0093     		str	r3, [sp]
+ 1582 001c 0223     		movs	r3, #2
+ 1583 001e 82B2     		uxth	r2, r0
+ 1584 0020 41F0A101 		orr	r1, r1, #161
+ 1585              	.LVL160:
+ 1586              		.loc 1 347 2 is_stmt 0 view .LVU312
+ 1587 0024 0448     		ldr	r0, .L114
+ 1588              	.LVL161:
+ 1589              		.loc 1 347 2 view .LVU313
+ 1590 0026 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ARM GAS  /tmp/ccH2036k.s 			page 35
+
+
+ 1591              	.LVL162:
+ 348:Core/Src/AvioNEXT.c **** 	return data;
+ 1592              		.loc 1 348 2 is_stmt 1 view .LVU314
+ 1593              		.loc 1 348 9 is_stmt 0 view .LVU315
+ 1594 002a 9DF81700 		ldrb	r0, [sp, #23]	@ zero_extendqisi2
+ 349:Core/Src/AvioNEXT.c **** }
+ 1595              		.loc 1 349 1 view .LVU316
+ 1596 002e 07B0     		add	sp, sp, #28
+ 1597              	.LCFI39:
+ 1598              		.cfi_def_cfa_offset 4
+ 1599              		@ sp needed
+ 1600 0030 5DF804FB 		ldr	pc, [sp], #4
+ 1601              	.LVL163:
+ 1602              	.L109:
+ 1603              	.LCFI40:
+ 1604              		.cfi_def_cfa_offset 0
+ 1605              		.cfi_restore 14
+ 340:Core/Src/AvioNEXT.c **** 	}
+ 1606              		.loc 1 340 10 view .LVU317
+ 1607 0034 FF20     		movs	r0, #255
+ 1608              	.LVL164:
+ 1609              		.loc 1 349 1 view .LVU318
+ 1610 0036 7047     		bx	lr
+ 1611              	.L115:
+ 1612              		.align	2
+ 1613              	.L114:
+ 1614 0038 00000000 		.word	hi2c2
+ 1615              		.cfi_endproc
+ 1616              	.LFE371:
+ 1618              		.section	.text.setLEDs,"ax",%progbits
+ 1619              		.align	1
+ 1620              		.global	setLEDs
+ 1621              		.syntax unified
+ 1622              		.thumb
+ 1623              		.thumb_func
+ 1624              		.fpu fpv5-d16
+ 1626              	setLEDs:
+ 1627              	.LVL165:
+ 1628              	.LFB372:
+ 350:Core/Src/AvioNEXT.c **** 
+ 351:Core/Src/AvioNEXT.c **** void setLEDs(uint8_t LED_Color_Data[14][3]) {
+ 1629              		.loc 1 351 45 is_stmt 1 view -0
+ 1630              		.cfi_startproc
+ 1631              		@ args = 0, pretend = 0, frame = 0
+ 1632              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1633              		.loc 1 351 45 is_stmt 0 view .LVU320
+ 1634 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1635              	.LCFI41:
+ 1636              		.cfi_def_cfa_offset 24
+ 1637              		.cfi_offset 3, -24
+ 1638              		.cfi_offset 4, -20
+ 1639              		.cfi_offset 5, -16
+ 1640              		.cfi_offset 6, -12
+ 1641              		.cfi_offset 7, -8
+ 1642              		.cfi_offset 14, -4
+ 352:Core/Src/AvioNEXT.c **** 
+ 353:Core/Src/AvioNEXT.c **** 	static uint32_t LED_PWM_Data_0[(NUM_LEDS_0 * 24) + 58];
+ARM GAS  /tmp/ccH2036k.s 			page 36
+
+
+ 1643              		.loc 1 353 2 is_stmt 1 view .LVU321
+ 354:Core/Src/AvioNEXT.c **** 	static uint32_t LED_PWM_Data_1[(NUM_LEDS_1 * 24) + 58];
+ 1644              		.loc 1 354 2 view .LVU322
+ 355:Core/Src/AvioNEXT.c **** 	static uint32_t LED_PWM_Data_2[(NUM_LEDS_2 * 24) + 58];
+ 1645              		.loc 1 355 2 view .LVU323
+ 356:Core/Src/AvioNEXT.c **** 	static uint32_t LED_PWM_Data_3[(NUM_LEDS_3 * 24) + 58];
+ 1646              		.loc 1 356 2 view .LVU324
+ 357:Core/Src/AvioNEXT.c **** 
+ 358:Core/Src/AvioNEXT.c **** 	for (int i = 0; i < NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3;
+ 1647              		.loc 1 358 2 view .LVU325
+ 1648              	.LBB5:
+ 1649              		.loc 1 358 7 view .LVU326
+ 1650              	.LVL166:
+ 1651              		.loc 1 358 11 is_stmt 0 view .LVU327
+ 1652 0002 0023     		movs	r3, #0
+ 1653              		.loc 1 358 2 view .LVU328
+ 1654 0004 E9E0     		b	.L117
+ 1655              	.LVL167:
+ 1656              	.L124:
+ 1657              	.LBB6:
+ 1658              	.LBB7:
+ 359:Core/Src/AvioNEXT.c **** 			i++) {
+ 360:Core/Src/AvioNEXT.c **** 		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
+ 361:Core/Src/AvioNEXT.c **** 		case 0:
+ 362:Core/Src/AvioNEXT.c **** 			for (int j = 0; j < 3; j++) {
+ 363:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 364:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 365:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 366:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 367:Core/Src/AvioNEXT.c **** 					} else {
+ 368:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1659              		.loc 1 368 7 is_stmt 1 view .LVU329
+ 1660              		.loc 1 368 24 is_stmt 0 view .LVU330
+ 1661 0006 02EBC401 		add	r1, r2, r4, lsl #3
+ 1662              		.loc 1 368 56 view .LVU331
+ 1663 000a 8A4E     		ldr	r6, .L167
+ 1664 000c 06EBC306 		add	r6, r6, r3, lsl #3
+ 1665 0010 7668     		ldr	r6, [r6, #4]
+ 1666              		.loc 1 368 40 view .LVU332
+ 1667 0012 06EB4606 		add	r6, r6, r6, lsl #1
+ 1668              		.loc 1 368 34 view .LVU333
+ 1669 0016 01EBC601 		add	r1, r1, r6, lsl #3
+ 369:Core/Src/AvioNEXT.c **** 								+ 8] = 30;
+ 1670              		.loc 1 369 9 view .LVU334
+ 1671 001a 0831     		adds	r1, r1, #8
+ 1672              		.loc 1 369 14 view .LVU335
+ 1673 001c 864E     		ldr	r6, .L167+4
+ 1674 001e 1E27     		movs	r7, #30
+ 1675 0020 46F82170 		str	r7, [r6, r1, lsl #2]
+ 1676              	.L125:
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1677              		.loc 1 363 28 is_stmt 1 discriminator 2 view .LVU336
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1678              		.loc 1 363 29 is_stmt 0 discriminator 2 view .LVU337
+ 1679 0024 0132     		adds	r2, r2, #1
+ 1680              	.LVL168:
+ 1681              	.L127:
+ARM GAS  /tmp/ccH2036k.s 			page 37
+
+
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1682              		.loc 1 363 21 is_stmt 1 discriminator 1 view .LVU338
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1683              		.loc 1 363 5 is_stmt 0 discriminator 1 view .LVU339
+ 1684 0026 072A     		cmp	r2, #7
+ 1685 0028 17DC     		bgt	.L158
+ 364:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1686              		.loc 1 364 6 is_stmt 1 view .LVU340
+ 364:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1687              		.loc 1 364 24 is_stmt 0 view .LVU341
+ 1688 002a 03EB4301 		add	r1, r3, r3, lsl #1
+ 1689 002e 0144     		add	r1, r1, r0
+ 364:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1690              		.loc 1 364 27 view .LVU342
+ 1691 0030 0E5D     		ldrb	r6, [r1, r4]	@ zero_extendqisi2
+ 364:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1692              		.loc 1 364 38 view .LVU343
+ 1693 0032 8021     		movs	r1, #128
+ 1694 0034 1141     		asrs	r1, r1, r2
+ 364:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_0[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1695              		.loc 1 364 9 view .LVU344
+ 1696 0036 0E42     		tst	r6, r1
+ 1697 0038 E5D0     		beq	.L124
+ 365:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1698              		.loc 1 365 7 is_stmt 1 view .LVU345
+ 365:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1699              		.loc 1 365 24 is_stmt 0 view .LVU346
+ 1700 003a 02EBC401 		add	r1, r2, r4, lsl #3
+ 365:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1701              		.loc 1 365 56 view .LVU347
+ 1702 003e 7D4E     		ldr	r6, .L167
+ 1703 0040 06EBC306 		add	r6, r6, r3, lsl #3
+ 1704 0044 7668     		ldr	r6, [r6, #4]
+ 365:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1705              		.loc 1 365 40 view .LVU348
+ 1706 0046 06EB4606 		add	r6, r6, r6, lsl #1
+ 365:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1707              		.loc 1 365 34 view .LVU349
+ 1708 004a 01EBC601 		add	r1, r1, r6, lsl #3
+ 366:Core/Src/AvioNEXT.c **** 					} else {
+ 1709              		.loc 1 366 9 view .LVU350
+ 1710 004e 0831     		adds	r1, r1, #8
+ 366:Core/Src/AvioNEXT.c **** 					} else {
+ 1711              		.loc 1 366 14 view .LVU351
+ 1712 0050 794E     		ldr	r6, .L167+4
+ 1713 0052 3C27     		movs	r7, #60
+ 1714 0054 46F82170 		str	r7, [r6, r1, lsl #2]
+ 1715 0058 E4E7     		b	.L125
+ 1716              	.L158:
+ 366:Core/Src/AvioNEXT.c **** 					} else {
+ 1717              		.loc 1 366 14 view .LVU352
+ 1718              	.LBE7:
+ 362:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1719              		.loc 1 362 27 is_stmt 1 discriminator 2 view .LVU353
+ 362:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1720              		.loc 1 362 28 is_stmt 0 discriminator 2 view .LVU354
+ 1721 005a 0134     		adds	r4, r4, #1
+ARM GAS  /tmp/ccH2036k.s 			page 38
+
+
+ 1722              	.LVL169:
+ 1723              	.L123:
+ 362:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1724              		.loc 1 362 20 is_stmt 1 discriminator 1 view .LVU355
+ 362:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1725              		.loc 1 362 4 is_stmt 0 discriminator 1 view .LVU356
+ 1726 005c 022C     		cmp	r4, #2
+ 1727 005e 03DC     		bgt	.L159
+ 1728              	.LBB8:
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1729              		.loc 1 363 14 view .LVU357
+ 1730 0060 2A46     		mov	r2, r5
+ 1731 0062 E0E7     		b	.L127
+ 1732              	.LVL170:
+ 1733              	.L149:
+ 363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1734              		.loc 1 363 14 view .LVU358
+ 1735              	.LBE8:
+ 1736              	.LBE6:
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 1737              		.loc 1 360 25 view .LVU359
+ 1738 0064 2C46     		mov	r4, r5
+ 1739 0066 F9E7     		b	.L123
+ 1740              	.LVL171:
+ 1741              	.L159:
+ 1742              	.LBB9:
+ 370:Core/Src/AvioNEXT.c **** 					}
+ 371:Core/Src/AvioNEXT.c **** 				}
+ 372:Core/Src/AvioNEXT.c **** 			}
+ 373:Core/Src/AvioNEXT.c **** 			for (int i = (NUM_LEDS_0 * 24) + 8; i < (NUM_LEDS_0 * 24) + 58;
+ 1743              		.loc 1 373 13 view .LVU360
+ 1744 0068 8022     		movs	r2, #128
+ 1745              	.LVL172:
+ 1746              	.L128:
+ 1747              		.loc 1 373 40 is_stmt 1 discriminator 1 view .LVU361
+ 1748              		.loc 1 373 4 is_stmt 0 discriminator 1 view .LVU362
+ 1749 006a B12A     		cmp	r2, #177
+ 1750 006c 00F3B480 		bgt	.L118
+ 374:Core/Src/AvioNEXT.c **** 					i++) {
+ 375:Core/Src/AvioNEXT.c **** 				LED_PWM_Data_0[i] = 0;
+ 1751              		.loc 1 375 5 is_stmt 1 view .LVU363
+ 1752              		.loc 1 375 23 is_stmt 0 view .LVU364
+ 1753 0070 7149     		ldr	r1, .L167+4
+ 1754 0072 0024     		movs	r4, #0
+ 1755 0074 41F82240 		str	r4, [r1, r2, lsl #2]
+ 374:Core/Src/AvioNEXT.c **** 					i++) {
+ 1756              		.loc 1 374 6 is_stmt 1 view .LVU365
+ 374:Core/Src/AvioNEXT.c **** 					i++) {
+ 1757              		.loc 1 374 7 is_stmt 0 view .LVU366
+ 1758 0078 0132     		adds	r2, r2, #1
+ 1759              	.LVL173:
+ 374:Core/Src/AvioNEXT.c **** 					i++) {
+ 1760              		.loc 1 374 7 view .LVU367
+ 1761 007a F6E7     		b	.L128
+ 1762              	.LVL174:
+ 1763              	.L130:
+ 374:Core/Src/AvioNEXT.c **** 					i++) {
+ARM GAS  /tmp/ccH2036k.s 			page 39
+
+
+ 1764              		.loc 1 374 7 view .LVU368
+ 1765              	.LBE9:
+ 1766              	.LBB10:
+ 1767              	.LBB11:
+ 376:Core/Src/AvioNEXT.c **** 			}
+ 377:Core/Src/AvioNEXT.c **** 			break;
+ 378:Core/Src/AvioNEXT.c **** 		case 1:
+ 379:Core/Src/AvioNEXT.c **** 			for (int j = 0; j < 3; j++) {
+ 380:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 381:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 382:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 383:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 384:Core/Src/AvioNEXT.c **** 					} else {
+ 385:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1768              		.loc 1 385 7 is_stmt 1 view .LVU369
+ 1769              		.loc 1 385 24 is_stmt 0 view .LVU370
+ 1770 007c 02EBC401 		add	r1, r2, r4, lsl #3
+ 1771              		.loc 1 385 56 view .LVU371
+ 1772 0080 6C4D     		ldr	r5, .L167
+ 1773 0082 05EBC305 		add	r5, r5, r3, lsl #3
+ 1774 0086 6D68     		ldr	r5, [r5, #4]
+ 1775              		.loc 1 385 40 view .LVU372
+ 1776 0088 05EB4505 		add	r5, r5, r5, lsl #1
+ 1777              		.loc 1 385 34 view .LVU373
+ 1778 008c 01EBC501 		add	r1, r1, r5, lsl #3
+ 386:Core/Src/AvioNEXT.c **** 								+ 8] = 30;
+ 1779              		.loc 1 386 9 view .LVU374
+ 1780 0090 0831     		adds	r1, r1, #8
+ 1781              		.loc 1 386 14 view .LVU375
+ 1782 0092 6A4D     		ldr	r5, .L167+8
+ 1783 0094 1E26     		movs	r6, #30
+ 1784 0096 45F82160 		str	r6, [r5, r1, lsl #2]
+ 1785              	.L131:
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1786              		.loc 1 380 28 is_stmt 1 discriminator 2 view .LVU376
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1787              		.loc 1 380 29 is_stmt 0 discriminator 2 view .LVU377
+ 1788 009a 0132     		adds	r2, r2, #1
+ 1789              	.LVL175:
+ 1790              	.L133:
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1791              		.loc 1 380 21 is_stmt 1 discriminator 1 view .LVU378
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1792              		.loc 1 380 5 is_stmt 0 discriminator 1 view .LVU379
+ 1793 009c 072A     		cmp	r2, #7
+ 1794 009e 17DC     		bgt	.L160
+ 381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1795              		.loc 1 381 6 is_stmt 1 view .LVU380
+ 381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1796              		.loc 1 381 24 is_stmt 0 view .LVU381
+ 1797 00a0 03EB4301 		add	r1, r3, r3, lsl #1
+ 1798 00a4 0144     		add	r1, r1, r0
+ 381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1799              		.loc 1 381 27 view .LVU382
+ 1800 00a6 0D5D     		ldrb	r5, [r1, r4]	@ zero_extendqisi2
+ 381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1801              		.loc 1 381 38 view .LVU383
+ARM GAS  /tmp/ccH2036k.s 			page 40
+
+
+ 1802 00a8 8021     		movs	r1, #128
+ 1803 00aa 1141     		asrs	r1, r1, r2
+ 381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1804              		.loc 1 381 9 view .LVU384
+ 1805 00ac 0D42     		tst	r5, r1
+ 1806 00ae E5D0     		beq	.L130
+ 382:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1807              		.loc 1 382 7 is_stmt 1 view .LVU385
+ 382:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1808              		.loc 1 382 24 is_stmt 0 view .LVU386
+ 1809 00b0 02EBC401 		add	r1, r2, r4, lsl #3
+ 382:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1810              		.loc 1 382 56 view .LVU387
+ 1811 00b4 5F4D     		ldr	r5, .L167
+ 1812 00b6 05EBC305 		add	r5, r5, r3, lsl #3
+ 1813 00ba 6D68     		ldr	r5, [r5, #4]
+ 382:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1814              		.loc 1 382 40 view .LVU388
+ 1815 00bc 05EB4505 		add	r5, r5, r5, lsl #1
+ 382:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1816              		.loc 1 382 34 view .LVU389
+ 1817 00c0 01EBC501 		add	r1, r1, r5, lsl #3
+ 383:Core/Src/AvioNEXT.c **** 					} else {
+ 1818              		.loc 1 383 9 view .LVU390
+ 1819 00c4 0831     		adds	r1, r1, #8
+ 383:Core/Src/AvioNEXT.c **** 					} else {
+ 1820              		.loc 1 383 14 view .LVU391
+ 1821 00c6 5D4D     		ldr	r5, .L167+8
+ 1822 00c8 3C26     		movs	r6, #60
+ 1823 00ca 45F82160 		str	r6, [r5, r1, lsl #2]
+ 1824 00ce E4E7     		b	.L131
+ 1825              	.L160:
+ 383:Core/Src/AvioNEXT.c **** 					} else {
+ 1826              		.loc 1 383 14 view .LVU392
+ 1827              	.LBE11:
+ 379:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1828              		.loc 1 379 27 is_stmt 1 discriminator 2 view .LVU393
+ 379:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1829              		.loc 1 379 28 is_stmt 0 discriminator 2 view .LVU394
+ 1830 00d0 0134     		adds	r4, r4, #1
+ 1831              	.LVL176:
+ 1832              	.L122:
+ 379:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1833              		.loc 1 379 20 is_stmt 1 discriminator 1 view .LVU395
+ 379:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1834              		.loc 1 379 4 is_stmt 0 discriminator 1 view .LVU396
+ 1835 00d2 022C     		cmp	r4, #2
+ 1836 00d4 03DC     		bgt	.L161
+ 1837              	.LBB12:
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1838              		.loc 1 380 14 view .LVU397
+ 1839 00d6 0022     		movs	r2, #0
+ 1840 00d8 E0E7     		b	.L133
+ 1841              	.LVL177:
+ 1842              	.L150:
+ 380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1843              		.loc 1 380 14 view .LVU398
+ARM GAS  /tmp/ccH2036k.s 			page 41
+
+
+ 1844              	.LBE12:
+ 1845              	.LBE10:
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 1846              		.loc 1 360 25 view .LVU399
+ 1847 00da 0024     		movs	r4, #0
+ 1848 00dc F9E7     		b	.L122
+ 1849              	.LVL178:
+ 1850              	.L161:
+ 1851              	.LBB13:
+ 387:Core/Src/AvioNEXT.c **** 					}
+ 388:Core/Src/AvioNEXT.c **** 				}
+ 389:Core/Src/AvioNEXT.c **** 			}
+ 390:Core/Src/AvioNEXT.c **** 			for (int i = (NUM_LEDS_1 * 24) + 8; i < (NUM_LEDS_1 * 24) + 58;
+ 1852              		.loc 1 390 13 view .LVU400
+ 1853 00de 8022     		movs	r2, #128
+ 1854              	.LVL179:
+ 1855              	.L134:
+ 1856              		.loc 1 390 40 is_stmt 1 discriminator 1 view .LVU401
+ 1857              		.loc 1 390 4 is_stmt 0 discriminator 1 view .LVU402
+ 1858 00e0 B12A     		cmp	r2, #177
+ 1859 00e2 79DC     		bgt	.L118
+ 391:Core/Src/AvioNEXT.c **** 					i++) {
+ 392:Core/Src/AvioNEXT.c **** 				LED_PWM_Data_1[i] = 0;
+ 1860              		.loc 1 392 5 is_stmt 1 view .LVU403
+ 1861              		.loc 1 392 23 is_stmt 0 view .LVU404
+ 1862 00e4 5549     		ldr	r1, .L167+8
+ 1863 00e6 0024     		movs	r4, #0
+ 1864 00e8 41F82240 		str	r4, [r1, r2, lsl #2]
+ 391:Core/Src/AvioNEXT.c **** 					i++) {
+ 1865              		.loc 1 391 6 is_stmt 1 view .LVU405
+ 391:Core/Src/AvioNEXT.c **** 					i++) {
+ 1866              		.loc 1 391 7 is_stmt 0 view .LVU406
+ 1867 00ec 0132     		adds	r2, r2, #1
+ 1868              	.LVL180:
+ 391:Core/Src/AvioNEXT.c **** 					i++) {
+ 1869              		.loc 1 391 7 view .LVU407
+ 1870 00ee F7E7     		b	.L134
+ 1871              	.LVL181:
+ 1872              	.L136:
+ 391:Core/Src/AvioNEXT.c **** 					i++) {
+ 1873              		.loc 1 391 7 view .LVU408
+ 1874              	.LBE13:
+ 1875              	.LBB14:
+ 1876              	.LBB15:
+ 393:Core/Src/AvioNEXT.c **** 			}
+ 394:Core/Src/AvioNEXT.c **** 			break;
+ 395:Core/Src/AvioNEXT.c **** 		case 2:
+ 396:Core/Src/AvioNEXT.c **** 			for (int j = 0; j < 3; j++) {
+ 397:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 398:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 399:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 400:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 401:Core/Src/AvioNEXT.c **** 					} else {
+ 402:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1877              		.loc 1 402 7 is_stmt 1 view .LVU409
+ 1878              		.loc 1 402 24 is_stmt 0 view .LVU410
+ 1879 00f0 02EBC401 		add	r1, r2, r4, lsl #3
+ARM GAS  /tmp/ccH2036k.s 			page 42
+
+
+ 1880              		.loc 1 402 56 view .LVU411
+ 1881 00f4 4F4D     		ldr	r5, .L167
+ 1882 00f6 05EBC305 		add	r5, r5, r3, lsl #3
+ 1883 00fa 6D68     		ldr	r5, [r5, #4]
+ 1884              		.loc 1 402 40 view .LVU412
+ 1885 00fc 05EB4505 		add	r5, r5, r5, lsl #1
+ 1886              		.loc 1 402 34 view .LVU413
+ 1887 0100 01EBC501 		add	r1, r1, r5, lsl #3
+ 403:Core/Src/AvioNEXT.c **** 								+ 8] = 30;
+ 1888              		.loc 1 403 9 view .LVU414
+ 1889 0104 0831     		adds	r1, r1, #8
+ 1890              		.loc 1 403 14 view .LVU415
+ 1891 0106 4E4D     		ldr	r5, .L167+12
+ 1892 0108 1E26     		movs	r6, #30
+ 1893 010a 45F82160 		str	r6, [r5, r1, lsl #2]
+ 1894              	.L137:
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1895              		.loc 1 397 28 is_stmt 1 discriminator 2 view .LVU416
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1896              		.loc 1 397 29 is_stmt 0 discriminator 2 view .LVU417
+ 1897 010e 0132     		adds	r2, r2, #1
+ 1898              	.LVL182:
+ 1899              	.L139:
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1900              		.loc 1 397 21 is_stmt 1 discriminator 1 view .LVU418
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1901              		.loc 1 397 5 is_stmt 0 discriminator 1 view .LVU419
+ 1902 0110 072A     		cmp	r2, #7
+ 1903 0112 17DC     		bgt	.L162
+ 398:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1904              		.loc 1 398 6 is_stmt 1 view .LVU420
+ 398:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1905              		.loc 1 398 24 is_stmt 0 view .LVU421
+ 1906 0114 03EB4301 		add	r1, r3, r3, lsl #1
+ 1907 0118 0144     		add	r1, r1, r0
+ 398:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1908              		.loc 1 398 27 view .LVU422
+ 1909 011a 0D5D     		ldrb	r5, [r1, r4]	@ zero_extendqisi2
+ 398:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1910              		.loc 1 398 38 view .LVU423
+ 1911 011c 8021     		movs	r1, #128
+ 1912 011e 1141     		asrs	r1, r1, r2
+ 398:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_2[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1913              		.loc 1 398 9 view .LVU424
+ 1914 0120 0D42     		tst	r5, r1
+ 1915 0122 E5D0     		beq	.L136
+ 399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1916              		.loc 1 399 7 is_stmt 1 view .LVU425
+ 399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1917              		.loc 1 399 24 is_stmt 0 view .LVU426
+ 1918 0124 02EBC401 		add	r1, r2, r4, lsl #3
+ 399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1919              		.loc 1 399 56 view .LVU427
+ 1920 0128 424D     		ldr	r5, .L167
+ 1921 012a 05EBC305 		add	r5, r5, r3, lsl #3
+ 1922 012e 6D68     		ldr	r5, [r5, #4]
+ 399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ARM GAS  /tmp/ccH2036k.s 			page 43
+
+
+ 1923              		.loc 1 399 40 view .LVU428
+ 1924 0130 05EB4505 		add	r5, r5, r5, lsl #1
+ 399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 1925              		.loc 1 399 34 view .LVU429
+ 1926 0134 01EBC501 		add	r1, r1, r5, lsl #3
+ 400:Core/Src/AvioNEXT.c **** 					} else {
+ 1927              		.loc 1 400 9 view .LVU430
+ 1928 0138 0831     		adds	r1, r1, #8
+ 400:Core/Src/AvioNEXT.c **** 					} else {
+ 1929              		.loc 1 400 14 view .LVU431
+ 1930 013a 414D     		ldr	r5, .L167+12
+ 1931 013c 3C26     		movs	r6, #60
+ 1932 013e 45F82160 		str	r6, [r5, r1, lsl #2]
+ 1933 0142 E4E7     		b	.L137
+ 1934              	.L162:
+ 400:Core/Src/AvioNEXT.c **** 					} else {
+ 1935              		.loc 1 400 14 view .LVU432
+ 1936              	.LBE15:
+ 396:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1937              		.loc 1 396 27 is_stmt 1 discriminator 2 view .LVU433
+ 396:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1938              		.loc 1 396 28 is_stmt 0 discriminator 2 view .LVU434
+ 1939 0144 0134     		adds	r4, r4, #1
+ 1940              	.LVL183:
+ 1941              	.L121:
+ 396:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1942              		.loc 1 396 20 is_stmt 1 discriminator 1 view .LVU435
+ 396:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 1943              		.loc 1 396 4 is_stmt 0 discriminator 1 view .LVU436
+ 1944 0146 022C     		cmp	r4, #2
+ 1945 0148 03DC     		bgt	.L163
+ 1946              	.LBB16:
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1947              		.loc 1 397 14 view .LVU437
+ 1948 014a 0022     		movs	r2, #0
+ 1949 014c E0E7     		b	.L139
+ 1950              	.LVL184:
+ 1951              	.L151:
+ 397:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 1952              		.loc 1 397 14 view .LVU438
+ 1953              	.LBE16:
+ 1954              	.LBE14:
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 1955              		.loc 1 360 25 view .LVU439
+ 1956 014e 0024     		movs	r4, #0
+ 1957 0150 F9E7     		b	.L121
+ 1958              	.LVL185:
+ 1959              	.L163:
+ 1960              	.LBB17:
+ 404:Core/Src/AvioNEXT.c **** 					}
+ 405:Core/Src/AvioNEXT.c **** 				}
+ 406:Core/Src/AvioNEXT.c **** 			}
+ 407:Core/Src/AvioNEXT.c **** 			for (int i = (NUM_LEDS_2 * 24) + 8; i < (NUM_LEDS_2 * 24) + 58;
+ 1961              		.loc 1 407 13 view .LVU440
+ 1962 0152 3822     		movs	r2, #56
+ 1963              	.LVL186:
+ 1964              	.L140:
+ARM GAS  /tmp/ccH2036k.s 			page 44
+
+
+ 1965              		.loc 1 407 40 is_stmt 1 discriminator 1 view .LVU441
+ 1966              		.loc 1 407 4 is_stmt 0 discriminator 1 view .LVU442
+ 1967 0154 692A     		cmp	r2, #105
+ 1968 0156 3FDC     		bgt	.L118
+ 408:Core/Src/AvioNEXT.c **** 					i++) {
+ 409:Core/Src/AvioNEXT.c **** 				LED_PWM_Data_2[i] = 0;
+ 1969              		.loc 1 409 5 is_stmt 1 view .LVU443
+ 1970              		.loc 1 409 23 is_stmt 0 view .LVU444
+ 1971 0158 3949     		ldr	r1, .L167+12
+ 1972 015a 0024     		movs	r4, #0
+ 1973 015c 41F82240 		str	r4, [r1, r2, lsl #2]
+ 408:Core/Src/AvioNEXT.c **** 					i++) {
+ 1974              		.loc 1 408 6 is_stmt 1 view .LVU445
+ 408:Core/Src/AvioNEXT.c **** 					i++) {
+ 1975              		.loc 1 408 7 is_stmt 0 view .LVU446
+ 1976 0160 0132     		adds	r2, r2, #1
+ 1977              	.LVL187:
+ 408:Core/Src/AvioNEXT.c **** 					i++) {
+ 1978              		.loc 1 408 7 view .LVU447
+ 1979 0162 F7E7     		b	.L140
+ 1980              	.LVL188:
+ 1981              	.L142:
+ 408:Core/Src/AvioNEXT.c **** 					i++) {
+ 1982              		.loc 1 408 7 view .LVU448
+ 1983              	.LBE17:
+ 1984              	.LBB18:
+ 1985              	.LBB19:
+ 410:Core/Src/AvioNEXT.c **** 			}
+ 411:Core/Src/AvioNEXT.c **** 			break;
+ 412:Core/Src/AvioNEXT.c **** 		case 3:
+ 413:Core/Src/AvioNEXT.c **** 			for (int j = 0; j < 3; j++) {
+ 414:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 415:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 416:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 417:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 418:Core/Src/AvioNEXT.c **** 					} else {
+ 419:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 1986              		.loc 1 419 7 is_stmt 1 view .LVU449
+ 1987              		.loc 1 419 24 is_stmt 0 view .LVU450
+ 1988 0164 02EBC401 		add	r1, r2, r4, lsl #3
+ 1989              		.loc 1 419 56 view .LVU451
+ 1990 0168 324D     		ldr	r5, .L167
+ 1991 016a 05EBC305 		add	r5, r5, r3, lsl #3
+ 1992 016e 6D68     		ldr	r5, [r5, #4]
+ 1993              		.loc 1 419 40 view .LVU452
+ 1994 0170 05EB4505 		add	r5, r5, r5, lsl #1
+ 1995              		.loc 1 419 34 view .LVU453
+ 1996 0174 01EBC501 		add	r1, r1, r5, lsl #3
+ 420:Core/Src/AvioNEXT.c **** 								+ 8] = 30;
+ 1997              		.loc 1 420 9 view .LVU454
+ 1998 0178 0831     		adds	r1, r1, #8
+ 1999              		.loc 1 420 14 view .LVU455
+ 2000 017a 324D     		ldr	r5, .L167+16
+ 2001 017c 1E26     		movs	r6, #30
+ 2002 017e 45F82160 		str	r6, [r5, r1, lsl #2]
+ 2003              	.L143:
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ARM GAS  /tmp/ccH2036k.s 			page 45
+
+
+ 2004              		.loc 1 414 28 is_stmt 1 discriminator 2 view .LVU456
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 2005              		.loc 1 414 29 is_stmt 0 discriminator 2 view .LVU457
+ 2006 0182 0132     		adds	r2, r2, #1
+ 2007              	.LVL189:
+ 2008              	.L145:
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 2009              		.loc 1 414 21 is_stmt 1 discriminator 1 view .LVU458
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 2010              		.loc 1 414 5 is_stmt 0 discriminator 1 view .LVU459
+ 2011 0184 072A     		cmp	r2, #7
+ 2012 0186 17DC     		bgt	.L164
+ 415:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 2013              		.loc 1 415 6 is_stmt 1 view .LVU460
+ 415:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 2014              		.loc 1 415 24 is_stmt 0 view .LVU461
+ 2015 0188 03EB4301 		add	r1, r3, r3, lsl #1
+ 2016 018c 0144     		add	r1, r1, r0
+ 415:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 2017              		.loc 1 415 27 view .LVU462
+ 2018 018e 0D5D     		ldrb	r5, [r1, r4]	@ zero_extendqisi2
+ 415:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 2019              		.loc 1 415 38 view .LVU463
+ 2020 0190 8021     		movs	r1, #128
+ 2021 0192 1141     		asrs	r1, r1, r2
+ 415:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_3[n + (8 * j) + (24 * LEDS_lookup[i][1])
+ 2022              		.loc 1 415 9 view .LVU464
+ 2023 0194 0D42     		tst	r5, r1
+ 2024 0196 E5D0     		beq	.L142
+ 416:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 2025              		.loc 1 416 7 is_stmt 1 view .LVU465
+ 416:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 2026              		.loc 1 416 24 is_stmt 0 view .LVU466
+ 2027 0198 02EBC401 		add	r1, r2, r4, lsl #3
+ 416:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 2028              		.loc 1 416 56 view .LVU467
+ 2029 019c 254D     		ldr	r5, .L167
+ 2030 019e 05EBC305 		add	r5, r5, r3, lsl #3
+ 2031 01a2 6D68     		ldr	r5, [r5, #4]
+ 416:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 2032              		.loc 1 416 40 view .LVU468
+ 2033 01a4 05EB4505 		add	r5, r5, r5, lsl #1
+ 416:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
+ 2034              		.loc 1 416 34 view .LVU469
+ 2035 01a8 01EBC501 		add	r1, r1, r5, lsl #3
+ 417:Core/Src/AvioNEXT.c **** 					} else {
+ 2036              		.loc 1 417 9 view .LVU470
+ 2037 01ac 0831     		adds	r1, r1, #8
+ 417:Core/Src/AvioNEXT.c **** 					} else {
+ 2038              		.loc 1 417 14 view .LVU471
+ 2039 01ae 254D     		ldr	r5, .L167+16
+ 2040 01b0 3C26     		movs	r6, #60
+ 2041 01b2 45F82160 		str	r6, [r5, r1, lsl #2]
+ 2042 01b6 E4E7     		b	.L143
+ 2043              	.L164:
+ 417:Core/Src/AvioNEXT.c **** 					} else {
+ 2044              		.loc 1 417 14 view .LVU472
+ARM GAS  /tmp/ccH2036k.s 			page 46
+
+
+ 2045              	.LBE19:
+ 413:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 2046              		.loc 1 413 27 is_stmt 1 discriminator 2 view .LVU473
+ 413:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 2047              		.loc 1 413 28 is_stmt 0 discriminator 2 view .LVU474
+ 2048 01b8 0134     		adds	r4, r4, #1
+ 2049              	.LVL190:
+ 2050              	.L119:
+ 413:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 2051              		.loc 1 413 20 is_stmt 1 discriminator 1 view .LVU475
+ 413:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
+ 2052              		.loc 1 413 4 is_stmt 0 discriminator 1 view .LVU476
+ 2053 01ba 022C     		cmp	r4, #2
+ 2054 01bc 03DC     		bgt	.L165
+ 2055              	.LBB20:
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 2056              		.loc 1 414 14 view .LVU477
+ 2057 01be 0022     		movs	r2, #0
+ 2058 01c0 E0E7     		b	.L145
+ 2059              	.LVL191:
+ 2060              	.L152:
+ 414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
+ 2061              		.loc 1 414 14 view .LVU478
+ 2062              	.LBE20:
+ 2063              	.LBE18:
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 2064              		.loc 1 360 25 view .LVU479
+ 2065 01c2 0024     		movs	r4, #0
+ 2066 01c4 F9E7     		b	.L119
+ 2067              	.LVL192:
+ 2068              	.L165:
+ 2069              	.LBB21:
+ 421:Core/Src/AvioNEXT.c **** 					}
+ 422:Core/Src/AvioNEXT.c **** 				}
+ 423:Core/Src/AvioNEXT.c **** 			}
+ 424:Core/Src/AvioNEXT.c **** 			for (int i = (NUM_LEDS_3 * 24) + 8; i < (NUM_LEDS_3 * 24) + 58;
+ 2070              		.loc 1 424 13 view .LVU480
+ 2071 01c6 3822     		movs	r2, #56
+ 2072              	.LVL193:
+ 2073              	.L146:
+ 2074              		.loc 1 424 40 is_stmt 1 discriminator 1 view .LVU481
+ 2075              		.loc 1 424 4 is_stmt 0 discriminator 1 view .LVU482
+ 2076 01c8 692A     		cmp	r2, #105
+ 2077 01ca 05DC     		bgt	.L118
+ 425:Core/Src/AvioNEXT.c **** 					i++) {
+ 426:Core/Src/AvioNEXT.c **** 				LED_PWM_Data_3[i] = 0;
+ 2078              		.loc 1 426 5 is_stmt 1 view .LVU483
+ 2079              		.loc 1 426 23 is_stmt 0 view .LVU484
+ 2080 01cc 1D49     		ldr	r1, .L167+16
+ 2081 01ce 0024     		movs	r4, #0
+ 2082 01d0 41F82240 		str	r4, [r1, r2, lsl #2]
+ 425:Core/Src/AvioNEXT.c **** 					i++) {
+ 2083              		.loc 1 425 6 is_stmt 1 view .LVU485
+ 425:Core/Src/AvioNEXT.c **** 					i++) {
+ 2084              		.loc 1 425 7 is_stmt 0 view .LVU486
+ 2085 01d4 0132     		adds	r2, r2, #1
+ 2086              	.LVL194:
+ARM GAS  /tmp/ccH2036k.s 			page 47
+
+
+ 425:Core/Src/AvioNEXT.c **** 					i++) {
+ 2087              		.loc 1 425 7 view .LVU487
+ 2088 01d6 F7E7     		b	.L146
+ 2089              	.LVL195:
+ 2090              	.L118:
+ 425:Core/Src/AvioNEXT.c **** 					i++) {
+ 2091              		.loc 1 425 7 view .LVU488
+ 2092              	.LBE21:
+ 359:Core/Src/AvioNEXT.c **** 		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
+ 2093              		.loc 1 359 4 is_stmt 1 view .LVU489
+ 359:Core/Src/AvioNEXT.c **** 		switch (LEDS_lookup[i][0]) { //checks in which string the LED is
+ 2094              		.loc 1 359 5 is_stmt 0 view .LVU490
+ 2095 01d8 0133     		adds	r3, r3, #1
+ 2096              	.LVL196:
+ 2097              	.L117:
+ 358:Core/Src/AvioNEXT.c **** 			i++) {
+ 2098              		.loc 1 358 18 is_stmt 1 discriminator 1 view .LVU491
+ 358:Core/Src/AvioNEXT.c **** 			i++) {
+ 2099              		.loc 1 358 2 is_stmt 0 discriminator 1 view .LVU492
+ 2100 01da 0D2B     		cmp	r3, #13
+ 2101 01dc 10DC     		bgt	.L166
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 2102              		.loc 1 360 3 is_stmt 1 view .LVU493
+ 360:Core/Src/AvioNEXT.c **** 		case 0:
+ 2103              		.loc 1 360 25 is_stmt 0 view .LVU494
+ 2104 01de 154A     		ldr	r2, .L167
+ 2105 01e0 52F83350 		ldr	r5, [r2, r3, lsl #3]
+ 2106 01e4 032D     		cmp	r5, #3
+ 2107 01e6 F7D8     		bhi	.L118
+ 2108 01e8 01A2     		adr	r2, .L120
+ 2109 01ea 52F825F0 		ldr	pc, [r2, r5, lsl #2]
+ 2110 01ee 00BF     		.p2align 2
+ 2111              	.L120:
+ 2112 01f0 65000000 		.word	.L149+1
+ 2113 01f4 DB000000 		.word	.L150+1
+ 2114 01f8 4F010000 		.word	.L151+1
+ 2115 01fc C3010000 		.word	.L152+1
+ 2116              		.p2align 1
+ 2117              	.L166:
+ 2118              	.LBE5:
+ 427:Core/Src/AvioNEXT.c **** 			}
+ 428:Core/Src/AvioNEXT.c **** 			break;
+ 429:Core/Src/AvioNEXT.c **** 		default:
+ 430:Core/Src/AvioNEXT.c **** 			break;
+ 431:Core/Src/AvioNEXT.c **** 		}
+ 432:Core/Src/AvioNEXT.c **** 	}
+ 433:Core/Src/AvioNEXT.c **** 
+ 434:Core/Src/AvioNEXT.c **** 	HAL_TIM_PWM_Start_DMA(&htim5, TIM_CHANNEL_4, LED_PWM_Data_0,
+ 2119              		.loc 1 434 2 is_stmt 1 view .LVU495
+ 2120 0200 B223     		movs	r3, #178
+ 2121              	.LVL197:
+ 2122              		.loc 1 434 2 is_stmt 0 view .LVU496
+ 2123 0202 0D4A     		ldr	r2, .L167+4
+ 2124 0204 0C21     		movs	r1, #12
+ 2125 0206 1048     		ldr	r0, .L167+20
+ 2126              	.LVL198:
+ 2127              		.loc 1 434 2 view .LVU497
+ARM GAS  /tmp/ccH2036k.s 			page 48
+
+
+ 2128 0208 FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
+ 2129              	.LVL199:
+ 435:Core/Src/AvioNEXT.c **** 			(NUM_LEDS_0 * 24) + 58); //DMA for LEDS 0
+ 436:Core/Src/AvioNEXT.c **** 	HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, LED_PWM_Data_1,
+ 2130              		.loc 1 436 2 is_stmt 1 view .LVU498
+ 2131 020c B223     		movs	r3, #178
+ 2132 020e 0B4A     		ldr	r2, .L167+8
+ 2133 0210 0821     		movs	r1, #8
+ 2134 0212 0E48     		ldr	r0, .L167+24
+ 2135 0214 FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
+ 2136              	.LVL200:
+ 437:Core/Src/AvioNEXT.c **** 			(NUM_LEDS_1 * 24) + 58); //DMA for LEDS 1
+ 438:Core/Src/AvioNEXT.c **** 	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_2, LED_PWM_Data_2,
+ 2137              		.loc 1 438 2 view .LVU499
+ 2138 0218 0D4C     		ldr	r4, .L167+28
+ 2139 021a 6A23     		movs	r3, #106
+ 2140 021c 084A     		ldr	r2, .L167+12
+ 2141 021e 0421     		movs	r1, #4
+ 2142 0220 2046     		mov	r0, r4
+ 2143 0222 FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
+ 2144              	.LVL201:
+ 439:Core/Src/AvioNEXT.c **** 			(NUM_LEDS_2 * 24) + 58); //DMA for LEDS 2
+ 440:Core/Src/AvioNEXT.c **** 	HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, LED_PWM_Data_3,
+ 2145              		.loc 1 440 2 view .LVU500
+ 2146 0226 6A23     		movs	r3, #106
+ 2147 0228 064A     		ldr	r2, .L167+16
+ 2148 022a 0021     		movs	r1, #0
+ 2149 022c 2046     		mov	r0, r4
+ 2150 022e FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
+ 2151              	.LVL202:
+ 441:Core/Src/AvioNEXT.c **** 			(NUM_LEDS_3 * 24) + 58); //DMA for LEDS 3
+ 442:Core/Src/AvioNEXT.c **** 
+ 443:Core/Src/AvioNEXT.c **** }
+ 2152              		.loc 1 443 1 is_stmt 0 view .LVU501
+ 2153 0232 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 2154              	.L168:
+ 2155              		.align	2
+ 2156              	.L167:
+ 2157 0234 00000000 		.word	.LANCHOR0
+ 2158 0238 00000000 		.word	.LANCHOR1
+ 2159 023c 00000000 		.word	.LANCHOR2
+ 2160 0240 00000000 		.word	.LANCHOR3
+ 2161 0244 00000000 		.word	.LANCHOR4
+ 2162 0248 00000000 		.word	htim5
+ 2163 024c 00000000 		.word	htim2
+ 2164 0250 00000000 		.word	htim3
+ 2165              		.cfi_endproc
+ 2166              	.LFE372:
+ 2168              		.global	LED_order
+ 2169              		.global	LED_num_max
+ 2170              		.global	LEDS_lookup
+ 2171              		.section	.bss.LED_PWM_Data_0.13392,"aw",%nobits
+ 2172              		.align	2
+ 2173              		.set	.LANCHOR1,. + 0
+ 2176              	LED_PWM_Data_0.13392:
+ 2177 0000 00000000 		.space	712
+ 2177      00000000 
+ARM GAS  /tmp/ccH2036k.s 			page 49
+
+
+ 2177      00000000 
+ 2177      00000000 
+ 2177      00000000 
+ 2178              		.section	.bss.LED_PWM_Data_1.13393,"aw",%nobits
+ 2179              		.align	2
+ 2180              		.set	.LANCHOR2,. + 0
+ 2183              	LED_PWM_Data_1.13393:
+ 2184 0000 00000000 		.space	712
+ 2184      00000000 
+ 2184      00000000 
+ 2184      00000000 
+ 2184      00000000 
+ 2185              		.section	.bss.LED_PWM_Data_2.13394,"aw",%nobits
+ 2186              		.align	2
+ 2187              		.set	.LANCHOR3,. + 0
+ 2190              	LED_PWM_Data_2.13394:
+ 2191 0000 00000000 		.space	424
+ 2191      00000000 
+ 2191      00000000 
+ 2191      00000000 
+ 2191      00000000 
+ 2192              		.section	.bss.LED_PWM_Data_3.13395,"aw",%nobits
+ 2193              		.align	2
+ 2194              		.set	.LANCHOR4,. + 0
+ 2197              	LED_PWM_Data_3.13395:
+ 2198 0000 00000000 		.space	424
+ 2198      00000000 
+ 2198      00000000 
+ 2198      00000000 
+ 2198      00000000 
+ 2199              		.section	.rodata.LEDS_lookup,"a"
+ 2200              		.align	2
+ 2201              		.set	.LANCHOR0,. + 0
+ 2204              	LEDS_lookup:
+ 2205 0000 02000000 		.word	2
+ 2206 0004 01000000 		.word	1
+ 2207 0008 02000000 		.word	2
+ 2208 000c 00000000 		.word	0
+ 2209 0010 03000000 		.word	3
+ 2210 0014 00000000 		.word	0
+ 2211 0018 03000000 		.word	3
+ 2212 001c 01000000 		.word	1
+ 2213 0020 00000000 		.word	0
+ 2214 0024 00000000 		.word	0
+ 2215 0028 00000000 		.word	0
+ 2216 002c 01000000 		.word	1
+ 2217 0030 00000000 		.word	0
+ 2218 0034 02000000 		.word	2
+ 2219 0038 01000000 		.word	1
+ 2220 003c 00000000 		.word	0
+ 2221 0040 01000000 		.word	1
+ 2222 0044 01000000 		.word	1
+ 2223 0048 01000000 		.word	1
+ 2224 004c 02000000 		.word	2
+ 2225 0050 01000000 		.word	1
+ 2226 0054 03000000 		.word	3
+ 2227 0058 00000000 		.word	0
+ARM GAS  /tmp/ccH2036k.s 			page 50
+
+
+ 2228 005c 03000000 		.word	3
+ 2229 0060 01000000 		.word	1
+ 2230 0064 04000000 		.word	4
+ 2231 0068 00000000 		.word	0
+ 2232 006c 04000000 		.word	4
+ 2233              		.section	.rodata.LED_num_max,"a"
+ 2234              		.align	2
+ 2237              	LED_num_max:
+ 2238 0000 06000000 		.word	6
+ 2239              		.section	.rodata.LED_order,"a"
+ 2240              		.align	2
+ 2243              	LED_order:
+ 2244 0000 00000000 		.word	0
+ 2245 0004 00000000 		.word	0
+ 2246 0008 00000000 		.word	0
+ 2247 000c 01000000 		.word	1
+ 2248 0010 02000000 		.word	2
+ 2249 0014 03000000 		.word	3
+ 2250 0018 04000000 		.word	4
+ 2251 001c 03000000 		.word	3
+ 2252 0020 04000000 		.word	4
+ 2253 0024 03000000 		.word	3
+ 2254 0028 02000000 		.word	2
+ 2255 002c 05000000 		.word	5
+ 2256 0030 05000000 		.word	5
+ 2257 0034 06000000 		.word	6
+ 2258              		.text
+ 2259              	.Letext0:
+ 2260              		.file 2 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 2261              		.file 3 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 2262              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 2263              		.file 5 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h"
+ 2264              		.file 6 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h723xx.h"
+ 2265              		.file 7 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/lib/gcc/arm-none-eabi/
+ 2266              		.file 8 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 2267              		.file 9 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 2268              		.file 10 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
+ 2269              		.file 11 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
+ 2270              		.file 12 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 2271              		.file 13 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 2272              		.file 14 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h"
+ 2273              		.file 15 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_i2c.h"
+ 2274              		.file 16 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h"
+ 2275              		.file 17 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h"
+ 2276              		.file 18 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h"
+ 2277              		.file 19 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
+ 2278              		.file 20 "<built-in>"
+ 2279              		.file 21 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ARM GAS  /tmp/ccH2036k.s 			page 51
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 AvioNEXT.c
+     /tmp/ccH2036k.s:17     .text.HG2_Read_Register:0000000000000000 $t
+     /tmp/ccH2036k.s:25     .text.HG2_Read_Register:0000000000000000 HG2_Read_Register
+     /tmp/ccH2036k.s:89     .text.HG2_Read_Register:000000000000004c $d
+     /tmp/ccH2036k.s:95     .text.HG2_Write_Register:0000000000000000 $t
+     /tmp/ccH2036k.s:102    .text.HG2_Write_Register:0000000000000000 HG2_Write_Register
+     /tmp/ccH2036k.s:162    .text.HG2_Write_Register:0000000000000048 $d
+     /tmp/ccH2036k.s:168    .text.HG2_Get_Acc:0000000000000000 $t
+     /tmp/ccH2036k.s:175    .text.HG2_Get_Acc:0000000000000000 HG2_Get_Acc
+     /tmp/ccH2036k.s:274    .text.HG2_Get_Acc:0000000000000090 $d
+     /tmp/ccH2036k.s:280    .text.LoRA_Read_Register:0000000000000000 $t
+     /tmp/ccH2036k.s:287    .text.LoRA_Read_Register:0000000000000000 LoRA_Read_Register
+     /tmp/ccH2036k.s:347    .text.LoRA_Read_Register:0000000000000048 $d
+     /tmp/ccH2036k.s:353    .text.LoRA_Write_Register:0000000000000000 $t
+     /tmp/ccH2036k.s:360    .text.LoRA_Write_Register:0000000000000000 LoRA_Write_Register
+     /tmp/ccH2036k.s:423    .text.LoRA_Write_Register:000000000000004c $d
+     /tmp/ccH2036k.s:429    .text.LoRA_sleep:0000000000000000 $t
+     /tmp/ccH2036k.s:436    .text.LoRA_sleep:0000000000000000 LoRA_sleep
+     /tmp/ccH2036k.s:459    .text.LoRA_set_frequency:0000000000000000 $t
+     /tmp/ccH2036k.s:466    .text.LoRA_set_frequency:0000000000000000 LoRA_set_frequency
+     /tmp/ccH2036k.s:518    .text.LoRA_set_frequency:0000000000000030 $d
+     /tmp/ccH2036k.s:523    .text.LoRA_idle:0000000000000000 $t
+     /tmp/ccH2036k.s:530    .text.LoRA_idle:0000000000000000 LoRA_idle
+     /tmp/ccH2036k.s:552    .text.LoRA_setOCP:0000000000000000 $t
+     /tmp/ccH2036k.s:559    .text.LoRA_setOCP:0000000000000000 LoRA_setOCP
+     /tmp/ccH2036k.s:628    .text.LoRA_setOCP:000000000000003c $d
+     /tmp/ccH2036k.s:633    .text.LoRA_setTxPower:0000000000000000 $t
+     /tmp/ccH2036k.s:640    .text.LoRA_setTxPower:0000000000000000 LoRA_setTxPower
+     /tmp/ccH2036k.s:720    .text.LoRA_explicit_header_mode:0000000000000000 $t
+     /tmp/ccH2036k.s:727    .text.LoRA_explicit_header_mode:0000000000000000 LoRA_explicit_header_mode
+     /tmp/ccH2036k.s:754    .rodata.LoRA_begin.str1.4:0000000000000000 $d
+     /tmp/ccH2036k.s:758    .text.LoRA_begin:0000000000000000 $t
+     /tmp/ccH2036k.s:765    .text.LoRA_begin:0000000000000000 LoRA_begin
+     /tmp/ccH2036k.s:865    .text.LoRA_begin:0000000000000078 $d
+     /tmp/ccH2036k.s:872    .text.LoRA_beginPacket:0000000000000000 $t
+     /tmp/ccH2036k.s:879    .text.LoRA_beginPacket:0000000000000000 LoRA_beginPacket
+     /tmp/ccH2036k.s:909    .text.LoRA_endPacket:0000000000000000 $t
+     /tmp/ccH2036k.s:916    .text.LoRA_endPacket:0000000000000000 LoRA_endPacket
+     /tmp/ccH2036k.s:954    .text.LoRA_parsePacket:0000000000000000 $t
+     /tmp/ccH2036k.s:961    .text.LoRA_parsePacket:0000000000000000 LoRA_parsePacket
+     /tmp/ccH2036k.s:1054   .text.LoRA_sendPacket:0000000000000000 $t
+     /tmp/ccH2036k.s:1061   .text.LoRA_sendPacket:0000000000000000 LoRA_sendPacket
+     /tmp/ccH2036k.s:1124   .text.recv_packet:0000000000000000 $t
+     /tmp/ccH2036k.s:1131   .text.recv_packet:0000000000000000 recv_packet
+     /tmp/ccH2036k.s:1206   .text.reliable_send_packet:0000000000000000 $t
+     /tmp/ccH2036k.s:1213   .text.reliable_send_packet:0000000000000000 reliable_send_packet
+     /tmp/ccH2036k.s:1295   .text.setServo:0000000000000000 $t
+     /tmp/ccH2036k.s:1302   .text.setServo:0000000000000000 setServo
+     /tmp/ccH2036k.s:1331   .text.setServo:0000000000000026 $d
+     /tmp/ccH2036k.s:1335   .text.setServo:000000000000002a $t
+     /tmp/ccH2036k.s:1377   .text.setServo:000000000000005c $d
+     /tmp/ccH2036k.s:1385   .text.triangle_space:0000000000000000 $t
+     /tmp/ccH2036k.s:1392   .text.triangle_space:0000000000000000 triangle_space
+     /tmp/ccH2036k.s:1452   .text.triangle_space:0000000000000040 $d
+     /tmp/ccH2036k.s:1458   .text.write_EEPROM:0000000000000000 $t
+     /tmp/ccH2036k.s:1465   .text.write_EEPROM:0000000000000000 write_EEPROM
+ARM GAS  /tmp/ccH2036k.s 			page 52
+
+
+     /tmp/ccH2036k.s:1538   .text.write_EEPROM:0000000000000040 $d
+     /tmp/ccH2036k.s:1543   .text.read_EEPROM:0000000000000000 $t
+     /tmp/ccH2036k.s:1550   .text.read_EEPROM:0000000000000000 read_EEPROM
+     /tmp/ccH2036k.s:1614   .text.read_EEPROM:0000000000000038 $d
+     /tmp/ccH2036k.s:1619   .text.setLEDs:0000000000000000 $t
+     /tmp/ccH2036k.s:1626   .text.setLEDs:0000000000000000 setLEDs
+     /tmp/ccH2036k.s:2112   .text.setLEDs:00000000000001f0 $d
+     /tmp/ccH2036k.s:2116   .text.setLEDs:0000000000000200 $t
+     /tmp/ccH2036k.s:2157   .text.setLEDs:0000000000000234 $d
+     /tmp/ccH2036k.s:2243   .rodata.LED_order:0000000000000000 LED_order
+     /tmp/ccH2036k.s:2237   .rodata.LED_num_max:0000000000000000 LED_num_max
+     /tmp/ccH2036k.s:2204   .rodata.LEDS_lookup:0000000000000000 LEDS_lookup
+     /tmp/ccH2036k.s:2172   .bss.LED_PWM_Data_0.13392:0000000000000000 $d
+     /tmp/ccH2036k.s:2176   .bss.LED_PWM_Data_0.13392:0000000000000000 LED_PWM_Data_0.13392
+     /tmp/ccH2036k.s:2179   .bss.LED_PWM_Data_1.13393:0000000000000000 $d
+     /tmp/ccH2036k.s:2183   .bss.LED_PWM_Data_1.13393:0000000000000000 LED_PWM_Data_1.13393
+     /tmp/ccH2036k.s:2186   .bss.LED_PWM_Data_2.13394:0000000000000000 $d
+     /tmp/ccH2036k.s:2190   .bss.LED_PWM_Data_2.13394:0000000000000000 LED_PWM_Data_2.13394
+     /tmp/ccH2036k.s:2193   .bss.LED_PWM_Data_3.13395:0000000000000000 $d
+     /tmp/ccH2036k.s:2197   .bss.LED_PWM_Data_3.13395:0000000000000000 LED_PWM_Data_3.13395
+     /tmp/ccH2036k.s:2200   .rodata.LEDS_lookup:0000000000000000 $d
+     /tmp/ccH2036k.s:2234   .rodata.LED_num_max:0000000000000000 $d
+     /tmp/ccH2036k.s:2240   .rodata.LED_order:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_SPI_Transmit
+HAL_SPI_Receive
+hspi2
+hspi3
+__aeabi_uldivmod
+sprintf
+strlen
+CDC_Transmit_HS
+strcmp
+fmod
+HAL_I2C_Mem_Write
+hi2c2
+HAL_I2C_Mem_Read
+HAL_TIM_PWM_Start_DMA
+htim5
+htim2
+htim3

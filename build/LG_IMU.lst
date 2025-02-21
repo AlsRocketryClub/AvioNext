@@ -1,0 +1,1080 @@
+ARM GAS  /tmp/cccNgdWY.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"LG_IMU.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text.LG_Read_Register,"ax",%progbits
+  17              		.align	1
+  18              		.global	LG_Read_Register
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv5-d16
+  25              	LG_Read_Register:
+  26              	.LVL0:
+  27              	.LFB350:
+  28              		.file 1 "Core/Src/LG_IMU.c"
+   1:Core/Src/LG_IMU.c **** #include "main.h"
+   2:Core/Src/LG_IMU.c **** 
+   3:Core/Src/LG_IMU.c **** extern SPI_HandleTypeDef hspi1;
+   4:Core/Src/LG_IMU.c **** extern SPI_HandleTypeDef hspi2;
+   5:Core/Src/LG_IMU.c **** 
+   6:Core/Src/LG_IMU.c **** int current_sensor = 2;
+   7:Core/Src/LG_IMU.c **** 
+   8:Core/Src/LG_IMU.c **** 
+   9:Core/Src/LG_IMU.c **** uint8_t LG_Read_Register(uint8_t addr){
+  29              		.loc 1 9 39 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 16
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 9 39 is_stmt 0 view .LVU1
+  34 0000 30B5     		push	{r4, r5, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 12
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 85B0     		sub	sp, sp, #20
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 32
+  10:Core/Src/LG_IMU.c **** 	uint8_t reg_value;
+  43              		.loc 1 10 2 is_stmt 1 view .LVU2
+  11:Core/Src/LG_IMU.c **** 	addr |= (1<<7);
+  44              		.loc 1 11 2 view .LVU3
+  45              		.loc 1 11 7 is_stmt 0 view .LVU4
+  46 0004 60F07F00 		orn	r0, r0, #127
+  47              	.LVL1:
+ARM GAS  /tmp/cccNgdWY.s 			page 2
+
+
+  48              		.loc 1 11 7 view .LVU5
+  49 0008 8DF80700 		strb	r0, [sp, #7]
+  12:Core/Src/LG_IMU.c **** 
+  13:Core/Src/LG_IMU.c **** 	if(current_sensor == 1){
+  50              		.loc 1 13 2 is_stmt 1 view .LVU6
+  51              		.loc 1 13 20 is_stmt 0 view .LVU7
+  52 000c 204B     		ldr	r3, .L7
+  53 000e 1B68     		ldr	r3, [r3]
+  54              		.loc 1 13 4 view .LVU8
+  55 0010 012B     		cmp	r3, #1
+  56 0012 05D0     		beq	.L5
+  14:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+  15:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi1, &addr, 1, 100);
+  16:Core/Src/LG_IMU.c **** 		HAL_SPI_Receive(&hspi1, &reg_value, 1, 100);
+  17:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 1);
+  18:Core/Src/LG_IMU.c **** 	}else if(current_sensor == 2){
+  57              		.loc 1 18 8 is_stmt 1 view .LVU9
+  58              		.loc 1 18 10 is_stmt 0 view .LVU10
+  59 0014 022B     		cmp	r3, #2
+  60 0016 1ED0     		beq	.L6
+  61              	.L3:
+  19:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
+  20:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+  21:Core/Src/LG_IMU.c **** 		HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+  22:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+  23:Core/Src/LG_IMU.c **** 	}
+  24:Core/Src/LG_IMU.c **** 
+  25:Core/Src/LG_IMU.c **** 
+  26:Core/Src/LG_IMU.c **** 	return reg_value;
+  62              		.loc 1 26 2 is_stmt 1 view .LVU11
+  27:Core/Src/LG_IMU.c **** }
+  63              		.loc 1 27 1 is_stmt 0 view .LVU12
+  64 0018 9DF80F00 		ldrb	r0, [sp, #15]	@ zero_extendqisi2
+  65 001c 05B0     		add	sp, sp, #20
+  66              	.LCFI2:
+  67              		.cfi_remember_state
+  68              		.cfi_def_cfa_offset 12
+  69              		@ sp needed
+  70 001e 30BD     		pop	{r4, r5, pc}
+  71              	.L5:
+  72              	.LCFI3:
+  73              		.cfi_restore_state
+  14:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+  74              		.loc 1 14 3 is_stmt 1 view .LVU13
+  75 0020 1C4C     		ldr	r4, .L7+4
+  76 0022 0022     		movs	r2, #0
+  77 0024 1021     		movs	r1, #16
+  78 0026 2046     		mov	r0, r4
+  79 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  80              	.LVL2:
+  15:Core/Src/LG_IMU.c **** 		HAL_SPI_Receive(&hspi1, &reg_value, 1, 100);
+  81              		.loc 1 15 3 view .LVU14
+  82 002c 1A4D     		ldr	r5, .L7+8
+  83 002e 6423     		movs	r3, #100
+  84 0030 0122     		movs	r2, #1
+  85 0032 0DF10701 		add	r1, sp, #7
+  86 0036 2846     		mov	r0, r5
+ARM GAS  /tmp/cccNgdWY.s 			page 3
+
+
+  87 0038 FFF7FEFF 		bl	HAL_SPI_Transmit
+  88              	.LVL3:
+  16:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 1);
+  89              		.loc 1 16 3 view .LVU15
+  90 003c 6423     		movs	r3, #100
+  91 003e 0122     		movs	r2, #1
+  92 0040 0DF10F01 		add	r1, sp, #15
+  93 0044 2846     		mov	r0, r5
+  94 0046 FFF7FEFF 		bl	HAL_SPI_Receive
+  95              	.LVL4:
+  17:Core/Src/LG_IMU.c **** 	}else if(current_sensor == 2){
+  96              		.loc 1 17 3 view .LVU16
+  97 004a 0122     		movs	r2, #1
+  98 004c 1021     		movs	r1, #16
+  99 004e 2046     		mov	r0, r4
+ 100 0050 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 101              	.LVL5:
+ 102 0054 E0E7     		b	.L3
+ 103              	.L6:
+  19:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 104              		.loc 1 19 3 view .LVU17
+ 105 0056 114C     		ldr	r4, .L7+12
+ 106 0058 0022     		movs	r2, #0
+ 107 005a 4FF48071 		mov	r1, #256
+ 108 005e 2046     		mov	r0, r4
+ 109 0060 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 110              	.LVL6:
+  20:Core/Src/LG_IMU.c **** 		HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
+ 111              		.loc 1 20 3 view .LVU18
+ 112 0064 0E4D     		ldr	r5, .L7+16
+ 113 0066 6423     		movs	r3, #100
+ 114 0068 0122     		movs	r2, #1
+ 115 006a 0DF10701 		add	r1, sp, #7
+ 116 006e 2846     		mov	r0, r5
+ 117 0070 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 118              	.LVL7:
+  21:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+ 119              		.loc 1 21 3 view .LVU19
+ 120 0074 6423     		movs	r3, #100
+ 121 0076 0122     		movs	r2, #1
+ 122 0078 0DF10F01 		add	r1, sp, #15
+ 123 007c 2846     		mov	r0, r5
+ 124 007e FFF7FEFF 		bl	HAL_SPI_Receive
+ 125              	.LVL8:
+  22:Core/Src/LG_IMU.c **** 	}
+ 126              		.loc 1 22 3 view .LVU20
+ 127 0082 0122     		movs	r2, #1
+ 128 0084 4FF48071 		mov	r1, #256
+ 129 0088 2046     		mov	r0, r4
+ 130 008a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 131              	.LVL9:
+ 132 008e C3E7     		b	.L3
+ 133              	.L8:
+ 134              		.align	2
+ 135              	.L7:
+ 136 0090 00000000 		.word	.LANCHOR0
+ 137 0094 00080258 		.word	1476528128
+ARM GAS  /tmp/cccNgdWY.s 			page 4
+
+
+ 138 0098 00000000 		.word	hspi1
+ 139 009c 000C0258 		.word	1476529152
+ 140 00a0 00000000 		.word	hspi2
+ 141              		.cfi_endproc
+ 142              	.LFE350:
+ 144              		.section	.text.LG_Write_Register,"ax",%progbits
+ 145              		.align	1
+ 146              		.global	LG_Write_Register
+ 147              		.syntax unified
+ 148              		.thumb
+ 149              		.thumb_func
+ 150              		.fpu fpv5-d16
+ 152              	LG_Write_Register:
+ 153              	.LVL10:
+ 154              	.LFB351:
+  28:Core/Src/LG_IMU.c **** 
+  29:Core/Src/LG_IMU.c **** void LG_Write_Register(uint8_t addr, uint8_t data){
+ 155              		.loc 1 29 51 view -0
+ 156              		.cfi_startproc
+ 157              		@ args = 0, pretend = 0, frame = 8
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 159              		.loc 1 29 51 is_stmt 0 view .LVU22
+ 160 0000 30B5     		push	{r4, r5, lr}
+ 161              	.LCFI4:
+ 162              		.cfi_def_cfa_offset 12
+ 163              		.cfi_offset 4, -12
+ 164              		.cfi_offset 5, -8
+ 165              		.cfi_offset 14, -4
+ 166 0002 83B0     		sub	sp, sp, #12
+ 167              	.LCFI5:
+ 168              		.cfi_def_cfa_offset 24
+ 169 0004 8DF80700 		strb	r0, [sp, #7]
+ 170 0008 8DF80610 		strb	r1, [sp, #6]
+  30:Core/Src/LG_IMU.c **** 	if(current_sensor == 1){
+ 171              		.loc 1 30 2 is_stmt 1 view .LVU23
+ 172              		.loc 1 30 20 is_stmt 0 view .LVU24
+ 173 000c 1F4B     		ldr	r3, .L15
+ 174 000e 1B68     		ldr	r3, [r3]
+ 175              		.loc 1 30 4 view .LVU25
+ 176 0010 012B     		cmp	r3, #1
+ 177 0012 03D0     		beq	.L13
+  31:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+  32:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi1, &addr, 1, 100);
+  33:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi1, &data, 1, 100);
+  34:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 1);
+  35:Core/Src/LG_IMU.c **** 	} else if(current_sensor == 2){
+ 178              		.loc 1 35 9 is_stmt 1 view .LVU26
+ 179              		.loc 1 35 11 is_stmt 0 view .LVU27
+ 180 0014 022B     		cmp	r3, #2
+ 181 0016 1CD0     		beq	.L14
+ 182              	.LVL11:
+ 183              	.L9:
+  36:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 0);
+  37:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+  38:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &data, 1, 100);
+  39:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+  40:Core/Src/LG_IMU.c **** 	}
+ARM GAS  /tmp/cccNgdWY.s 			page 5
+
+
+  41:Core/Src/LG_IMU.c **** 
+  42:Core/Src/LG_IMU.c **** }
+ 184              		.loc 1 42 1 view .LVU28
+ 185 0018 03B0     		add	sp, sp, #12
+ 186              	.LCFI6:
+ 187              		.cfi_remember_state
+ 188              		.cfi_def_cfa_offset 12
+ 189              		@ sp needed
+ 190 001a 30BD     		pop	{r4, r5, pc}
+ 191              	.LVL12:
+ 192              	.L13:
+ 193              	.LCFI7:
+ 194              		.cfi_restore_state
+  31:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+ 195              		.loc 1 31 3 is_stmt 1 view .LVU29
+ 196 001c 1C4C     		ldr	r4, .L15+4
+ 197 001e 0022     		movs	r2, #0
+ 198 0020 1021     		movs	r1, #16
+ 199              	.LVL13:
+  31:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+ 200              		.loc 1 31 3 is_stmt 0 view .LVU30
+ 201 0022 2046     		mov	r0, r4
+ 202              	.LVL14:
+  31:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 0);
+ 203              		.loc 1 31 3 view .LVU31
+ 204 0024 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 205              	.LVL15:
+  32:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi1, &data, 1, 100);
+ 206              		.loc 1 32 3 is_stmt 1 view .LVU32
+ 207 0028 1A4D     		ldr	r5, .L15+8
+ 208 002a 6423     		movs	r3, #100
+ 209 002c 0122     		movs	r2, #1
+ 210 002e 0DF10701 		add	r1, sp, #7
+ 211 0032 2846     		mov	r0, r5
+ 212 0034 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 213              	.LVL16:
+  33:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, 1);
+ 214              		.loc 1 33 3 view .LVU33
+ 215 0038 6423     		movs	r3, #100
+ 216 003a 0122     		movs	r2, #1
+ 217 003c 0DF10601 		add	r1, sp, #6
+ 218 0040 2846     		mov	r0, r5
+ 219 0042 FFF7FEFF 		bl	HAL_SPI_Transmit
+ 220              	.LVL17:
+  34:Core/Src/LG_IMU.c **** 	} else if(current_sensor == 2){
+ 221              		.loc 1 34 3 view .LVU34
+ 222 0046 0122     		movs	r2, #1
+ 223 0048 1021     		movs	r1, #16
+ 224 004a 2046     		mov	r0, r4
+ 225 004c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 226              	.LVL18:
+ 227 0050 E2E7     		b	.L9
+ 228              	.LVL19:
+ 229              	.L14:
+  36:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 230              		.loc 1 36 3 view .LVU35
+ 231 0052 114C     		ldr	r4, .L15+12
+ARM GAS  /tmp/cccNgdWY.s 			page 6
+
+
+ 232 0054 0022     		movs	r2, #0
+ 233 0056 4FF48071 		mov	r1, #256
+ 234              	.LVL20:
+  36:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 235              		.loc 1 36 3 is_stmt 0 view .LVU36
+ 236 005a 2046     		mov	r0, r4
+ 237              	.LVL21:
+  36:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
+ 238              		.loc 1 36 3 view .LVU37
+ 239 005c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 240              	.LVL22:
+  37:Core/Src/LG_IMU.c **** 		HAL_SPI_Transmit(&hspi2, &data, 1, 100);
+ 241              		.loc 1 37 3 is_stmt 1 view .LVU38
+ 242 0060 0E4D     		ldr	r5, .L15+16
+ 243 0062 6423     		movs	r3, #100
+ 244 0064 0122     		movs	r2, #1
+ 245 0066 0DF10701 		add	r1, sp, #7
+ 246 006a 2846     		mov	r0, r5
+ 247 006c FFF7FEFF 		bl	HAL_SPI_Transmit
+ 248              	.LVL23:
+  38:Core/Src/LG_IMU.c **** 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, 1);
+ 249              		.loc 1 38 3 view .LVU39
+ 250 0070 6423     		movs	r3, #100
+ 251 0072 0122     		movs	r2, #1
+ 252 0074 0DF10601 		add	r1, sp, #6
+ 253 0078 2846     		mov	r0, r5
+ 254 007a FFF7FEFF 		bl	HAL_SPI_Transmit
+ 255              	.LVL24:
+  39:Core/Src/LG_IMU.c **** 	}
+ 256              		.loc 1 39 3 view .LVU40
+ 257 007e 0122     		movs	r2, #1
+ 258 0080 4FF48071 		mov	r1, #256
+ 259 0084 2046     		mov	r0, r4
+ 260 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 261              	.LVL25:
+ 262              		.loc 1 42 1 is_stmt 0 view .LVU41
+ 263 008a C5E7     		b	.L9
+ 264              	.L16:
+ 265              		.align	2
+ 266              	.L15:
+ 267 008c 00000000 		.word	.LANCHOR0
+ 268 0090 00080258 		.word	1476528128
+ 269 0094 00000000 		.word	hspi1
+ 270 0098 000C0258 		.word	1476529152
+ 271 009c 00000000 		.word	hspi2
+ 272              		.cfi_endproc
+ 273              	.LFE351:
+ 275              		.section	.text.LG_Check,"ax",%progbits
+ 276              		.align	1
+ 277              		.global	LG_Check
+ 278              		.syntax unified
+ 279              		.thumb
+ 280              		.thumb_func
+ 281              		.fpu fpv5-d16
+ 283              	LG_Check:
+ 284              	.LFB352:
+  43:Core/Src/LG_IMU.c **** 
+ARM GAS  /tmp/cccNgdWY.s 			page 7
+
+
+  44:Core/Src/LG_IMU.c **** uint8_t LG_Check(){
+ 285              		.loc 1 44 19 is_stmt 1 view -0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 289 0000 10B5     		push	{r4, lr}
+ 290              	.LCFI8:
+ 291              		.cfi_def_cfa_offset 8
+ 292              		.cfi_offset 4, -8
+ 293              		.cfi_offset 14, -4
+  45:Core/Src/LG_IMU.c **** 	current_sensor = 1;
+ 294              		.loc 1 45 2 view .LVU43
+ 295              		.loc 1 45 17 is_stmt 0 view .LVU44
+ 296 0002 114B     		ldr	r3, .L25
+ 297 0004 0122     		movs	r2, #1
+ 298 0006 1A60     		str	r2, [r3]
+  46:Core/Src/LG_IMU.c **** 	uint8_t sensors_state = 0;
+ 299              		.loc 1 46 2 is_stmt 1 view .LVU45
+ 300              	.LVL26:
+  47:Core/Src/LG_IMU.c **** 	if(LG_Read_Register(0x0F) == 0x6B){
+ 301              		.loc 1 47 2 view .LVU46
+ 302              		.loc 1 47 5 is_stmt 0 view .LVU47
+ 303 0008 0F20     		movs	r0, #15
+ 304 000a FFF7FEFF 		bl	LG_Read_Register
+ 305              	.LVL27:
+ 306              		.loc 1 47 4 view .LVU48
+ 307 000e 6B28     		cmp	r0, #107
+ 308 0010 10D0     		beq	.L22
+  46:Core/Src/LG_IMU.c **** 	uint8_t sensors_state = 0;
+ 309              		.loc 1 46 10 view .LVU49
+ 310 0012 0024     		movs	r4, #0
+ 311              	.L18:
+ 312              	.LVL28:
+  48:Core/Src/LG_IMU.c **** 		sensors_state |= 0b1;
+  49:Core/Src/LG_IMU.c **** 	}
+  50:Core/Src/LG_IMU.c **** 
+  51:Core/Src/LG_IMU.c **** 	current_sensor = 2;
+ 313              		.loc 1 51 2 is_stmt 1 view .LVU50
+ 314              		.loc 1 51 17 is_stmt 0 view .LVU51
+ 315 0014 0C4B     		ldr	r3, .L25
+ 316 0016 0222     		movs	r2, #2
+ 317 0018 1A60     		str	r2, [r3]
+  52:Core/Src/LG_IMU.c **** 	if(LG_Read_Register(0x0F) == 0x6B){
+ 318              		.loc 1 52 2 is_stmt 1 view .LVU52
+ 319              		.loc 1 52 5 is_stmt 0 view .LVU53
+ 320 001a 0F20     		movs	r0, #15
+ 321 001c FFF7FEFF 		bl	LG_Read_Register
+ 322              	.LVL29:
+ 323              		.loc 1 52 4 view .LVU54
+ 324 0020 6B28     		cmp	r0, #107
+ 325 0022 09D0     		beq	.L24
+ 326              	.L19:
+  53:Core/Src/LG_IMU.c **** 		sensors_state |= 0b10;
+  54:Core/Src/LG_IMU.c **** 	}
+  55:Core/Src/LG_IMU.c **** 
+  56:Core/Src/LG_IMU.c **** 	if(sensors_state & 0b1){
+ 327              		.loc 1 56 2 is_stmt 1 view .LVU55
+ARM GAS  /tmp/cccNgdWY.s 			page 8
+
+
+ 328              		.loc 1 56 4 is_stmt 0 view .LVU56
+ 329 0024 14F0010F 		tst	r4, #1
+ 330 0028 09D0     		beq	.L20
+  57:Core/Src/LG_IMU.c **** 		current_sensor = 1;
+ 331              		.loc 1 57 3 is_stmt 1 view .LVU57
+ 332              		.loc 1 57 18 is_stmt 0 view .LVU58
+ 333 002a 074B     		ldr	r3, .L25
+ 334 002c 0122     		movs	r2, #1
+ 335 002e 1A60     		str	r2, [r3]
+ 336              	.L21:
+  58:Core/Src/LG_IMU.c **** 	}else{
+  59:Core/Src/LG_IMU.c **** 		current_sensor = 2;
+  60:Core/Src/LG_IMU.c **** 	}
+  61:Core/Src/LG_IMU.c **** 	return sensors_state;
+ 337              		.loc 1 61 2 is_stmt 1 view .LVU59
+  62:Core/Src/LG_IMU.c **** 
+  63:Core/Src/LG_IMU.c **** }
+ 338              		.loc 1 63 1 is_stmt 0 view .LVU60
+ 339 0030 2046     		mov	r0, r4
+ 340 0032 10BD     		pop	{r4, pc}
+ 341              	.LVL30:
+ 342              	.L22:
+  48:Core/Src/LG_IMU.c **** 	}
+ 343              		.loc 1 48 17 view .LVU61
+ 344 0034 0124     		movs	r4, #1
+ 345 0036 EDE7     		b	.L18
+ 346              	.LVL31:
+ 347              	.L24:
+  53:Core/Src/LG_IMU.c **** 	}
+ 348              		.loc 1 53 3 is_stmt 1 view .LVU62
+  53:Core/Src/LG_IMU.c **** 	}
+ 349              		.loc 1 53 17 is_stmt 0 view .LVU63
+ 350 0038 44F00204 		orr	r4, r4, #2
+ 351              	.LVL32:
+  53:Core/Src/LG_IMU.c **** 	}
+ 352              		.loc 1 53 17 view .LVU64
+ 353 003c F2E7     		b	.L19
+ 354              	.L20:
+  59:Core/Src/LG_IMU.c **** 	}
+ 355              		.loc 1 59 3 is_stmt 1 view .LVU65
+  59:Core/Src/LG_IMU.c **** 	}
+ 356              		.loc 1 59 18 is_stmt 0 view .LVU66
+ 357 003e 024B     		ldr	r3, .L25
+ 358 0040 0222     		movs	r2, #2
+ 359 0042 1A60     		str	r2, [r3]
+ 360 0044 F4E7     		b	.L21
+ 361              	.L26:
+ 362 0046 00BF     		.align	2
+ 363              	.L25:
+ 364 0048 00000000 		.word	.LANCHOR0
+ 365              		.cfi_endproc
+ 366              	.LFE352:
+ 368              		.section	.text.LG_Configure,"ax",%progbits
+ 369              		.align	1
+ 370              		.global	LG_Configure
+ 371              		.syntax unified
+ 372              		.thumb
+ARM GAS  /tmp/cccNgdWY.s 			page 9
+
+
+ 373              		.thumb_func
+ 374              		.fpu fpv5-d16
+ 376              	LG_Configure:
+ 377              	.LFB353:
+  64:Core/Src/LG_IMU.c **** 
+  65:Core/Src/LG_IMU.c **** void LG_Configure(){
+ 378              		.loc 1 65 20 is_stmt 1 view -0
+ 379              		.cfi_startproc
+ 380              		@ args = 0, pretend = 0, frame = 0
+ 381              		@ frame_needed = 0, uses_anonymous_args = 0
+ 382 0000 08B5     		push	{r3, lr}
+ 383              	.LCFI9:
+ 384              		.cfi_def_cfa_offset 8
+ 385              		.cfi_offset 3, -8
+ 386              		.cfi_offset 14, -4
+  66:Core/Src/LG_IMU.c **** 	LG_Write_Register(0x10, 0b00111100); //Accelerometer setup - CTRL1_XL
+ 387              		.loc 1 66 2 view .LVU68
+ 388 0002 3C21     		movs	r1, #60
+ 389 0004 1020     		movs	r0, #16
+ 390 0006 FFF7FEFF 		bl	LG_Write_Register
+ 391              	.LVL33:
+  67:Core/Src/LG_IMU.c **** 	LG_Write_Register(0x11, 0b01101000); //Gyroscope setup - CTRL2_G
+ 392              		.loc 1 67 2 view .LVU69
+ 393 000a 6821     		movs	r1, #104
+ 394 000c 1120     		movs	r0, #17
+ 395 000e FFF7FEFF 		bl	LG_Write_Register
+ 396              	.LVL34:
+  68:Core/Src/LG_IMU.c **** 	LG_Write_Register(0x13, 0b00001100); //disables I2C - CTRL4_C
+ 397              		.loc 1 68 2 view .LVU70
+ 398 0012 0C21     		movs	r1, #12
+ 399 0014 1320     		movs	r0, #19
+ 400 0016 FFF7FEFF 		bl	LG_Write_Register
+ 401              	.LVL35:
+  69:Core/Src/LG_IMU.c **** }
+ 402              		.loc 1 69 1 is_stmt 0 view .LVU71
+ 403 001a 08BD     		pop	{r3, pc}
+ 404              		.cfi_endproc
+ 405              	.LFE353:
+ 407              		.section	.text.LG_Get_Gyro_X,"ax",%progbits
+ 408              		.align	1
+ 409              		.global	LG_Get_Gyro_X
+ 410              		.syntax unified
+ 411              		.thumb
+ 412              		.thumb_func
+ 413              		.fpu fpv5-d16
+ 415              	LG_Get_Gyro_X:
+ 416              	.LFB354:
+  70:Core/Src/LG_IMU.c **** 
+  71:Core/Src/LG_IMU.c **** float LG_Get_Gyro_X(){
+ 417              		.loc 1 71 22 is_stmt 1 view -0
+ 418              		.cfi_startproc
+ 419              		@ args = 0, pretend = 0, frame = 0
+ 420              		@ frame_needed = 0, uses_anonymous_args = 0
+ 421 0000 10B5     		push	{r4, lr}
+ 422              	.LCFI10:
+ 423              		.cfi_def_cfa_offset 8
+ 424              		.cfi_offset 4, -8
+ARM GAS  /tmp/cccNgdWY.s 			page 10
+
+
+ 425              		.cfi_offset 14, -4
+  72:Core/Src/LG_IMU.c **** 	uint8_t Gyro_L = LG_Read_Register(0x22);
+ 426              		.loc 1 72 2 view .LVU73
+ 427              		.loc 1 72 19 is_stmt 0 view .LVU74
+ 428 0002 2220     		movs	r0, #34
+ 429 0004 FFF7FEFF 		bl	LG_Read_Register
+ 430              	.LVL36:
+ 431 0008 0446     		mov	r4, r0
+ 432              	.LVL37:
+  73:Core/Src/LG_IMU.c **** 	uint8_t Gyro_H = LG_Read_Register(0x23);
+ 433              		.loc 1 73 2 is_stmt 1 view .LVU75
+ 434              		.loc 1 73 19 is_stmt 0 view .LVU76
+ 435 000a 2320     		movs	r0, #35
+ 436 000c FFF7FEFF 		bl	LG_Read_Register
+ 437              	.LVL38:
+  74:Core/Src/LG_IMU.c **** 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+ 438              		.loc 1 74 2 is_stmt 1 view .LVU77
+ 439              		.loc 1 74 35 is_stmt 0 view .LVU78
+ 440 0010 0302     		lsls	r3, r0, #8
+ 441              		.loc 1 74 41 view .LVU79
+ 442 0012 1BB2     		sxth	r3, r3
+ 443 0014 24B2     		sxth	r4, r4
+ 444              	.LVL39:
+ 445              		.loc 1 74 10 view .LVU80
+ 446 0016 2343     		orrs	r3, r3, r4
+ 447 0018 07EE103A 		vmov	s14, r3	@ int
+ 448              	.LVL40:
+  75:Core/Src/LG_IMU.c **** 	float omega = (float)Gyro*35.0/1000;
+ 449              		.loc 1 75 2 is_stmt 1 view .LVU81
+ 450              		.loc 1 75 16 is_stmt 0 view .LVU82
+ 451 001c B8EEC77B 		vcvt.f64.s32	d7, s14
+ 452              	.LVL41:
+ 453              		.loc 1 75 27 view .LVU83
+ 454 0020 9FED056B 		vldr.64	d6, .L31
+ 455 0024 27EE067B 		vmul.f64	d7, d7, d6
+ 456              		.loc 1 75 32 view .LVU84
+ 457 0028 9FED056B 		vldr.64	d6, .L31+8
+ 458 002c 87EE060B 		vdiv.f64	d0, d7, d6
+ 459              	.LVL42:
+  76:Core/Src/LG_IMU.c **** 	return omega;
+ 460              		.loc 1 76 2 is_stmt 1 view .LVU85
+  77:Core/Src/LG_IMU.c **** }
+ 461              		.loc 1 77 1 is_stmt 0 view .LVU86
+ 462 0030 B7EEC00B 		vcvt.f32.f64	s0, d0
+ 463              	.LVL43:
+ 464              		.loc 1 77 1 view .LVU87
+ 465 0034 10BD     		pop	{r4, pc}
+ 466              	.L32:
+ 467 0036 00BF     		.align	3
+ 468              	.L31:
+ 469 0038 00000000 		.word	0
+ 470 003c 00804140 		.word	1078034432
+ 471 0040 00000000 		.word	0
+ 472 0044 00408F40 		.word	1083129856
+ 473              		.cfi_endproc
+ 474              	.LFE354:
+ 476              		.section	.text.LG_Get_Gyro_Y,"ax",%progbits
+ARM GAS  /tmp/cccNgdWY.s 			page 11
+
+
+ 477              		.align	1
+ 478              		.global	LG_Get_Gyro_Y
+ 479              		.syntax unified
+ 480              		.thumb
+ 481              		.thumb_func
+ 482              		.fpu fpv5-d16
+ 484              	LG_Get_Gyro_Y:
+ 485              	.LFB355:
+  78:Core/Src/LG_IMU.c **** 
+  79:Core/Src/LG_IMU.c **** float LG_Get_Gyro_Y(){
+ 486              		.loc 1 79 22 is_stmt 1 view -0
+ 487              		.cfi_startproc
+ 488              		@ args = 0, pretend = 0, frame = 0
+ 489              		@ frame_needed = 0, uses_anonymous_args = 0
+ 490 0000 10B5     		push	{r4, lr}
+ 491              	.LCFI11:
+ 492              		.cfi_def_cfa_offset 8
+ 493              		.cfi_offset 4, -8
+ 494              		.cfi_offset 14, -4
+  80:Core/Src/LG_IMU.c **** 	uint8_t Gyro_L = LG_Read_Register(0x24);
+ 495              		.loc 1 80 2 view .LVU89
+ 496              		.loc 1 80 19 is_stmt 0 view .LVU90
+ 497 0002 2420     		movs	r0, #36
+ 498 0004 FFF7FEFF 		bl	LG_Read_Register
+ 499              	.LVL44:
+ 500 0008 0446     		mov	r4, r0
+ 501              	.LVL45:
+  81:Core/Src/LG_IMU.c **** 	uint8_t Gyro_H = LG_Read_Register(0x25);
+ 502              		.loc 1 81 2 is_stmt 1 view .LVU91
+ 503              		.loc 1 81 19 is_stmt 0 view .LVU92
+ 504 000a 2520     		movs	r0, #37
+ 505 000c FFF7FEFF 		bl	LG_Read_Register
+ 506              	.LVL46:
+  82:Core/Src/LG_IMU.c **** 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+ 507              		.loc 1 82 2 is_stmt 1 view .LVU93
+ 508              		.loc 1 82 35 is_stmt 0 view .LVU94
+ 509 0010 0302     		lsls	r3, r0, #8
+ 510              		.loc 1 82 41 view .LVU95
+ 511 0012 1BB2     		sxth	r3, r3
+ 512 0014 24B2     		sxth	r4, r4
+ 513              	.LVL47:
+ 514              		.loc 1 82 10 view .LVU96
+ 515 0016 2343     		orrs	r3, r3, r4
+ 516 0018 07EE103A 		vmov	s14, r3	@ int
+ 517              	.LVL48:
+  83:Core/Src/LG_IMU.c **** 	float omega = (float)Gyro*35.0/1000;
+ 518              		.loc 1 83 2 is_stmt 1 view .LVU97
+ 519              		.loc 1 83 16 is_stmt 0 view .LVU98
+ 520 001c B8EEC77B 		vcvt.f64.s32	d7, s14
+ 521              	.LVL49:
+ 522              		.loc 1 83 27 view .LVU99
+ 523 0020 9FED056B 		vldr.64	d6, .L35
+ 524 0024 27EE067B 		vmul.f64	d7, d7, d6
+ 525              		.loc 1 83 32 view .LVU100
+ 526 0028 9FED056B 		vldr.64	d6, .L35+8
+ 527 002c 87EE060B 		vdiv.f64	d0, d7, d6
+ 528              	.LVL50:
+ARM GAS  /tmp/cccNgdWY.s 			page 12
+
+
+  84:Core/Src/LG_IMU.c **** 
+  85:Core/Src/LG_IMU.c **** 	return omega;
+ 529              		.loc 1 85 2 is_stmt 1 view .LVU101
+  86:Core/Src/LG_IMU.c **** }
+ 530              		.loc 1 86 1 is_stmt 0 view .LVU102
+ 531 0030 B7EEC00B 		vcvt.f32.f64	s0, d0
+ 532              	.LVL51:
+ 533              		.loc 1 86 1 view .LVU103
+ 534 0034 10BD     		pop	{r4, pc}
+ 535              	.L36:
+ 536 0036 00BF     		.align	3
+ 537              	.L35:
+ 538 0038 00000000 		.word	0
+ 539 003c 00804140 		.word	1078034432
+ 540 0040 00000000 		.word	0
+ 541 0044 00408F40 		.word	1083129856
+ 542              		.cfi_endproc
+ 543              	.LFE355:
+ 545              		.section	.text.LG_Get_Gyro_Z,"ax",%progbits
+ 546              		.align	1
+ 547              		.global	LG_Get_Gyro_Z
+ 548              		.syntax unified
+ 549              		.thumb
+ 550              		.thumb_func
+ 551              		.fpu fpv5-d16
+ 553              	LG_Get_Gyro_Z:
+ 554              	.LFB356:
+  87:Core/Src/LG_IMU.c **** 
+  88:Core/Src/LG_IMU.c **** float LG_Get_Gyro_Z(){
+ 555              		.loc 1 88 22 is_stmt 1 view -0
+ 556              		.cfi_startproc
+ 557              		@ args = 0, pretend = 0, frame = 0
+ 558              		@ frame_needed = 0, uses_anonymous_args = 0
+ 559 0000 10B5     		push	{r4, lr}
+ 560              	.LCFI12:
+ 561              		.cfi_def_cfa_offset 8
+ 562              		.cfi_offset 4, -8
+ 563              		.cfi_offset 14, -4
+  89:Core/Src/LG_IMU.c **** 	uint8_t Gyro_L = LG_Read_Register(0x26);
+ 564              		.loc 1 89 2 view .LVU105
+ 565              		.loc 1 89 19 is_stmt 0 view .LVU106
+ 566 0002 2620     		movs	r0, #38
+ 567 0004 FFF7FEFF 		bl	LG_Read_Register
+ 568              	.LVL52:
+ 569 0008 0446     		mov	r4, r0
+ 570              	.LVL53:
+  90:Core/Src/LG_IMU.c **** 	uint8_t Gyro_H = LG_Read_Register(0x27);
+ 571              		.loc 1 90 2 is_stmt 1 view .LVU107
+ 572              		.loc 1 90 19 is_stmt 0 view .LVU108
+ 573 000a 2720     		movs	r0, #39
+ 574 000c FFF7FEFF 		bl	LG_Read_Register
+ 575              	.LVL54:
+  91:Core/Src/LG_IMU.c **** 	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+ 576              		.loc 1 91 2 is_stmt 1 view .LVU109
+ 577              		.loc 1 91 35 is_stmt 0 view .LVU110
+ 578 0010 0302     		lsls	r3, r0, #8
+ 579              		.loc 1 91 41 view .LVU111
+ARM GAS  /tmp/cccNgdWY.s 			page 13
+
+
+ 580 0012 1BB2     		sxth	r3, r3
+ 581 0014 24B2     		sxth	r4, r4
+ 582              	.LVL55:
+ 583              		.loc 1 91 10 view .LVU112
+ 584 0016 2343     		orrs	r3, r3, r4
+ 585 0018 07EE103A 		vmov	s14, r3	@ int
+ 586              	.LVL56:
+  92:Core/Src/LG_IMU.c **** 	float omega = (float)Gyro*35.0/1000;
+ 587              		.loc 1 92 2 is_stmt 1 view .LVU113
+ 588              		.loc 1 92 16 is_stmt 0 view .LVU114
+ 589 001c B8EEC77B 		vcvt.f64.s32	d7, s14
+ 590              	.LVL57:
+ 591              		.loc 1 92 27 view .LVU115
+ 592 0020 9FED056B 		vldr.64	d6, .L39
+ 593 0024 27EE067B 		vmul.f64	d7, d7, d6
+ 594              		.loc 1 92 32 view .LVU116
+ 595 0028 9FED056B 		vldr.64	d6, .L39+8
+ 596 002c 87EE060B 		vdiv.f64	d0, d7, d6
+ 597              	.LVL58:
+  93:Core/Src/LG_IMU.c **** 
+  94:Core/Src/LG_IMU.c **** 	return omega;
+ 598              		.loc 1 94 2 is_stmt 1 view .LVU117
+  95:Core/Src/LG_IMU.c **** }
+ 599              		.loc 1 95 1 is_stmt 0 view .LVU118
+ 600 0030 B7EEC00B 		vcvt.f32.f64	s0, d0
+ 601              	.LVL59:
+ 602              		.loc 1 95 1 view .LVU119
+ 603 0034 10BD     		pop	{r4, pc}
+ 604              	.L40:
+ 605 0036 00BF     		.align	3
+ 606              	.L39:
+ 607 0038 00000000 		.word	0
+ 608 003c 00804140 		.word	1078034432
+ 609 0040 00000000 		.word	0
+ 610 0044 00408F40 		.word	1083129856
+ 611              		.cfi_endproc
+ 612              	.LFE356:
+ 614              		.section	.text.LG_Get_Acc_X,"ax",%progbits
+ 615              		.align	1
+ 616              		.global	LG_Get_Acc_X
+ 617              		.syntax unified
+ 618              		.thumb
+ 619              		.thumb_func
+ 620              		.fpu fpv5-d16
+ 622              	LG_Get_Acc_X:
+ 623              	.LFB357:
+  96:Core/Src/LG_IMU.c **** 
+  97:Core/Src/LG_IMU.c **** float LG_Get_Acc_X(){
+ 624              		.loc 1 97 21 is_stmt 1 view -0
+ 625              		.cfi_startproc
+ 626              		@ args = 0, pretend = 0, frame = 0
+ 627              		@ frame_needed = 0, uses_anonymous_args = 0
+ 628 0000 10B5     		push	{r4, lr}
+ 629              	.LCFI13:
+ 630              		.cfi_def_cfa_offset 8
+ 631              		.cfi_offset 4, -8
+ 632              		.cfi_offset 14, -4
+ARM GAS  /tmp/cccNgdWY.s 			page 14
+
+
+  98:Core/Src/LG_IMU.c **** 	uint8_t Acc_L = LG_Read_Register(0x28);
+ 633              		.loc 1 98 2 view .LVU121
+ 634              		.loc 1 98 18 is_stmt 0 view .LVU122
+ 635 0002 2820     		movs	r0, #40
+ 636 0004 FFF7FEFF 		bl	LG_Read_Register
+ 637              	.LVL60:
+ 638 0008 0446     		mov	r4, r0
+ 639              	.LVL61:
+  99:Core/Src/LG_IMU.c **** 	uint8_t Acc_H = LG_Read_Register(0x29);
+ 640              		.loc 1 99 2 is_stmt 1 view .LVU123
+ 641              		.loc 1 99 18 is_stmt 0 view .LVU124
+ 642 000a 2920     		movs	r0, #41
+ 643 000c FFF7FEFF 		bl	LG_Read_Register
+ 644              	.LVL62:
+ 100:Core/Src/LG_IMU.c **** 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+ 645              		.loc 1 100 2 is_stmt 1 view .LVU125
+ 646              		.loc 1 100 33 is_stmt 0 view .LVU126
+ 647 0010 0302     		lsls	r3, r0, #8
+ 648              		.loc 1 100 39 view .LVU127
+ 649 0012 1BB2     		sxth	r3, r3
+ 650 0014 24B2     		sxth	r4, r4
+ 651              	.LVL63:
+ 652              		.loc 1 100 10 view .LVU128
+ 653 0016 2343     		orrs	r3, r3, r4
+ 654              	.LVL64:
+ 101:Core/Src/LG_IMU.c **** 
+ 102:Core/Src/LG_IMU.c **** 	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+ 655              		.loc 1 102 2 is_stmt 1 view .LVU129
+ 656              		.loc 1 102 17 is_stmt 0 view .LVU130
+ 657 0018 07EE903A 		vmov	s15, r3	@ int
+ 658 001c F8EEE77A 		vcvt.f32.s32	s15, s15
+ 659              		.loc 1 102 28 view .LVU131
+ 660 0020 9FED0B7A 		vldr.32	s14, .L43+8
+ 661 0024 87EE870A 		vdiv.f32	s0, s15, s14
+ 662 0028 B7EEC00A 		vcvt.f64.f32	d0, s0
+ 663              		.loc 1 102 37 view .LVU132
+ 664 002c 9FED067B 		vldr.64	d7, .L43
+ 665 0030 20EE070B 		vmul.f64	d0, d0, d7
+ 666              		.loc 1 102 43 view .LVU133
+ 667 0034 B2EE007B 		vmov.f64	d7, #8.0e+0
+ 668 0038 20EE070B 		vmul.f64	d0, d0, d7
+ 669              	.LVL65:
+ 103:Core/Src/LG_IMU.c **** 	return AccSI;
+ 670              		.loc 1 103 2 is_stmt 1 view .LVU134
+ 104:Core/Src/LG_IMU.c **** }
+ 671              		.loc 1 104 1 is_stmt 0 view .LVU135
+ 672 003c B7EEC00B 		vcvt.f32.f64	s0, d0
+ 673              	.LVL66:
+ 674              		.loc 1 104 1 view .LVU136
+ 675 0040 10BD     		pop	{r4, pc}
+ 676              	.L44:
+ 677 0042 00BFAFF3 		.align	3
+ 677      0080
+ 678              	.L43:
+ 679 0048 9A999999 		.word	2576980378
+ 680 004c 99992340 		.word	1076074905
+ 681 0050 00FEFF46 		.word	1191181824
+ARM GAS  /tmp/cccNgdWY.s 			page 15
+
+
+ 682              		.cfi_endproc
+ 683              	.LFE357:
+ 685              		.section	.text.LG_Get_Acc_Y,"ax",%progbits
+ 686              		.align	1
+ 687              		.global	LG_Get_Acc_Y
+ 688              		.syntax unified
+ 689              		.thumb
+ 690              		.thumb_func
+ 691              		.fpu fpv5-d16
+ 693              	LG_Get_Acc_Y:
+ 694              	.LFB358:
+ 105:Core/Src/LG_IMU.c **** 
+ 106:Core/Src/LG_IMU.c **** float LG_Get_Acc_Y(){
+ 695              		.loc 1 106 21 is_stmt 1 view -0
+ 696              		.cfi_startproc
+ 697              		@ args = 0, pretend = 0, frame = 0
+ 698              		@ frame_needed = 0, uses_anonymous_args = 0
+ 699 0000 10B5     		push	{r4, lr}
+ 700              	.LCFI14:
+ 701              		.cfi_def_cfa_offset 8
+ 702              		.cfi_offset 4, -8
+ 703              		.cfi_offset 14, -4
+ 107:Core/Src/LG_IMU.c **** 	uint8_t Acc_L = LG_Read_Register(0x2A);
+ 704              		.loc 1 107 2 view .LVU138
+ 705              		.loc 1 107 18 is_stmt 0 view .LVU139
+ 706 0002 2A20     		movs	r0, #42
+ 707 0004 FFF7FEFF 		bl	LG_Read_Register
+ 708              	.LVL67:
+ 709 0008 0446     		mov	r4, r0
+ 710              	.LVL68:
+ 108:Core/Src/LG_IMU.c **** 	uint8_t Acc_H = LG_Read_Register(0x2B);
+ 711              		.loc 1 108 2 is_stmt 1 view .LVU140
+ 712              		.loc 1 108 18 is_stmt 0 view .LVU141
+ 713 000a 2B20     		movs	r0, #43
+ 714 000c FFF7FEFF 		bl	LG_Read_Register
+ 715              	.LVL69:
+ 109:Core/Src/LG_IMU.c **** 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+ 716              		.loc 1 109 2 is_stmt 1 view .LVU142
+ 717              		.loc 1 109 33 is_stmt 0 view .LVU143
+ 718 0010 0302     		lsls	r3, r0, #8
+ 719              		.loc 1 109 39 view .LVU144
+ 720 0012 1BB2     		sxth	r3, r3
+ 721 0014 24B2     		sxth	r4, r4
+ 722              	.LVL70:
+ 723              		.loc 1 109 10 view .LVU145
+ 724 0016 2343     		orrs	r3, r3, r4
+ 725              	.LVL71:
+ 110:Core/Src/LG_IMU.c **** 
+ 111:Core/Src/LG_IMU.c **** 	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+ 726              		.loc 1 111 2 is_stmt 1 view .LVU146
+ 727              		.loc 1 111 17 is_stmt 0 view .LVU147
+ 728 0018 07EE903A 		vmov	s15, r3	@ int
+ 729 001c F8EEE77A 		vcvt.f32.s32	s15, s15
+ 730              		.loc 1 111 28 view .LVU148
+ 731 0020 9FED0B7A 		vldr.32	s14, .L47+8
+ 732 0024 87EE870A 		vdiv.f32	s0, s15, s14
+ 733 0028 B7EEC00A 		vcvt.f64.f32	d0, s0
+ARM GAS  /tmp/cccNgdWY.s 			page 16
+
+
+ 734              		.loc 1 111 37 view .LVU149
+ 735 002c 9FED067B 		vldr.64	d7, .L47
+ 736 0030 20EE070B 		vmul.f64	d0, d0, d7
+ 737              		.loc 1 111 43 view .LVU150
+ 738 0034 B2EE007B 		vmov.f64	d7, #8.0e+0
+ 739 0038 20EE070B 		vmul.f64	d0, d0, d7
+ 740              	.LVL72:
+ 112:Core/Src/LG_IMU.c **** 	return AccSI;
+ 741              		.loc 1 112 2 is_stmt 1 view .LVU151
+ 113:Core/Src/LG_IMU.c **** }
+ 742              		.loc 1 113 1 is_stmt 0 view .LVU152
+ 743 003c B7EEC00B 		vcvt.f32.f64	s0, d0
+ 744              	.LVL73:
+ 745              		.loc 1 113 1 view .LVU153
+ 746 0040 10BD     		pop	{r4, pc}
+ 747              	.L48:
+ 748 0042 00BFAFF3 		.align	3
+ 748      0080
+ 749              	.L47:
+ 750 0048 9A999999 		.word	2576980378
+ 751 004c 99992340 		.word	1076074905
+ 752 0050 00FEFF46 		.word	1191181824
+ 753              		.cfi_endproc
+ 754              	.LFE358:
+ 756              		.section	.text.LG_Get_Acc_Z,"ax",%progbits
+ 757              		.align	1
+ 758              		.global	LG_Get_Acc_Z
+ 759              		.syntax unified
+ 760              		.thumb
+ 761              		.thumb_func
+ 762              		.fpu fpv5-d16
+ 764              	LG_Get_Acc_Z:
+ 765              	.LFB359:
+ 114:Core/Src/LG_IMU.c **** 
+ 115:Core/Src/LG_IMU.c **** float LG_Get_Acc_Z(){
+ 766              		.loc 1 115 21 is_stmt 1 view -0
+ 767              		.cfi_startproc
+ 768              		@ args = 0, pretend = 0, frame = 0
+ 769              		@ frame_needed = 0, uses_anonymous_args = 0
+ 770 0000 10B5     		push	{r4, lr}
+ 771              	.LCFI15:
+ 772              		.cfi_def_cfa_offset 8
+ 773              		.cfi_offset 4, -8
+ 774              		.cfi_offset 14, -4
+ 116:Core/Src/LG_IMU.c **** 	uint8_t Acc_L = LG_Read_Register(0x2C);
+ 775              		.loc 1 116 2 view .LVU155
+ 776              		.loc 1 116 18 is_stmt 0 view .LVU156
+ 777 0002 2C20     		movs	r0, #44
+ 778 0004 FFF7FEFF 		bl	LG_Read_Register
+ 779              	.LVL74:
+ 780 0008 0446     		mov	r4, r0
+ 781              	.LVL75:
+ 117:Core/Src/LG_IMU.c **** 	uint8_t Acc_H = LG_Read_Register(0x2D);
+ 782              		.loc 1 117 2 is_stmt 1 view .LVU157
+ 783              		.loc 1 117 18 is_stmt 0 view .LVU158
+ 784 000a 2D20     		movs	r0, #45
+ 785 000c FFF7FEFF 		bl	LG_Read_Register
+ARM GAS  /tmp/cccNgdWY.s 			page 17
+
+
+ 786              	.LVL76:
+ 118:Core/Src/LG_IMU.c **** 	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
+ 787              		.loc 1 118 2 is_stmt 1 view .LVU159
+ 788              		.loc 1 118 33 is_stmt 0 view .LVU160
+ 789 0010 0302     		lsls	r3, r0, #8
+ 790              		.loc 1 118 39 view .LVU161
+ 791 0012 1BB2     		sxth	r3, r3
+ 792 0014 24B2     		sxth	r4, r4
+ 793              	.LVL77:
+ 794              		.loc 1 118 10 view .LVU162
+ 795 0016 2343     		orrs	r3, r3, r4
+ 796              	.LVL78:
+ 119:Core/Src/LG_IMU.c **** 
+ 120:Core/Src/LG_IMU.c **** 	float AccSI = ((float)Acc / 32767) * 9.8 * 8;
+ 797              		.loc 1 120 2 is_stmt 1 view .LVU163
+ 798              		.loc 1 120 17 is_stmt 0 view .LVU164
+ 799 0018 07EE903A 		vmov	s15, r3	@ int
+ 800 001c F8EEE77A 		vcvt.f32.s32	s15, s15
+ 801              		.loc 1 120 28 view .LVU165
+ 802 0020 9FED0B7A 		vldr.32	s14, .L51+8
+ 803 0024 87EE870A 		vdiv.f32	s0, s15, s14
+ 804 0028 B7EEC00A 		vcvt.f64.f32	d0, s0
+ 805              		.loc 1 120 37 view .LVU166
+ 806 002c 9FED067B 		vldr.64	d7, .L51
+ 807 0030 20EE070B 		vmul.f64	d0, d0, d7
+ 808              		.loc 1 120 43 view .LVU167
+ 809 0034 B2EE007B 		vmov.f64	d7, #8.0e+0
+ 810 0038 20EE070B 		vmul.f64	d0, d0, d7
+ 811              	.LVL79:
+ 121:Core/Src/LG_IMU.c **** 	return AccSI;
+ 812              		.loc 1 121 2 is_stmt 1 view .LVU168
+ 122:Core/Src/LG_IMU.c **** }
+ 813              		.loc 1 122 1 is_stmt 0 view .LVU169
+ 814 003c B7EEC00B 		vcvt.f32.f64	s0, d0
+ 815              	.LVL80:
+ 816              		.loc 1 122 1 view .LVU170
+ 817 0040 10BD     		pop	{r4, pc}
+ 818              	.L52:
+ 819 0042 00BFAFF3 		.align	3
+ 819      0080
+ 820              	.L51:
+ 821 0048 9A999999 		.word	2576980378
+ 822 004c 99992340 		.word	1076074905
+ 823 0050 00FEFF46 		.word	1191181824
+ 824              		.cfi_endproc
+ 825              	.LFE359:
+ 827              		.global	current_sensor
+ 828              		.section	.data.current_sensor,"aw"
+ 829              		.align	2
+ 830              		.set	.LANCHOR0,. + 0
+ 833              	current_sensor:
+ 834 0000 02000000 		.word	2
+ 835              		.text
+ 836              	.Letext0:
+ 837              		.file 2 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 838              		.file 3 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 839              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ARM GAS  /tmp/cccNgdWY.s 			page 18
+
+
+ 840              		.file 5 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h"
+ 841              		.file 6 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h723xx.h"
+ 842              		.file 7 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/lib/gcc/arm-none-eabi/
+ 843              		.file 8 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 844              		.file 9 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 845              		.file 10 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
+ 846              		.file 11 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
+ 847              		.file 12 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 848              		.file 13 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_dma.h"
+ 849              		.file 14 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h"
+ 850              		.file 15 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h"
+ 851              		.file 16 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h"
+ 852              		.file 17 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
+ 853              		.file 18 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
+ARM GAS  /tmp/cccNgdWY.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 LG_IMU.c
+     /tmp/cccNgdWY.s:17     .text.LG_Read_Register:0000000000000000 $t
+     /tmp/cccNgdWY.s:25     .text.LG_Read_Register:0000000000000000 LG_Read_Register
+     /tmp/cccNgdWY.s:136    .text.LG_Read_Register:0000000000000090 $d
+     /tmp/cccNgdWY.s:145    .text.LG_Write_Register:0000000000000000 $t
+     /tmp/cccNgdWY.s:152    .text.LG_Write_Register:0000000000000000 LG_Write_Register
+     /tmp/cccNgdWY.s:267    .text.LG_Write_Register:000000000000008c $d
+     /tmp/cccNgdWY.s:276    .text.LG_Check:0000000000000000 $t
+     /tmp/cccNgdWY.s:283    .text.LG_Check:0000000000000000 LG_Check
+     /tmp/cccNgdWY.s:364    .text.LG_Check:0000000000000048 $d
+     /tmp/cccNgdWY.s:369    .text.LG_Configure:0000000000000000 $t
+     /tmp/cccNgdWY.s:376    .text.LG_Configure:0000000000000000 LG_Configure
+     /tmp/cccNgdWY.s:408    .text.LG_Get_Gyro_X:0000000000000000 $t
+     /tmp/cccNgdWY.s:415    .text.LG_Get_Gyro_X:0000000000000000 LG_Get_Gyro_X
+     /tmp/cccNgdWY.s:469    .text.LG_Get_Gyro_X:0000000000000038 $d
+     /tmp/cccNgdWY.s:477    .text.LG_Get_Gyro_Y:0000000000000000 $t
+     /tmp/cccNgdWY.s:484    .text.LG_Get_Gyro_Y:0000000000000000 LG_Get_Gyro_Y
+     /tmp/cccNgdWY.s:538    .text.LG_Get_Gyro_Y:0000000000000038 $d
+     /tmp/cccNgdWY.s:546    .text.LG_Get_Gyro_Z:0000000000000000 $t
+     /tmp/cccNgdWY.s:553    .text.LG_Get_Gyro_Z:0000000000000000 LG_Get_Gyro_Z
+     /tmp/cccNgdWY.s:607    .text.LG_Get_Gyro_Z:0000000000000038 $d
+     /tmp/cccNgdWY.s:615    .text.LG_Get_Acc_X:0000000000000000 $t
+     /tmp/cccNgdWY.s:622    .text.LG_Get_Acc_X:0000000000000000 LG_Get_Acc_X
+     /tmp/cccNgdWY.s:679    .text.LG_Get_Acc_X:0000000000000048 $d
+     /tmp/cccNgdWY.s:686    .text.LG_Get_Acc_Y:0000000000000000 $t
+     /tmp/cccNgdWY.s:693    .text.LG_Get_Acc_Y:0000000000000000 LG_Get_Acc_Y
+     /tmp/cccNgdWY.s:750    .text.LG_Get_Acc_Y:0000000000000048 $d
+     /tmp/cccNgdWY.s:757    .text.LG_Get_Acc_Z:0000000000000000 $t
+     /tmp/cccNgdWY.s:764    .text.LG_Get_Acc_Z:0000000000000000 LG_Get_Acc_Z
+     /tmp/cccNgdWY.s:821    .text.LG_Get_Acc_Z:0000000000000048 $d
+     /tmp/cccNgdWY.s:833    .data.current_sensor:0000000000000000 current_sensor
+     /tmp/cccNgdWY.s:829    .data.current_sensor:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_SPI_Transmit
+HAL_SPI_Receive
+hspi1
+hspi2

@@ -1,0 +1,709 @@
+ARM GAS  /tmp/ccXctthv.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"StatusDisplay.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.rodata.setStatus.str1.4,"aMS",%progbits,1
+  17              		.align	2
+  18              	.LC0:
+  19 0000 43414E00 		.ascii	"CAN\000"
+  20              		.align	2
+  21              	.LC1:
+  22 0004 47505300 		.ascii	"GPS\000"
+  23              		.align	2
+  24              	.LC2:
+  25 0008 4C6F5241 		.ascii	"LoRA\000"
+  25      00
+  26 000d 000000   		.align	2
+  27              	.LC3:
+  28 0010 53442043 		.ascii	"SD CARD\000"
+  28      41524400 
+  29              		.align	2
+  30              	.LC4:
+  31 0018 48472031 		.ascii	"HG 1\000"
+  31      00
+  32 001d 000000   		.align	2
+  33              	.LC5:
+  34 0020 4C472031 		.ascii	"LG 1\000"
+  34      00
+  35 0025 000000   		.align	2
+  36              	.LC6:
+  37 0028 42415220 		.ascii	"BAR 1\000"
+  37      3100
+  38 002e 0000     		.align	2
+  39              	.LC7:
+  40 0030 41524D00 		.ascii	"ARM\000"
+  41              		.align	2
+  42              	.LC8:
+  43 0034 48472032 		.ascii	"HG 2\000"
+  43      00
+  44 0039 000000   		.align	2
+  45              	.LC9:
+  46 003c 4C472032 		.ascii	"LG 2\000"
+  46      00
+  47 0041 000000   		.align	2
+  48              	.LC10:
+  49 0044 42415220 		.ascii	"BAR 2\000"
+  49      3200
+ARM GAS  /tmp/ccXctthv.s 			page 2
+
+
+  50 004a 0000     		.align	2
+  51              	.LC11:
+  52 004c 52454720 		.ascii	"REG 1\000"
+  52      3100
+  53 0052 0000     		.align	2
+  54              	.LC12:
+  55 0054 52454720 		.ascii	"REG 2\000"
+  55      3200
+  56 005a 0000     		.align	2
+  57              	.LC13:
+  58 005c 42415454 		.ascii	"BATT\000"
+  58      00
+  59              		.section	.text.setStatus,"ax",%progbits
+  60              		.align	1
+  61              		.global	setStatus
+  62              		.arch armv7e-m
+  63              		.syntax unified
+  64              		.thumb
+  65              		.thumb_func
+  66              		.fpu fpv5-d16
+  68              	setStatus:
+  69              	.LVL0:
+  70              	.LFB350:
+  71              		.file 1 "Core/Src/StatusDisplay.c"
+   1:Core/Src/StatusDisplay.c **** #include <AvioNEXT.h>
+   2:Core/Src/StatusDisplay.c **** #include <main.h>
+   3:Core/Src/StatusDisplay.c **** uint8_t statusArray[14];
+   4:Core/Src/StatusDisplay.c **** 
+   5:Core/Src/StatusDisplay.c **** 
+   6:Core/Src/StatusDisplay.c **** const float brightness = 0.4;
+   7:Core/Src/StatusDisplay.c **** 
+   8:Core/Src/StatusDisplay.c **** void setStatus(char *ModuleName, uint8_t status) {
+  72              		.loc 1 8 50 view -0
+  73              		.cfi_startproc
+  74              		@ args = 0, pretend = 0, frame = 0
+  75              		@ frame_needed = 0, uses_anonymous_args = 0
+  76              		.loc 1 8 50 is_stmt 0 view .LVU1
+  77 0000 38B5     		push	{r3, r4, r5, lr}
+  78              	.LCFI0:
+  79              		.cfi_def_cfa_offset 16
+  80              		.cfi_offset 3, -16
+  81              		.cfi_offset 4, -12
+  82              		.cfi_offset 5, -8
+  83              		.cfi_offset 14, -4
+  84 0002 0546     		mov	r5, r0
+  85 0004 0C46     		mov	r4, r1
+   9:Core/Src/StatusDisplay.c **** 
+  10:Core/Src/StatusDisplay.c **** 	if (strcmp(ModuleName, "CAN") == 0) {
+  86              		.loc 1 10 2 is_stmt 1 view .LVU2
+  87              	.LBB2:
+  88              		.loc 1 10 6 is_stmt 0 view .LVU3
+  89 0006 3849     		ldr	r1, .L17
+  90              	.LVL1:
+  91              		.loc 1 10 6 view .LVU4
+  92 0008 FFF7FEFF 		bl	strcmp
+  93              	.LVL2:
+  94              		.loc 1 10 5 view .LVU5
+ARM GAS  /tmp/ccXctthv.s 			page 3
+
+
+  95 000c 10B9     		cbnz	r0, .L2
+  11:Core/Src/StatusDisplay.c **** 		statusArray[0] = status;
+  96              		.loc 1 11 3 is_stmt 1 view .LVU6
+  97              		.loc 1 11 18 is_stmt 0 view .LVU7
+  98 000e 374B     		ldr	r3, .L17+4
+  99 0010 1C70     		strb	r4, [r3]
+ 100              	.L1:
+ 101              	.LBE2:
+  12:Core/Src/StatusDisplay.c **** 
+  13:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "GPS") == 0) {
+  14:Core/Src/StatusDisplay.c **** 		statusArray[1] = status;
+  15:Core/Src/StatusDisplay.c **** 
+  16:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "LoRA") == 0) {
+  17:Core/Src/StatusDisplay.c **** 		statusArray[2] = status;
+  18:Core/Src/StatusDisplay.c **** 
+  19:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "SD CARD") == 0) {
+  20:Core/Src/StatusDisplay.c **** 		statusArray[3] = status;
+  21:Core/Src/StatusDisplay.c **** 
+  22:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "HG 1") == 0) {
+  23:Core/Src/StatusDisplay.c **** 		statusArray[4] = status;
+  24:Core/Src/StatusDisplay.c **** 
+  25:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "LG 1") == 0) {
+  26:Core/Src/StatusDisplay.c **** 		statusArray[5] = status;
+  27:Core/Src/StatusDisplay.c **** 
+  28:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "BAR 1") == 0) {
+  29:Core/Src/StatusDisplay.c **** 		statusArray[6] = status;
+  30:Core/Src/StatusDisplay.c **** 
+  31:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "ARM") == 0) {
+  32:Core/Src/StatusDisplay.c **** 		statusArray[7] = status;
+  33:Core/Src/StatusDisplay.c **** 
+  34:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "HG 2") == 0) {
+  35:Core/Src/StatusDisplay.c **** 		statusArray[8] = status;
+  36:Core/Src/StatusDisplay.c **** 
+  37:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "LG 2") == 0) {
+  38:Core/Src/StatusDisplay.c **** 		statusArray[9] = status;
+  39:Core/Src/StatusDisplay.c **** 
+  40:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "BAR 2") == 0) {
+  41:Core/Src/StatusDisplay.c **** 		statusArray[10] = status;
+  42:Core/Src/StatusDisplay.c **** 
+  43:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "REG 1") == 0) {
+  44:Core/Src/StatusDisplay.c **** 		statusArray[11] = status;
+  45:Core/Src/StatusDisplay.c **** 
+  46:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "REG 2") == 0) {
+  47:Core/Src/StatusDisplay.c **** 		statusArray[12] = status;
+  48:Core/Src/StatusDisplay.c **** 
+  49:Core/Src/StatusDisplay.c **** 	} else if (strcmp(ModuleName, "BATT") == 0) {
+  50:Core/Src/StatusDisplay.c **** 		statusArray[13] = status;
+  51:Core/Src/StatusDisplay.c **** 
+  52:Core/Src/StatusDisplay.c **** 	}
+  53:Core/Src/StatusDisplay.c **** 
+  54:Core/Src/StatusDisplay.c **** }
+ 102              		.loc 1 54 1 view .LVU8
+ 103 0012 38BD     		pop	{r3, r4, r5, pc}
+ 104              	.LVL3:
+ 105              	.L2:
+ 106              	.LBB3:
+  13:Core/Src/StatusDisplay.c **** 		statusArray[1] = status;
+ARM GAS  /tmp/ccXctthv.s 			page 4
+
+
+ 107              		.loc 1 13 9 is_stmt 1 view .LVU9
+  13:Core/Src/StatusDisplay.c **** 		statusArray[1] = status;
+ 108              		.loc 1 13 13 is_stmt 0 view .LVU10
+ 109 0014 3649     		ldr	r1, .L17+8
+ 110 0016 2846     		mov	r0, r5
+ 111 0018 FFF7FEFF 		bl	strcmp
+ 112              	.LVL4:
+  13:Core/Src/StatusDisplay.c **** 		statusArray[1] = status;
+ 113              		.loc 1 13 12 view .LVU11
+ 114 001c 10B9     		cbnz	r0, .L4
+  14:Core/Src/StatusDisplay.c **** 
+ 115              		.loc 1 14 3 is_stmt 1 view .LVU12
+  14:Core/Src/StatusDisplay.c **** 
+ 116              		.loc 1 14 18 is_stmt 0 view .LVU13
+ 117 001e 334B     		ldr	r3, .L17+4
+ 118 0020 5C70     		strb	r4, [r3, #1]
+ 119 0022 F6E7     		b	.L1
+ 120              	.L4:
+  16:Core/Src/StatusDisplay.c **** 		statusArray[2] = status;
+ 121              		.loc 1 16 9 is_stmt 1 view .LVU14
+  16:Core/Src/StatusDisplay.c **** 		statusArray[2] = status;
+ 122              		.loc 1 16 13 is_stmt 0 view .LVU15
+ 123 0024 3349     		ldr	r1, .L17+12
+ 124 0026 2846     		mov	r0, r5
+ 125 0028 FFF7FEFF 		bl	strcmp
+ 126              	.LVL5:
+  16:Core/Src/StatusDisplay.c **** 		statusArray[2] = status;
+ 127              		.loc 1 16 12 view .LVU16
+ 128 002c 10B9     		cbnz	r0, .L5
+  17:Core/Src/StatusDisplay.c **** 
+ 129              		.loc 1 17 3 is_stmt 1 view .LVU17
+  17:Core/Src/StatusDisplay.c **** 
+ 130              		.loc 1 17 18 is_stmt 0 view .LVU18
+ 131 002e 2F4B     		ldr	r3, .L17+4
+ 132 0030 9C70     		strb	r4, [r3, #2]
+ 133 0032 EEE7     		b	.L1
+ 134              	.L5:
+  19:Core/Src/StatusDisplay.c **** 		statusArray[3] = status;
+ 135              		.loc 1 19 9 is_stmt 1 view .LVU19
+  19:Core/Src/StatusDisplay.c **** 		statusArray[3] = status;
+ 136              		.loc 1 19 13 is_stmt 0 view .LVU20
+ 137 0034 3049     		ldr	r1, .L17+16
+ 138 0036 2846     		mov	r0, r5
+ 139 0038 FFF7FEFF 		bl	strcmp
+ 140              	.LVL6:
+  19:Core/Src/StatusDisplay.c **** 		statusArray[3] = status;
+ 141              		.loc 1 19 12 view .LVU21
+ 142 003c 10B9     		cbnz	r0, .L6
+  20:Core/Src/StatusDisplay.c **** 
+ 143              		.loc 1 20 3 is_stmt 1 view .LVU22
+  20:Core/Src/StatusDisplay.c **** 
+ 144              		.loc 1 20 18 is_stmt 0 view .LVU23
+ 145 003e 2B4B     		ldr	r3, .L17+4
+ 146 0040 DC70     		strb	r4, [r3, #3]
+ 147 0042 E6E7     		b	.L1
+ 148              	.L6:
+  22:Core/Src/StatusDisplay.c **** 		statusArray[4] = status;
+ARM GAS  /tmp/ccXctthv.s 			page 5
+
+
+ 149              		.loc 1 22 9 is_stmt 1 view .LVU24
+  22:Core/Src/StatusDisplay.c **** 		statusArray[4] = status;
+ 150              		.loc 1 22 13 is_stmt 0 view .LVU25
+ 151 0044 2D49     		ldr	r1, .L17+20
+ 152 0046 2846     		mov	r0, r5
+ 153 0048 FFF7FEFF 		bl	strcmp
+ 154              	.LVL7:
+  22:Core/Src/StatusDisplay.c **** 		statusArray[4] = status;
+ 155              		.loc 1 22 12 view .LVU26
+ 156 004c 10B9     		cbnz	r0, .L7
+  23:Core/Src/StatusDisplay.c **** 
+ 157              		.loc 1 23 3 is_stmt 1 view .LVU27
+  23:Core/Src/StatusDisplay.c **** 
+ 158              		.loc 1 23 18 is_stmt 0 view .LVU28
+ 159 004e 274B     		ldr	r3, .L17+4
+ 160 0050 1C71     		strb	r4, [r3, #4]
+ 161 0052 DEE7     		b	.L1
+ 162              	.L7:
+  25:Core/Src/StatusDisplay.c **** 		statusArray[5] = status;
+ 163              		.loc 1 25 9 is_stmt 1 view .LVU29
+  25:Core/Src/StatusDisplay.c **** 		statusArray[5] = status;
+ 164              		.loc 1 25 13 is_stmt 0 view .LVU30
+ 165 0054 2A49     		ldr	r1, .L17+24
+ 166 0056 2846     		mov	r0, r5
+ 167 0058 FFF7FEFF 		bl	strcmp
+ 168              	.LVL8:
+  25:Core/Src/StatusDisplay.c **** 		statusArray[5] = status;
+ 169              		.loc 1 25 12 view .LVU31
+ 170 005c 10B9     		cbnz	r0, .L8
+  26:Core/Src/StatusDisplay.c **** 
+ 171              		.loc 1 26 3 is_stmt 1 view .LVU32
+  26:Core/Src/StatusDisplay.c **** 
+ 172              		.loc 1 26 18 is_stmt 0 view .LVU33
+ 173 005e 234B     		ldr	r3, .L17+4
+ 174 0060 5C71     		strb	r4, [r3, #5]
+ 175 0062 D6E7     		b	.L1
+ 176              	.L8:
+  28:Core/Src/StatusDisplay.c **** 		statusArray[6] = status;
+ 177              		.loc 1 28 9 is_stmt 1 view .LVU34
+  28:Core/Src/StatusDisplay.c **** 		statusArray[6] = status;
+ 178              		.loc 1 28 13 is_stmt 0 view .LVU35
+ 179 0064 2749     		ldr	r1, .L17+28
+ 180 0066 2846     		mov	r0, r5
+ 181 0068 FFF7FEFF 		bl	strcmp
+ 182              	.LVL9:
+  28:Core/Src/StatusDisplay.c **** 		statusArray[6] = status;
+ 183              		.loc 1 28 12 view .LVU36
+ 184 006c 10B9     		cbnz	r0, .L9
+  29:Core/Src/StatusDisplay.c **** 
+ 185              		.loc 1 29 3 is_stmt 1 view .LVU37
+  29:Core/Src/StatusDisplay.c **** 
+ 186              		.loc 1 29 18 is_stmt 0 view .LVU38
+ 187 006e 1F4B     		ldr	r3, .L17+4
+ 188 0070 9C71     		strb	r4, [r3, #6]
+ 189 0072 CEE7     		b	.L1
+ 190              	.L9:
+  31:Core/Src/StatusDisplay.c **** 		statusArray[7] = status;
+ARM GAS  /tmp/ccXctthv.s 			page 6
+
+
+ 191              		.loc 1 31 9 is_stmt 1 view .LVU39
+  31:Core/Src/StatusDisplay.c **** 		statusArray[7] = status;
+ 192              		.loc 1 31 13 is_stmt 0 view .LVU40
+ 193 0074 2449     		ldr	r1, .L17+32
+ 194 0076 2846     		mov	r0, r5
+ 195 0078 FFF7FEFF 		bl	strcmp
+ 196              	.LVL10:
+  31:Core/Src/StatusDisplay.c **** 		statusArray[7] = status;
+ 197              		.loc 1 31 12 view .LVU41
+ 198 007c 10B9     		cbnz	r0, .L10
+  32:Core/Src/StatusDisplay.c **** 
+ 199              		.loc 1 32 3 is_stmt 1 view .LVU42
+  32:Core/Src/StatusDisplay.c **** 
+ 200              		.loc 1 32 18 is_stmt 0 view .LVU43
+ 201 007e 1B4B     		ldr	r3, .L17+4
+ 202 0080 DC71     		strb	r4, [r3, #7]
+ 203 0082 C6E7     		b	.L1
+ 204              	.L10:
+  34:Core/Src/StatusDisplay.c **** 		statusArray[8] = status;
+ 205              		.loc 1 34 9 is_stmt 1 view .LVU44
+  34:Core/Src/StatusDisplay.c **** 		statusArray[8] = status;
+ 206              		.loc 1 34 13 is_stmt 0 view .LVU45
+ 207 0084 2149     		ldr	r1, .L17+36
+ 208 0086 2846     		mov	r0, r5
+ 209 0088 FFF7FEFF 		bl	strcmp
+ 210              	.LVL11:
+  34:Core/Src/StatusDisplay.c **** 		statusArray[8] = status;
+ 211              		.loc 1 34 12 view .LVU46
+ 212 008c 10B9     		cbnz	r0, .L11
+  35:Core/Src/StatusDisplay.c **** 
+ 213              		.loc 1 35 3 is_stmt 1 view .LVU47
+  35:Core/Src/StatusDisplay.c **** 
+ 214              		.loc 1 35 18 is_stmt 0 view .LVU48
+ 215 008e 174B     		ldr	r3, .L17+4
+ 216 0090 1C72     		strb	r4, [r3, #8]
+ 217 0092 BEE7     		b	.L1
+ 218              	.L11:
+  37:Core/Src/StatusDisplay.c **** 		statusArray[9] = status;
+ 219              		.loc 1 37 9 is_stmt 1 view .LVU49
+  37:Core/Src/StatusDisplay.c **** 		statusArray[9] = status;
+ 220              		.loc 1 37 13 is_stmt 0 view .LVU50
+ 221 0094 1E49     		ldr	r1, .L17+40
+ 222 0096 2846     		mov	r0, r5
+ 223 0098 FFF7FEFF 		bl	strcmp
+ 224              	.LVL12:
+  37:Core/Src/StatusDisplay.c **** 		statusArray[9] = status;
+ 225              		.loc 1 37 12 view .LVU51
+ 226 009c 10B9     		cbnz	r0, .L12
+  38:Core/Src/StatusDisplay.c **** 
+ 227              		.loc 1 38 3 is_stmt 1 view .LVU52
+  38:Core/Src/StatusDisplay.c **** 
+ 228              		.loc 1 38 18 is_stmt 0 view .LVU53
+ 229 009e 134B     		ldr	r3, .L17+4
+ 230 00a0 5C72     		strb	r4, [r3, #9]
+ 231 00a2 B6E7     		b	.L1
+ 232              	.L12:
+  40:Core/Src/StatusDisplay.c **** 		statusArray[10] = status;
+ARM GAS  /tmp/ccXctthv.s 			page 7
+
+
+ 233              		.loc 1 40 9 is_stmt 1 view .LVU54
+  40:Core/Src/StatusDisplay.c **** 		statusArray[10] = status;
+ 234              		.loc 1 40 13 is_stmt 0 view .LVU55
+ 235 00a4 1B49     		ldr	r1, .L17+44
+ 236 00a6 2846     		mov	r0, r5
+ 237 00a8 FFF7FEFF 		bl	strcmp
+ 238              	.LVL13:
+  40:Core/Src/StatusDisplay.c **** 		statusArray[10] = status;
+ 239              		.loc 1 40 12 view .LVU56
+ 240 00ac 10B9     		cbnz	r0, .L13
+  41:Core/Src/StatusDisplay.c **** 
+ 241              		.loc 1 41 3 is_stmt 1 view .LVU57
+  41:Core/Src/StatusDisplay.c **** 
+ 242              		.loc 1 41 19 is_stmt 0 view .LVU58
+ 243 00ae 0F4B     		ldr	r3, .L17+4
+ 244 00b0 9C72     		strb	r4, [r3, #10]
+ 245 00b2 AEE7     		b	.L1
+ 246              	.L13:
+  43:Core/Src/StatusDisplay.c **** 		statusArray[11] = status;
+ 247              		.loc 1 43 9 is_stmt 1 view .LVU59
+  43:Core/Src/StatusDisplay.c **** 		statusArray[11] = status;
+ 248              		.loc 1 43 13 is_stmt 0 view .LVU60
+ 249 00b4 1849     		ldr	r1, .L17+48
+ 250 00b6 2846     		mov	r0, r5
+ 251 00b8 FFF7FEFF 		bl	strcmp
+ 252              	.LVL14:
+  43:Core/Src/StatusDisplay.c **** 		statusArray[11] = status;
+ 253              		.loc 1 43 12 view .LVU61
+ 254 00bc 10B9     		cbnz	r0, .L14
+  44:Core/Src/StatusDisplay.c **** 
+ 255              		.loc 1 44 3 is_stmt 1 view .LVU62
+  44:Core/Src/StatusDisplay.c **** 
+ 256              		.loc 1 44 19 is_stmt 0 view .LVU63
+ 257 00be 0B4B     		ldr	r3, .L17+4
+ 258 00c0 DC72     		strb	r4, [r3, #11]
+ 259 00c2 A6E7     		b	.L1
+ 260              	.L14:
+  46:Core/Src/StatusDisplay.c **** 		statusArray[12] = status;
+ 261              		.loc 1 46 9 is_stmt 1 view .LVU64
+  46:Core/Src/StatusDisplay.c **** 		statusArray[12] = status;
+ 262              		.loc 1 46 13 is_stmt 0 view .LVU65
+ 263 00c4 1549     		ldr	r1, .L17+52
+ 264 00c6 2846     		mov	r0, r5
+ 265 00c8 FFF7FEFF 		bl	strcmp
+ 266              	.LVL15:
+  46:Core/Src/StatusDisplay.c **** 		statusArray[12] = status;
+ 267              		.loc 1 46 12 view .LVU66
+ 268 00cc 10B9     		cbnz	r0, .L15
+  47:Core/Src/StatusDisplay.c **** 
+ 269              		.loc 1 47 3 is_stmt 1 view .LVU67
+  47:Core/Src/StatusDisplay.c **** 
+ 270              		.loc 1 47 19 is_stmt 0 view .LVU68
+ 271 00ce 074B     		ldr	r3, .L17+4
+ 272 00d0 1C73     		strb	r4, [r3, #12]
+ 273 00d2 9EE7     		b	.L1
+ 274              	.L15:
+  49:Core/Src/StatusDisplay.c **** 		statusArray[13] = status;
+ARM GAS  /tmp/ccXctthv.s 			page 8
+
+
+ 275              		.loc 1 49 9 is_stmt 1 view .LVU69
+  49:Core/Src/StatusDisplay.c **** 		statusArray[13] = status;
+ 276              		.loc 1 49 13 is_stmt 0 view .LVU70
+ 277 00d4 1249     		ldr	r1, .L17+56
+ 278 00d6 2846     		mov	r0, r5
+ 279 00d8 FFF7FEFF 		bl	strcmp
+ 280              	.LVL16:
+  49:Core/Src/StatusDisplay.c **** 		statusArray[13] = status;
+ 281              		.loc 1 49 12 view .LVU71
+ 282 00dc 0028     		cmp	r0, #0
+ 283 00de 98D1     		bne	.L1
+  50:Core/Src/StatusDisplay.c **** 
+ 284              		.loc 1 50 3 is_stmt 1 view .LVU72
+  50:Core/Src/StatusDisplay.c **** 
+ 285              		.loc 1 50 19 is_stmt 0 view .LVU73
+ 286 00e0 024B     		ldr	r3, .L17+4
+ 287 00e2 5C73     		strb	r4, [r3, #13]
+ 288              	.LBE3:
+ 289              		.loc 1 54 1 view .LVU74
+ 290 00e4 95E7     		b	.L1
+ 291              	.L18:
+ 292 00e6 00BF     		.align	2
+ 293              	.L17:
+ 294 00e8 00000000 		.word	.LC0
+ 295 00ec 00000000 		.word	statusArray
+ 296 00f0 04000000 		.word	.LC1
+ 297 00f4 08000000 		.word	.LC2
+ 298 00f8 10000000 		.word	.LC3
+ 299 00fc 18000000 		.word	.LC4
+ 300 0100 20000000 		.word	.LC5
+ 301 0104 28000000 		.word	.LC6
+ 302 0108 30000000 		.word	.LC7
+ 303 010c 34000000 		.word	.LC8
+ 304 0110 3C000000 		.word	.LC9
+ 305 0114 44000000 		.word	.LC10
+ 306 0118 4C000000 		.word	.LC11
+ 307 011c 54000000 		.word	.LC12
+ 308 0120 5C000000 		.word	.LC13
+ 309              		.cfi_endproc
+ 310              	.LFE350:
+ 312              		.section	.text.updateStatus,"ax",%progbits
+ 313              		.align	1
+ 314              		.global	updateStatus
+ 315              		.syntax unified
+ 316              		.thumb
+ 317              		.thumb_func
+ 318              		.fpu fpv5-d16
+ 320              	updateStatus:
+ 321              	.LFB351:
+  55:Core/Src/StatusDisplay.c **** 
+  56:Core/Src/StatusDisplay.c **** void updateStatus() {
+ 322              		.loc 1 56 21 is_stmt 1 view -0
+ 323              		.cfi_startproc
+ 324              		@ args = 0, pretend = 0, frame = 48
+ 325              		@ frame_needed = 0, uses_anonymous_args = 0
+ 326 0000 10B5     		push	{r4, lr}
+ 327              	.LCFI1:
+ARM GAS  /tmp/ccXctthv.s 			page 9
+
+
+ 328              		.cfi_def_cfa_offset 8
+ 329              		.cfi_offset 4, -8
+ 330              		.cfi_offset 14, -4
+ 331 0002 8CB0     		sub	sp, sp, #48
+ 332              	.LCFI2:
+ 333              		.cfi_def_cfa_offset 56
+  57:Core/Src/StatusDisplay.c **** 	uint8_t LED_Color_Data_Staus[14][3];
+ 334              		.loc 1 57 2 view .LVU76
+  58:Core/Src/StatusDisplay.c **** 	for (int i = 0; i < 14; i++) {
+ 335              		.loc 1 58 2 view .LVU77
+ 336              	.LBB4:
+ 337              		.loc 1 58 7 view .LVU78
+ 338              	.LVL17:
+ 339              		.loc 1 58 11 is_stmt 0 view .LVU79
+ 340 0004 0024     		movs	r4, #0
+ 341              		.loc 1 58 2 view .LVU80
+ 342 0006 2EE0     		b	.L20
+ 343              	.LVL18:
+ 344              	.L21:
+  59:Core/Src/StatusDisplay.c **** 		switch (statusArray[i]) {
+  60:Core/Src/StatusDisplay.c **** 		case 0: //RED LED, critical module malfunction
+  61:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][0] = 0;
+  62:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][1] = (int)(255 * brightness);
+  63:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][2] = 0;
+  64:Core/Src/StatusDisplay.c **** 			break;
+  65:Core/Src/StatusDisplay.c **** 		case 1: //orange blinking LED, module awaiting connection
+  66:Core/Src/StatusDisplay.c **** 			if ((HAL_GetTick() / 1000) % 2) {
+ 345              		.loc 1 66 4 is_stmt 1 view .LVU81
+ 346              		.loc 1 66 9 is_stmt 0 view .LVU82
+ 347 0008 FFF7FEFF 		bl	HAL_GetTick
+ 348              	.LVL19:
+ 349              		.loc 1 66 23 view .LVU83
+ 350 000c 244B     		ldr	r3, .L28
+ 351 000e A3FB0030 		umull	r3, r0, r3, r0
+ 352              		.loc 1 66 7 view .LVU84
+ 353 0012 10F0400F 		tst	r0, #64
+ 354 0016 0DD0     		beq	.L24
+  67:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][0] = (int)(50 * brightness);
+ 355              		.loc 1 67 5 is_stmt 1 view .LVU85
+ 356              		.loc 1 67 32 is_stmt 0 view .LVU86
+ 357 0018 04EB4403 		add	r3, r4, r4, lsl #1
+ 358 001c 0CAA     		add	r2, sp, #48
+ 359 001e 1344     		add	r3, r3, r2
+ 360 0020 1422     		movs	r2, #20
+ 361 0022 03F82C2C 		strb	r2, [r3, #-44]
+  68:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][1] = (int)(255 * brightness);
+ 362              		.loc 1 68 5 is_stmt 1 view .LVU87
+ 363              		.loc 1 68 32 is_stmt 0 view .LVU88
+ 364 0026 6622     		movs	r2, #102
+ 365 0028 03F82B2C 		strb	r2, [r3, #-43]
+  69:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][2] = 0;
+ 366              		.loc 1 69 5 is_stmt 1 view .LVU89
+ 367              		.loc 1 69 32 is_stmt 0 view .LVU90
+ 368 002c 0022     		movs	r2, #0
+ 369 002e 03F82A2C 		strb	r2, [r3, #-42]
+ 370 0032 17E0     		b	.L23
+ 371              	.L24:
+ARM GAS  /tmp/ccXctthv.s 			page 10
+
+
+  70:Core/Src/StatusDisplay.c **** 			} else {
+  71:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][0] = 0;
+ 372              		.loc 1 71 5 is_stmt 1 view .LVU91
+ 373              		.loc 1 71 32 is_stmt 0 view .LVU92
+ 374 0034 04EB4403 		add	r3, r4, r4, lsl #1
+ 375 0038 0CAA     		add	r2, sp, #48
+ 376 003a 1344     		add	r3, r3, r2
+ 377 003c 0022     		movs	r2, #0
+ 378 003e 03F82C2C 		strb	r2, [r3, #-44]
+  72:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][1] = 0;
+ 379              		.loc 1 72 5 is_stmt 1 view .LVU93
+ 380              		.loc 1 72 32 is_stmt 0 view .LVU94
+ 381 0042 03F82B2C 		strb	r2, [r3, #-43]
+  73:Core/Src/StatusDisplay.c **** 				LED_Color_Data_Staus[i][2] = 0;
+ 382              		.loc 1 73 5 is_stmt 1 view .LVU95
+ 383              		.loc 1 73 32 is_stmt 0 view .LVU96
+ 384 0046 03F82A2C 		strb	r2, [r3, #-42]
+ 385 004a 0BE0     		b	.L23
+ 386              	.L22:
+  74:Core/Src/StatusDisplay.c **** 			}
+  75:Core/Src/StatusDisplay.c **** 			break;
+  76:Core/Src/StatusDisplay.c **** 		case 2: //GREEN LED, module nominal
+  77:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][0] = (int)(255 * brightness);
+ 387              		.loc 1 77 4 is_stmt 1 view .LVU97
+ 388              		.loc 1 77 31 is_stmt 0 view .LVU98
+ 389 004c 04EB4403 		add	r3, r4, r4, lsl #1
+ 390 0050 0CAA     		add	r2, sp, #48
+ 391 0052 1344     		add	r3, r3, r2
+ 392 0054 6622     		movs	r2, #102
+ 393 0056 03F82C2C 		strb	r2, [r3, #-44]
+  78:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][1] = 0;
+ 394              		.loc 1 78 4 is_stmt 1 view .LVU99
+ 395              		.loc 1 78 31 is_stmt 0 view .LVU100
+ 396 005a 0022     		movs	r2, #0
+ 397 005c 03F82B2C 		strb	r2, [r3, #-43]
+  79:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][2] = 0;
+ 398              		.loc 1 79 4 is_stmt 1 view .LVU101
+ 399              		.loc 1 79 31 is_stmt 0 view .LVU102
+ 400 0060 03F82A2C 		strb	r2, [r3, #-42]
+ 401              	.L23:
+  58:Core/Src/StatusDisplay.c **** 		switch (statusArray[i]) {
+ 402              		.loc 1 58 26 is_stmt 1 discriminator 2 view .LVU103
+  58:Core/Src/StatusDisplay.c **** 		switch (statusArray[i]) {
+ 403              		.loc 1 58 27 is_stmt 0 discriminator 2 view .LVU104
+ 404 0064 0134     		adds	r4, r4, #1
+ 405              	.LVL20:
+ 406              	.L20:
+  58:Core/Src/StatusDisplay.c **** 		switch (statusArray[i]) {
+ 407              		.loc 1 58 18 is_stmt 1 discriminator 1 view .LVU105
+  58:Core/Src/StatusDisplay.c **** 		switch (statusArray[i]) {
+ 408              		.loc 1 58 2 is_stmt 0 discriminator 1 view .LVU106
+ 409 0066 0D2C     		cmp	r4, #13
+ 410 0068 14DC     		bgt	.L27
+  59:Core/Src/StatusDisplay.c **** 		case 0: //RED LED, critical module malfunction
+ 411              		.loc 1 59 3 is_stmt 1 view .LVU107
+  59:Core/Src/StatusDisplay.c **** 		case 0: //RED LED, critical module malfunction
+ 412              		.loc 1 59 22 is_stmt 0 view .LVU108
+ARM GAS  /tmp/ccXctthv.s 			page 11
+
+
+ 413 006a 0E4B     		ldr	r3, .L28+4
+ 414 006c 1B5D     		ldrb	r3, [r3, r4]	@ zero_extendqisi2
+  59:Core/Src/StatusDisplay.c **** 		case 0: //RED LED, critical module malfunction
+ 415              		.loc 1 59 3 view .LVU109
+ 416 006e 012B     		cmp	r3, #1
+ 417 0070 CAD0     		beq	.L21
+ 418 0072 022B     		cmp	r3, #2
+ 419 0074 EAD0     		beq	.L22
+ 420 0076 002B     		cmp	r3, #0
+ 421 0078 F4D1     		bne	.L23
+  61:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][1] = (int)(255 * brightness);
+ 422              		.loc 1 61 4 is_stmt 1 view .LVU110
+  61:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][1] = (int)(255 * brightness);
+ 423              		.loc 1 61 31 is_stmt 0 view .LVU111
+ 424 007a 04EB4403 		add	r3, r4, r4, lsl #1
+ 425 007e 0CAA     		add	r2, sp, #48
+ 426 0080 1344     		add	r3, r3, r2
+ 427 0082 0022     		movs	r2, #0
+ 428 0084 03F82C2C 		strb	r2, [r3, #-44]
+  62:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][2] = 0;
+ 429              		.loc 1 62 4 is_stmt 1 view .LVU112
+  62:Core/Src/StatusDisplay.c **** 			LED_Color_Data_Staus[i][2] = 0;
+ 430              		.loc 1 62 31 is_stmt 0 view .LVU113
+ 431 0088 6621     		movs	r1, #102
+ 432 008a 03F82B1C 		strb	r1, [r3, #-43]
+  63:Core/Src/StatusDisplay.c **** 			break;
+ 433              		.loc 1 63 4 is_stmt 1 view .LVU114
+  63:Core/Src/StatusDisplay.c **** 			break;
+ 434              		.loc 1 63 31 is_stmt 0 view .LVU115
+ 435 008e 03F82A2C 		strb	r2, [r3, #-42]
+  64:Core/Src/StatusDisplay.c **** 		case 1: //orange blinking LED, module awaiting connection
+ 436              		.loc 1 64 4 is_stmt 1 view .LVU116
+ 437 0092 E7E7     		b	.L23
+ 438              	.L27:
+ 439              	.LBE4:
+  80:Core/Src/StatusDisplay.c **** 		default:
+  81:Core/Src/StatusDisplay.c **** 			break;
+  82:Core/Src/StatusDisplay.c **** 		}
+  83:Core/Src/StatusDisplay.c **** 	}
+  84:Core/Src/StatusDisplay.c **** 	setLEDs(LED_Color_Data_Staus);
+ 440              		.loc 1 84 2 view .LVU117
+ 441 0094 01A8     		add	r0, sp, #4
+ 442 0096 FFF7FEFF 		bl	setLEDs
+ 443              	.LVL21:
+  85:Core/Src/StatusDisplay.c **** }
+ 444              		.loc 1 85 1 is_stmt 0 view .LVU118
+ 445 009a 0CB0     		add	sp, sp, #48
+ 446              	.LCFI3:
+ 447              		.cfi_def_cfa_offset 8
+ 448              		@ sp needed
+ 449 009c 10BD     		pop	{r4, pc}
+ 450              	.LVL22:
+ 451              	.L29:
+ 452              		.loc 1 85 1 view .LVU119
+ 453 009e 00BF     		.align	2
+ 454              	.L28:
+ 455 00a0 D34D6210 		.word	274877907
+ARM GAS  /tmp/ccXctthv.s 			page 12
+
+
+ 456 00a4 00000000 		.word	statusArray
+ 457              		.cfi_endproc
+ 458              	.LFE351:
+ 460              		.global	brightness
+ 461              		.comm	statusArray,14,4
+ 462              		.section	.rodata.brightness,"a"
+ 463              		.align	2
+ 466              	brightness:
+ 467 0000 CDCCCC3E 		.word	1053609165
+ 468              		.text
+ 469              	.Letext0:
+ 470              		.file 2 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 471              		.file 3 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 472              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 473              		.file 5 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h"
+ 474              		.file 6 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/lib/gcc/arm-none-eabi/
+ 475              		.file 7 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 476              		.file 8 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 477              		.file 9 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include/
+ 478              		.file 10 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
+ 479              		.file 11 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
+ 480              		.file 12 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h"
+ 481              		.file 13 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h"
+ 482              		.file 14 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
+ 483              		.file 15 "Core/Inc/AvioNEXT.h"
+ 484              		.file 16 "<built-in>"
+ARM GAS  /tmp/ccXctthv.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 StatusDisplay.c
+     /tmp/ccXctthv.s:17     .rodata.setStatus.str1.4:0000000000000000 $d
+     /tmp/ccXctthv.s:60     .text.setStatus:0000000000000000 $t
+     /tmp/ccXctthv.s:68     .text.setStatus:0000000000000000 setStatus
+     /tmp/ccXctthv.s:294    .text.setStatus:00000000000000e8 $d
+                            *COM*:000000000000000e statusArray
+     /tmp/ccXctthv.s:313    .text.updateStatus:0000000000000000 $t
+     /tmp/ccXctthv.s:320    .text.updateStatus:0000000000000000 updateStatus
+     /tmp/ccXctthv.s:455    .text.updateStatus:00000000000000a0 $d
+     /tmp/ccXctthv.s:466    .rodata.brightness:0000000000000000 brightness
+     /tmp/ccXctthv.s:463    .rodata.brightness:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+strcmp
+HAL_GetTick
+setLEDs
