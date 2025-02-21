@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccH2036k.s 			page 1
+ARM GAS  /tmp/ccj7bTph.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
   28:Core/Src/AvioNEXT.c **** 		{ 1, 3 }, //LED10: BAR2
   29:Core/Src/AvioNEXT.c **** 		{ 0, 3 }, //LED11: REG1
   30:Core/Src/AvioNEXT.c **** 		{ 1, 4 }, //LED12: REG2
-ARM GAS  /tmp/ccH2036k.s 			page 2
+ARM GAS  /tmp/ccj7bTph.s 			page 2
 
 
   31:Core/Src/AvioNEXT.c **** 		{ 0, 4 }  //LED13: BATT
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
   57:Core/Src/AvioNEXT.c **** 	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
   57              		.loc 1 57 2 view .LVU7
   58 001a 0D4D     		ldr	r5, .L3+4
-ARM GAS  /tmp/ccH2036k.s 			page 3
+ARM GAS  /tmp/ccj7bTph.s 			page 3
 
 
   59 001c 6423     		movs	r3, #100
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  107              		@ args = 0, pretend = 0, frame = 8
  108              		@ frame_needed = 0, uses_anonymous_args = 0
  109              		.loc 1 65 52 is_stmt 0 view .LVU13
-ARM GAS  /tmp/ccH2036k.s 			page 4
+ARM GAS  /tmp/ccj7bTph.s 			page 4
 
 
  110 0000 30B5     		push	{r4, r5, lr}
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  158 0046 30BD     		pop	{r4, r5, pc}
  159              	.L8:
  160              		.align	2
-ARM GAS  /tmp/ccH2036k.s 			page 5
+ARM GAS  /tmp/ccj7bTph.s 			page 5
 
 
  161              	.L7:
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  211 0020 0DF10701 		add	r1, sp, #7
  212 0024 2846     		mov	r0, r5
  213 0026 FFF7FEFF 		bl	HAL_SPI_Transmit
-ARM GAS  /tmp/ccH2036k.s 			page 6
+ARM GAS  /tmp/ccj7bTph.s 			page 6
 
 
  214              	.LVL16:
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  260 0084 3046     		mov	r0, r6
  261 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
  262              	.LVL23:
-ARM GAS  /tmp/ccH2036k.s 			page 7
+ARM GAS  /tmp/ccj7bTph.s 			page 7
 
 
   86:Core/Src/AvioNEXT.c **** }
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  306              		.loc 1 98 2 view .LVU40
  307 0008 0F4C     		ldr	r4, .L15
  308 000a 0022     		movs	r2, #0
-ARM GAS  /tmp/ccH2036k.s 			page 8
+ARM GAS  /tmp/ccj7bTph.s 			page 8
 
 
  309 000c 4FF40041 		mov	r1, #32768
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  356              		.thumb
  357              		.thumb_func
  358              		.fpu fpv5-d16
-ARM GAS  /tmp/ccH2036k.s 			page 9
+ARM GAS  /tmp/ccj7bTph.s 			page 9
 
 
  360              	LoRA_Write_Register:
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  113:Core/Src/AvioNEXT.c **** 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
  408              		.loc 1 113 2 view .LVU56
  409 003c 0122     		movs	r2, #1
-ARM GAS  /tmp/ccH2036k.s 			page 10
+ARM GAS  /tmp/ccj7bTph.s 			page 10
 
 
  410 003e 4FF40041 		mov	r1, #32768
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  460              		.global	LoRA_set_frequency
  461              		.syntax unified
  462              		.thumb
-ARM GAS  /tmp/ccH2036k.s 			page 11
+ARM GAS  /tmp/ccj7bTph.s 			page 11
 
 
  463              		.thumb_func
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  511              	.LVL47:
  128:Core/Src/AvioNEXT.c **** }
  512              		.loc 1 128 1 is_stmt 0 view .LVU72
-ARM GAS  /tmp/ccH2036k.s 			page 12
+ARM GAS  /tmp/ccj7bTph.s 			page 12
 
 
  513 002e 10BD     		pop	{r4, pc}
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  565              		@ frame_needed = 0, uses_anonymous_args = 0
  566              		.loc 1 134 29 is_stmt 0 view .LVU78
  567 0000 08B5     		push	{r3, lr}
-ARM GAS  /tmp/ccH2036k.s 			page 13
+ARM GAS  /tmp/ccj7bTph.s 			page 13
 
 
  568              	.LCFI18:
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  608              		.loc 1 140 20 is_stmt 0 view .LVU92
  609 002a 00F11E01 		add	r1, r0, #30
  140:Core/Src/AvioNEXT.c **** 	  }
-ARM GAS  /tmp/ccH2036k.s 			page 14
+ARM GAS  /tmp/ccj7bTph.s 			page 14
 
 
  610              		.loc 1 140 26 view .LVU93
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  149:Core/Src/AvioNEXT.c ****       if (level > 20) {
  658              		.loc 1 149 7 is_stmt 1 view .LVU102
  659              		.loc 1 149 10 is_stmt 0 view .LVU103
-ARM GAS  /tmp/ccH2036k.s 			page 15
+ARM GAS  /tmp/ccj7bTph.s 			page 15
 
 
  660 0008 1428     		cmp	r0, #20
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  694              	.L37:
  160:Core/Src/AvioNEXT.c ****         level = 2;
  695              		.loc 1 160 7 is_stmt 1 view .LVU114
-ARM GAS  /tmp/ccH2036k.s 			page 16
+ARM GAS  /tmp/ccj7bTph.s 			page 16
 
 
  160:Core/Src/AvioNEXT.c ****         level = 2;
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  745 000c 1D20     		movs	r0, #29
  746 000e FFF7FEFF 		bl	LoRA_Write_Register
  747              	.LVL71:
-ARM GAS  /tmp/ccH2036k.s 			page 17
+ARM GAS  /tmp/ccj7bTph.s 			page 17
 
 
  173:Core/Src/AvioNEXT.c **** }
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  797              		.loc 1 179 20 is_stmt 0 view .LVU130
  798 001c 4220     		movs	r0, #66
  799 001e FFF7FEFF 		bl	LoRA_Read_Register
-ARM GAS  /tmp/ccH2036k.s 			page 18
+ARM GAS  /tmp/ccj7bTph.s 			page 18
 
 
  800              	.LVL76:
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  843 0062 FFF7FEFF 		bl	LoRA_Write_Register
  844              	.LVL86:
  191:Core/Src/AvioNEXT.c **** 
-ARM GAS  /tmp/ccH2036k.s 			page 19
+ARM GAS  /tmp/ccj7bTph.s 			page 19
 
 
  192:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_MODEM_CONFIG_3, 0x04);
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  892              	.LVL90:
  201:Core/Src/AvioNEXT.c **** 
  202:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-ARM GAS  /tmp/ccH2036k.s 			page 20
+ARM GAS  /tmp/ccj7bTph.s 			page 20
 
 
  893              		.loc 1 202 2 view .LVU147
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  938 000c FFF7FEFF 		bl	LoRA_Read_Register
  939              	.LVL94:
  209:Core/Src/AvioNEXT.c **** 
-ARM GAS  /tmp/ccH2036k.s 			page 21
+ARM GAS  /tmp/ccj7bTph.s 			page 21
 
 
  940              		.loc 1 209 7 discriminator 1 view .LVU156
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  224:Core/Src/AvioNEXT.c **** 	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
  984              		.loc 1 224 2 view .LVU164
  985 000e 2146     		mov	r1, r4
-ARM GAS  /tmp/ccH2036k.s 			page 22
+ARM GAS  /tmp/ccj7bTph.s 			page 22
 
 
  986 0010 1220     		movs	r0, #18
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1023              	.LVL106:
  1024 003a 0146     		mov	r1, r0
  1025 003c 0D20     		movs	r0, #13
-ARM GAS  /tmp/ccH2036k.s 			page 23
+ARM GAS  /tmp/ccj7bTph.s 			page 23
 
 
  1026 003e FFF7FEFF 		bl	LoRA_Write_Register
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1074              		.cfi_offset 5, -8
  1075              		.cfi_offset 14, -4
  1076 0002 0546     		mov	r5, r0
-ARM GAS  /tmp/ccH2036k.s 			page 24
+ARM GAS  /tmp/ccj7bTph.s 			page 24
 
 
  240:Core/Src/AvioNEXT.c ****     LoRA_beginPacket();
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1120              		.cfi_endproc
  1121              	.LFE365:
  1123              		.section	.text.recv_packet,"ax",%progbits
-ARM GAS  /tmp/ccH2036k.s 			page 25
+ARM GAS  /tmp/ccj7bTph.s 			page 25
 
 
  1124              		.align	1
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  257:Core/Src/AvioNEXT.c **** 			LoRA_data[i] = LoRA_Read_Register(0x00);
  1169              		.loc 1 257 4 is_stmt 1 discriminator 3 view .LVU213
  1170              		.loc 1 257 19 is_stmt 0 discriminator 3 view .LVU214
-ARM GAS  /tmp/ccH2036k.s 			page 26
+ARM GAS  /tmp/ccj7bTph.s 			page 26
 
 
  1171 0018 0020     		movs	r0, #0
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1215              	.LFB367:
  265:Core/Src/AvioNEXT.c **** 
  266:Core/Src/AvioNEXT.c **** void reliable_send_packet(char *LoRA_data) {
-ARM GAS  /tmp/ccH2036k.s 			page 27
+ARM GAS  /tmp/ccj7bTph.s 			page 27
 
 
  1216              		.loc 1 266 44 is_stmt 1 view -0
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1264              	.LVL132:
  1265              		.loc 1 272 6 view .LVU239
  1266 002c 0028     		cmp	r0, #0
-ARM GAS  /tmp/ccH2036k.s 			page 28
+ARM GAS  /tmp/ccj7bTph.s 			page 28
 
 
  1267 002e F9D0     		beq	.L77
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  286:Core/Src/AvioNEXT.c **** 
  287:Core/Src/AvioNEXT.c **** 	uint16_t timerVal = (int) (3000 + (4000 * (angle / 180)));
  1310              		.loc 1 287 2 view .LVU247
-ARM GAS  /tmp/ccH2036k.s 			page 29
+ARM GAS  /tmp/ccj7bTph.s 			page 29
 
 
  1311              		.loc 1 287 51 is_stmt 0 view .LVU248
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1356              		.loc 1 296 14 is_stmt 0 view .LVU261
  1357 0042 17EE903A 		vmov	r3, s15	@ int
  1358 0046 9BB2     		uxth	r3, r3
-ARM GAS  /tmp/ccH2036k.s 			page 30
+ARM GAS  /tmp/ccj7bTph.s 			page 30
 
 
  1359 0048 074A     		ldr	r2, .L88+12
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1400 0000 08B5     		push	{r3, lr}
  1401              	.LCFI32:
  1402              		.cfi_def_cfa_offset 8
-ARM GAS  /tmp/ccH2036k.s 			page 31
+ARM GAS  /tmp/ccj7bTph.s 			page 31
 
 
  1403              		.cfi_offset 3, -8
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  317:Core/Src/AvioNEXT.c **** 		return 0;
  1444              		.loc 1 317 10 view .LVU283
  1445 0036 9FED020B 		vldr.64	d0, .L99
-ARM GAS  /tmp/ccH2036k.s 			page 32
+ARM GAS  /tmp/ccj7bTph.s 			page 32
 
 
  1446              	.LVL146:
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  331:Core/Src/AvioNEXT.c **** 	uint16_t memAddr = (uint16_t) address;
  1492              		.loc 1 331 2 is_stmt 1 view .LVU292
  332:Core/Src/AvioNEXT.c **** 
-ARM GAS  /tmp/ccH2036k.s 			page 33
+ARM GAS  /tmp/ccj7bTph.s 			page 33
 
 
  333:Core/Src/AvioNEXT.c **** 	HAL_I2C_Mem_Write(&hi2c2, writeAddress, memAddr, I2C_MEMADD_SIZE_16BIT,
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1542              		.section	.text.read_EEPROM,"ax",%progbits
  1543              		.align	1
  1544              		.global	read_EEPROM
-ARM GAS  /tmp/ccH2036k.s 			page 34
+ARM GAS  /tmp/ccj7bTph.s 			page 34
 
 
  1545              		.syntax unified
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1588              	.LVL161:
  1589              		.loc 1 347 2 view .LVU313
  1590 0026 FFF7FEFF 		bl	HAL_I2C_Mem_Read
-ARM GAS  /tmp/ccH2036k.s 			page 35
+ARM GAS  /tmp/ccj7bTph.s 			page 35
 
 
  1591              	.LVL162:
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1642              		.cfi_offset 14, -4
  352:Core/Src/AvioNEXT.c **** 
  353:Core/Src/AvioNEXT.c **** 	static uint32_t LED_PWM_Data_0[(NUM_LEDS_0 * 24) + 58];
-ARM GAS  /tmp/ccH2036k.s 			page 36
+ARM GAS  /tmp/ccj7bTph.s 			page 36
 
 
  1643              		.loc 1 353 2 is_stmt 1 view .LVU321
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1679 0024 0132     		adds	r2, r2, #1
  1680              	.LVL168:
  1681              	.L127:
-ARM GAS  /tmp/ccH2036k.s 			page 37
+ARM GAS  /tmp/ccj7bTph.s 			page 37
 
 
  363:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  362:Core/Src/AvioNEXT.c **** 				for (int n = 0; n < 8; n++) {
  1720              		.loc 1 362 28 is_stmt 0 discriminator 2 view .LVU354
  1721 005a 0134     		adds	r4, r4, #1
-ARM GAS  /tmp/ccH2036k.s 			page 38
+ARM GAS  /tmp/ccj7bTph.s 			page 38
 
 
  1722              	.LVL169:
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1762              	.LVL174:
  1763              	.L130:
  374:Core/Src/AvioNEXT.c **** 					i++) {
-ARM GAS  /tmp/ccH2036k.s 			page 39
+ARM GAS  /tmp/ccj7bTph.s 			page 39
 
 
  1764              		.loc 1 374 7 view .LVU368
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1800 00a6 0D5D     		ldrb	r5, [r1, r4]	@ zero_extendqisi2
  381:Core/Src/AvioNEXT.c **** 						LED_PWM_Data_1[n + (8 * j) + (24 * LEDS_lookup[i][1])
  1801              		.loc 1 381 38 view .LVU383
-ARM GAS  /tmp/ccH2036k.s 			page 40
+ARM GAS  /tmp/ccj7bTph.s 			page 40
 
 
  1802 00a8 8021     		movs	r1, #128
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1842              	.L150:
  380:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
  1843              		.loc 1 380 14 view .LVU398
-ARM GAS  /tmp/ccH2036k.s 			page 41
+ARM GAS  /tmp/ccj7bTph.s 			page 41
 
 
  1844              	.LBE12:
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1877              		.loc 1 402 7 is_stmt 1 view .LVU409
  1878              		.loc 1 402 24 is_stmt 0 view .LVU410
  1879 00f0 02EBC401 		add	r1, r2, r4, lsl #3
-ARM GAS  /tmp/ccH2036k.s 			page 42
+ARM GAS  /tmp/ccj7bTph.s 			page 42
 
 
  1880              		.loc 1 402 56 view .LVU411
@@ -2518,7 +2518,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1921 012a 05EBC305 		add	r5, r5, r3, lsl #3
  1922 012e 6D68     		ldr	r5, [r5, #4]
  399:Core/Src/AvioNEXT.c **** 								+ 8] = 60;
-ARM GAS  /tmp/ccH2036k.s 			page 43
+ARM GAS  /tmp/ccj7bTph.s 			page 43
 
 
  1923              		.loc 1 399 40 view .LVU428
@@ -2578,7 +2578,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  1962 0152 3822     		movs	r2, #56
  1963              	.LVL186:
  1964              	.L140:
-ARM GAS  /tmp/ccH2036k.s 			page 44
+ARM GAS  /tmp/ccj7bTph.s 			page 44
 
 
  1965              		.loc 1 407 40 is_stmt 1 discriminator 1 view .LVU441
@@ -2638,7 +2638,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2002 017e 45F82160 		str	r6, [r5, r1, lsl #2]
  2003              	.L143:
  414:Core/Src/AvioNEXT.c **** 					if (LED_Color_Data[i][j] & (128 >> n)) {
-ARM GAS  /tmp/ccH2036k.s 			page 45
+ARM GAS  /tmp/ccj7bTph.s 			page 45
 
 
  2004              		.loc 1 414 28 is_stmt 1 discriminator 2 view .LVU456
@@ -2698,7 +2698,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2043              	.L164:
  417:Core/Src/AvioNEXT.c **** 					} else {
  2044              		.loc 1 417 14 view .LVU472
-ARM GAS  /tmp/ccH2036k.s 			page 46
+ARM GAS  /tmp/ccj7bTph.s 			page 46
 
 
  2045              	.LBE19:
@@ -2758,7 +2758,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2084              		.loc 1 425 7 is_stmt 0 view .LVU486
  2085 01d4 0132     		adds	r2, r2, #1
  2086              	.LVL194:
-ARM GAS  /tmp/ccH2036k.s 			page 47
+ARM GAS  /tmp/ccj7bTph.s 			page 47
 
 
  425:Core/Src/AvioNEXT.c **** 					i++) {
@@ -2818,7 +2818,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2125 0206 1048     		ldr	r0, .L167+20
  2126              	.LVL198:
  2127              		.loc 1 434 2 view .LVU497
-ARM GAS  /tmp/ccH2036k.s 			page 48
+ARM GAS  /tmp/ccj7bTph.s 			page 48
 
 
  2128 0208 FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
@@ -2878,7 +2878,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2176              	LED_PWM_Data_0.13392:
  2177 0000 00000000 		.space	712
  2177      00000000 
-ARM GAS  /tmp/ccH2036k.s 			page 49
+ARM GAS  /tmp/ccj7bTph.s 			page 49
 
 
  2177      00000000 
@@ -2938,7 +2938,7 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2225 0050 01000000 		.word	1
  2226 0054 03000000 		.word	3
  2227 0058 00000000 		.word	0
-ARM GAS  /tmp/ccH2036k.s 			page 50
+ARM GAS  /tmp/ccj7bTph.s 			page 50
 
 
  2228 005c 03000000 		.word	3
@@ -2989,92 +2989,92 @@ ARM GAS  /tmp/ccH2036k.s 			page 1
  2277              		.file 19 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
  2278              		.file 20 "<built-in>"
  2279              		.file 21 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h"
-ARM GAS  /tmp/ccH2036k.s 			page 51
+ARM GAS  /tmp/ccj7bTph.s 			page 51
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 AvioNEXT.c
-     /tmp/ccH2036k.s:17     .text.HG2_Read_Register:0000000000000000 $t
-     /tmp/ccH2036k.s:25     .text.HG2_Read_Register:0000000000000000 HG2_Read_Register
-     /tmp/ccH2036k.s:89     .text.HG2_Read_Register:000000000000004c $d
-     /tmp/ccH2036k.s:95     .text.HG2_Write_Register:0000000000000000 $t
-     /tmp/ccH2036k.s:102    .text.HG2_Write_Register:0000000000000000 HG2_Write_Register
-     /tmp/ccH2036k.s:162    .text.HG2_Write_Register:0000000000000048 $d
-     /tmp/ccH2036k.s:168    .text.HG2_Get_Acc:0000000000000000 $t
-     /tmp/ccH2036k.s:175    .text.HG2_Get_Acc:0000000000000000 HG2_Get_Acc
-     /tmp/ccH2036k.s:274    .text.HG2_Get_Acc:0000000000000090 $d
-     /tmp/ccH2036k.s:280    .text.LoRA_Read_Register:0000000000000000 $t
-     /tmp/ccH2036k.s:287    .text.LoRA_Read_Register:0000000000000000 LoRA_Read_Register
-     /tmp/ccH2036k.s:347    .text.LoRA_Read_Register:0000000000000048 $d
-     /tmp/ccH2036k.s:353    .text.LoRA_Write_Register:0000000000000000 $t
-     /tmp/ccH2036k.s:360    .text.LoRA_Write_Register:0000000000000000 LoRA_Write_Register
-     /tmp/ccH2036k.s:423    .text.LoRA_Write_Register:000000000000004c $d
-     /tmp/ccH2036k.s:429    .text.LoRA_sleep:0000000000000000 $t
-     /tmp/ccH2036k.s:436    .text.LoRA_sleep:0000000000000000 LoRA_sleep
-     /tmp/ccH2036k.s:459    .text.LoRA_set_frequency:0000000000000000 $t
-     /tmp/ccH2036k.s:466    .text.LoRA_set_frequency:0000000000000000 LoRA_set_frequency
-     /tmp/ccH2036k.s:518    .text.LoRA_set_frequency:0000000000000030 $d
-     /tmp/ccH2036k.s:523    .text.LoRA_idle:0000000000000000 $t
-     /tmp/ccH2036k.s:530    .text.LoRA_idle:0000000000000000 LoRA_idle
-     /tmp/ccH2036k.s:552    .text.LoRA_setOCP:0000000000000000 $t
-     /tmp/ccH2036k.s:559    .text.LoRA_setOCP:0000000000000000 LoRA_setOCP
-     /tmp/ccH2036k.s:628    .text.LoRA_setOCP:000000000000003c $d
-     /tmp/ccH2036k.s:633    .text.LoRA_setTxPower:0000000000000000 $t
-     /tmp/ccH2036k.s:640    .text.LoRA_setTxPower:0000000000000000 LoRA_setTxPower
-     /tmp/ccH2036k.s:720    .text.LoRA_explicit_header_mode:0000000000000000 $t
-     /tmp/ccH2036k.s:727    .text.LoRA_explicit_header_mode:0000000000000000 LoRA_explicit_header_mode
-     /tmp/ccH2036k.s:754    .rodata.LoRA_begin.str1.4:0000000000000000 $d
-     /tmp/ccH2036k.s:758    .text.LoRA_begin:0000000000000000 $t
-     /tmp/ccH2036k.s:765    .text.LoRA_begin:0000000000000000 LoRA_begin
-     /tmp/ccH2036k.s:865    .text.LoRA_begin:0000000000000078 $d
-     /tmp/ccH2036k.s:872    .text.LoRA_beginPacket:0000000000000000 $t
-     /tmp/ccH2036k.s:879    .text.LoRA_beginPacket:0000000000000000 LoRA_beginPacket
-     /tmp/ccH2036k.s:909    .text.LoRA_endPacket:0000000000000000 $t
-     /tmp/ccH2036k.s:916    .text.LoRA_endPacket:0000000000000000 LoRA_endPacket
-     /tmp/ccH2036k.s:954    .text.LoRA_parsePacket:0000000000000000 $t
-     /tmp/ccH2036k.s:961    .text.LoRA_parsePacket:0000000000000000 LoRA_parsePacket
-     /tmp/ccH2036k.s:1054   .text.LoRA_sendPacket:0000000000000000 $t
-     /tmp/ccH2036k.s:1061   .text.LoRA_sendPacket:0000000000000000 LoRA_sendPacket
-     /tmp/ccH2036k.s:1124   .text.recv_packet:0000000000000000 $t
-     /tmp/ccH2036k.s:1131   .text.recv_packet:0000000000000000 recv_packet
-     /tmp/ccH2036k.s:1206   .text.reliable_send_packet:0000000000000000 $t
-     /tmp/ccH2036k.s:1213   .text.reliable_send_packet:0000000000000000 reliable_send_packet
-     /tmp/ccH2036k.s:1295   .text.setServo:0000000000000000 $t
-     /tmp/ccH2036k.s:1302   .text.setServo:0000000000000000 setServo
-     /tmp/ccH2036k.s:1331   .text.setServo:0000000000000026 $d
-     /tmp/ccH2036k.s:1335   .text.setServo:000000000000002a $t
-     /tmp/ccH2036k.s:1377   .text.setServo:000000000000005c $d
-     /tmp/ccH2036k.s:1385   .text.triangle_space:0000000000000000 $t
-     /tmp/ccH2036k.s:1392   .text.triangle_space:0000000000000000 triangle_space
-     /tmp/ccH2036k.s:1452   .text.triangle_space:0000000000000040 $d
-     /tmp/ccH2036k.s:1458   .text.write_EEPROM:0000000000000000 $t
-     /tmp/ccH2036k.s:1465   .text.write_EEPROM:0000000000000000 write_EEPROM
-ARM GAS  /tmp/ccH2036k.s 			page 52
+     /tmp/ccj7bTph.s:17     .text.HG2_Read_Register:0000000000000000 $t
+     /tmp/ccj7bTph.s:25     .text.HG2_Read_Register:0000000000000000 HG2_Read_Register
+     /tmp/ccj7bTph.s:89     .text.HG2_Read_Register:000000000000004c $d
+     /tmp/ccj7bTph.s:95     .text.HG2_Write_Register:0000000000000000 $t
+     /tmp/ccj7bTph.s:102    .text.HG2_Write_Register:0000000000000000 HG2_Write_Register
+     /tmp/ccj7bTph.s:162    .text.HG2_Write_Register:0000000000000048 $d
+     /tmp/ccj7bTph.s:168    .text.HG2_Get_Acc:0000000000000000 $t
+     /tmp/ccj7bTph.s:175    .text.HG2_Get_Acc:0000000000000000 HG2_Get_Acc
+     /tmp/ccj7bTph.s:274    .text.HG2_Get_Acc:0000000000000090 $d
+     /tmp/ccj7bTph.s:280    .text.LoRA_Read_Register:0000000000000000 $t
+     /tmp/ccj7bTph.s:287    .text.LoRA_Read_Register:0000000000000000 LoRA_Read_Register
+     /tmp/ccj7bTph.s:347    .text.LoRA_Read_Register:0000000000000048 $d
+     /tmp/ccj7bTph.s:353    .text.LoRA_Write_Register:0000000000000000 $t
+     /tmp/ccj7bTph.s:360    .text.LoRA_Write_Register:0000000000000000 LoRA_Write_Register
+     /tmp/ccj7bTph.s:423    .text.LoRA_Write_Register:000000000000004c $d
+     /tmp/ccj7bTph.s:429    .text.LoRA_sleep:0000000000000000 $t
+     /tmp/ccj7bTph.s:436    .text.LoRA_sleep:0000000000000000 LoRA_sleep
+     /tmp/ccj7bTph.s:459    .text.LoRA_set_frequency:0000000000000000 $t
+     /tmp/ccj7bTph.s:466    .text.LoRA_set_frequency:0000000000000000 LoRA_set_frequency
+     /tmp/ccj7bTph.s:518    .text.LoRA_set_frequency:0000000000000030 $d
+     /tmp/ccj7bTph.s:523    .text.LoRA_idle:0000000000000000 $t
+     /tmp/ccj7bTph.s:530    .text.LoRA_idle:0000000000000000 LoRA_idle
+     /tmp/ccj7bTph.s:552    .text.LoRA_setOCP:0000000000000000 $t
+     /tmp/ccj7bTph.s:559    .text.LoRA_setOCP:0000000000000000 LoRA_setOCP
+     /tmp/ccj7bTph.s:628    .text.LoRA_setOCP:000000000000003c $d
+     /tmp/ccj7bTph.s:633    .text.LoRA_setTxPower:0000000000000000 $t
+     /tmp/ccj7bTph.s:640    .text.LoRA_setTxPower:0000000000000000 LoRA_setTxPower
+     /tmp/ccj7bTph.s:720    .text.LoRA_explicit_header_mode:0000000000000000 $t
+     /tmp/ccj7bTph.s:727    .text.LoRA_explicit_header_mode:0000000000000000 LoRA_explicit_header_mode
+     /tmp/ccj7bTph.s:754    .rodata.LoRA_begin.str1.4:0000000000000000 $d
+     /tmp/ccj7bTph.s:758    .text.LoRA_begin:0000000000000000 $t
+     /tmp/ccj7bTph.s:765    .text.LoRA_begin:0000000000000000 LoRA_begin
+     /tmp/ccj7bTph.s:865    .text.LoRA_begin:0000000000000078 $d
+     /tmp/ccj7bTph.s:872    .text.LoRA_beginPacket:0000000000000000 $t
+     /tmp/ccj7bTph.s:879    .text.LoRA_beginPacket:0000000000000000 LoRA_beginPacket
+     /tmp/ccj7bTph.s:909    .text.LoRA_endPacket:0000000000000000 $t
+     /tmp/ccj7bTph.s:916    .text.LoRA_endPacket:0000000000000000 LoRA_endPacket
+     /tmp/ccj7bTph.s:954    .text.LoRA_parsePacket:0000000000000000 $t
+     /tmp/ccj7bTph.s:961    .text.LoRA_parsePacket:0000000000000000 LoRA_parsePacket
+     /tmp/ccj7bTph.s:1054   .text.LoRA_sendPacket:0000000000000000 $t
+     /tmp/ccj7bTph.s:1061   .text.LoRA_sendPacket:0000000000000000 LoRA_sendPacket
+     /tmp/ccj7bTph.s:1124   .text.recv_packet:0000000000000000 $t
+     /tmp/ccj7bTph.s:1131   .text.recv_packet:0000000000000000 recv_packet
+     /tmp/ccj7bTph.s:1206   .text.reliable_send_packet:0000000000000000 $t
+     /tmp/ccj7bTph.s:1213   .text.reliable_send_packet:0000000000000000 reliable_send_packet
+     /tmp/ccj7bTph.s:1295   .text.setServo:0000000000000000 $t
+     /tmp/ccj7bTph.s:1302   .text.setServo:0000000000000000 setServo
+     /tmp/ccj7bTph.s:1331   .text.setServo:0000000000000026 $d
+     /tmp/ccj7bTph.s:1335   .text.setServo:000000000000002a $t
+     /tmp/ccj7bTph.s:1377   .text.setServo:000000000000005c $d
+     /tmp/ccj7bTph.s:1385   .text.triangle_space:0000000000000000 $t
+     /tmp/ccj7bTph.s:1392   .text.triangle_space:0000000000000000 triangle_space
+     /tmp/ccj7bTph.s:1452   .text.triangle_space:0000000000000040 $d
+     /tmp/ccj7bTph.s:1458   .text.write_EEPROM:0000000000000000 $t
+     /tmp/ccj7bTph.s:1465   .text.write_EEPROM:0000000000000000 write_EEPROM
+ARM GAS  /tmp/ccj7bTph.s 			page 52
 
 
-     /tmp/ccH2036k.s:1538   .text.write_EEPROM:0000000000000040 $d
-     /tmp/ccH2036k.s:1543   .text.read_EEPROM:0000000000000000 $t
-     /tmp/ccH2036k.s:1550   .text.read_EEPROM:0000000000000000 read_EEPROM
-     /tmp/ccH2036k.s:1614   .text.read_EEPROM:0000000000000038 $d
-     /tmp/ccH2036k.s:1619   .text.setLEDs:0000000000000000 $t
-     /tmp/ccH2036k.s:1626   .text.setLEDs:0000000000000000 setLEDs
-     /tmp/ccH2036k.s:2112   .text.setLEDs:00000000000001f0 $d
-     /tmp/ccH2036k.s:2116   .text.setLEDs:0000000000000200 $t
-     /tmp/ccH2036k.s:2157   .text.setLEDs:0000000000000234 $d
-     /tmp/ccH2036k.s:2243   .rodata.LED_order:0000000000000000 LED_order
-     /tmp/ccH2036k.s:2237   .rodata.LED_num_max:0000000000000000 LED_num_max
-     /tmp/ccH2036k.s:2204   .rodata.LEDS_lookup:0000000000000000 LEDS_lookup
-     /tmp/ccH2036k.s:2172   .bss.LED_PWM_Data_0.13392:0000000000000000 $d
-     /tmp/ccH2036k.s:2176   .bss.LED_PWM_Data_0.13392:0000000000000000 LED_PWM_Data_0.13392
-     /tmp/ccH2036k.s:2179   .bss.LED_PWM_Data_1.13393:0000000000000000 $d
-     /tmp/ccH2036k.s:2183   .bss.LED_PWM_Data_1.13393:0000000000000000 LED_PWM_Data_1.13393
-     /tmp/ccH2036k.s:2186   .bss.LED_PWM_Data_2.13394:0000000000000000 $d
-     /tmp/ccH2036k.s:2190   .bss.LED_PWM_Data_2.13394:0000000000000000 LED_PWM_Data_2.13394
-     /tmp/ccH2036k.s:2193   .bss.LED_PWM_Data_3.13395:0000000000000000 $d
-     /tmp/ccH2036k.s:2197   .bss.LED_PWM_Data_3.13395:0000000000000000 LED_PWM_Data_3.13395
-     /tmp/ccH2036k.s:2200   .rodata.LEDS_lookup:0000000000000000 $d
-     /tmp/ccH2036k.s:2234   .rodata.LED_num_max:0000000000000000 $d
-     /tmp/ccH2036k.s:2240   .rodata.LED_order:0000000000000000 $d
+     /tmp/ccj7bTph.s:1538   .text.write_EEPROM:0000000000000040 $d
+     /tmp/ccj7bTph.s:1543   .text.read_EEPROM:0000000000000000 $t
+     /tmp/ccj7bTph.s:1550   .text.read_EEPROM:0000000000000000 read_EEPROM
+     /tmp/ccj7bTph.s:1614   .text.read_EEPROM:0000000000000038 $d
+     /tmp/ccj7bTph.s:1619   .text.setLEDs:0000000000000000 $t
+     /tmp/ccj7bTph.s:1626   .text.setLEDs:0000000000000000 setLEDs
+     /tmp/ccj7bTph.s:2112   .text.setLEDs:00000000000001f0 $d
+     /tmp/ccj7bTph.s:2116   .text.setLEDs:0000000000000200 $t
+     /tmp/ccj7bTph.s:2157   .text.setLEDs:0000000000000234 $d
+     /tmp/ccj7bTph.s:2243   .rodata.LED_order:0000000000000000 LED_order
+     /tmp/ccj7bTph.s:2237   .rodata.LED_num_max:0000000000000000 LED_num_max
+     /tmp/ccj7bTph.s:2204   .rodata.LEDS_lookup:0000000000000000 LEDS_lookup
+     /tmp/ccj7bTph.s:2172   .bss.LED_PWM_Data_0.13392:0000000000000000 $d
+     /tmp/ccj7bTph.s:2176   .bss.LED_PWM_Data_0.13392:0000000000000000 LED_PWM_Data_0.13392
+     /tmp/ccj7bTph.s:2179   .bss.LED_PWM_Data_1.13393:0000000000000000 $d
+     /tmp/ccj7bTph.s:2183   .bss.LED_PWM_Data_1.13393:0000000000000000 LED_PWM_Data_1.13393
+     /tmp/ccj7bTph.s:2186   .bss.LED_PWM_Data_2.13394:0000000000000000 $d
+     /tmp/ccj7bTph.s:2190   .bss.LED_PWM_Data_2.13394:0000000000000000 LED_PWM_Data_2.13394
+     /tmp/ccj7bTph.s:2193   .bss.LED_PWM_Data_3.13395:0000000000000000 $d
+     /tmp/ccj7bTph.s:2197   .bss.LED_PWM_Data_3.13395:0000000000000000 LED_PWM_Data_3.13395
+     /tmp/ccj7bTph.s:2200   .rodata.LEDS_lookup:0000000000000000 $d
+     /tmp/ccj7bTph.s:2234   .rodata.LED_num_max:0000000000000000 $d
+     /tmp/ccj7bTph.s:2240   .rodata.LED_order:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin

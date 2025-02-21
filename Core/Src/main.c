@@ -280,7 +280,7 @@ int main(void)
   MX_RNG_Init();
   /* USER CODE BEGIN 2 */
   while(1) {
-    CDC_Transmit_HS("not Hi\n", strlen("not hi\n"));
+    CDC_Transmit_HS((uint8_t*)"not Hi\n", strlen("not hi\n"));
     HAL_Delay(1000);
   }
 	//if (MAX_M10s_init(&hi2c2))
@@ -353,7 +353,7 @@ int main(void)
 		sum /= 100;
 		double altitude = (temperature/0.0065) *(1- pow((sum/sea_level_pressure), (1/5.256)));
 
-		char data_gyro[50];
+		uint8_t* data_gyro[50];
 
 		double test = LG_Get_Acc_Z();
 		sprintf(data_gyro, "%f\n", test);
@@ -446,34 +446,382 @@ int main(void)
 				counter = 0;
 				float pitch = 180 * (asin(x[3]) / 3.1415);
 				//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
-				char data_gyro[50];
+				uint8_t* data_gyro[50];
 				sprintf(data_gyro, "%f, %f, %f, %f\n", pitch, x[1], x[2], x[3]);
 				CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 			}
 
-	}
-	char dummy[50];
-	disarm(dummy);
+		}
 
+		while (1) {
 
-	FR_Status = f_mount(&FatFs, SDPath, 1);
+			if (strcmp(communication_state, "RECIEVING") == 0) {
 
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
+				if (isReceived) {
+					//if crc then:
+					//send acknowledge
+					//{
+					strcpy(command, recieved_packet);
+					LoRA_sendPacket(recieved_packet);
+					strcpy(communication_state, "WAITING FOR PRIVILIGE");
+					//}
+				} else {
+					//give up MASTER
+					LoRA_sendPacket("$");
+					isReceived = 0;
+					for (int i = 0; i < 1000; i++) {
+						if (recv_packet(recieved_packet, 50)) {
+							isReceived = 1;
+						}
+						HAL_Delay(1);
+					}
+					//LoRA_parsePacket();
+					//char gotten[50];
+					//sprintf(gotten,"gotten: %d",LoRA_parsePacket());
+					//LoRA_sendPacket(gotten);
+					//HAL_Delay(1000);
+				}
+			} else if (strcmp(communication_state, "WAITING FOR PRIVILIGE")
+					== 0) {
+				if (recv_packet(recieved_packet, 50)) {
+					LoRA_sendPacket("Recived packet");
 
-	FR_Status = f_open(&Fil, "MyTextFile.txt", FA_CREATE_NEW);
-	f_close(&Fil);
+					//if crc then:
+					//{
+					if (strcmp(recieved_packet, "$") == 0) {
 
-	LoRA_begin(868000000);
-	communicationHandler(
-			  rocketReliableReceiveHandle,
-			  rocketStreamReceiveHandle,
-			  rocketStreamSendHandle,
-			  rocketReliableSendHandle,
-			  RECEIVING_RELIABLE
-	  );
+						strcpy(communication_state, "MASTER");
+					} else {
+						LoRA_sendPacket("Received not $");
 
+						//send acknowledge again
+						strcpy(command, recieved_packet);
+
+					}
+					//}
+				}
+			} else if (strcmp(communication_state, "MASTER") == 0) {
+
+				LoRA_sendPacket("MASTER");
+				strcpy(communication_state, "RECIEVING");
+//        if(strcmp(state, "DISARMED") == 0)
+//        {
+//          if(strcmp(command, "ARM") == 0)
+//          {
+//            if(!arm(state))
+//            {
+//              reliable_send_packet("ARM SUCCESS");
+//            }
+//            else
+//            {
+//              reliable_send_packet("ARM UNSUCCESSFUL");
+//            }
+//          }
+//          else if(strcmp(command, "DISARM") == 0)
+//          {
+//            reliable_send_packet("ALREADY DISARMED");
+//          }
+//          else if(strcmp(command, "CONT") == 0)
+//          {
+//            uint8_t CONTS[8];
+//            CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+//            CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+//            CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+//            CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+//            CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+//            CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+//            CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+//            CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+//
+//            char message[100];
+//            for(int i=0; i<8; i++)
+//            {
+//              if(CONTS[i])
+//              {
+//                sprintf( message,  "PYRO %d DOESN'T HAVE CONTINUITY", i+1);
+//              }
+//              else
+//              {
+//                sprintf( message,  "PYRO %d HAS CONTINUITY", i+1);
+//              }
+//
+//              reliable_send_packet(message);
+//          }
+//        }
+//        else if(strcmp(state, "ARMED") == 0)
+//        {
+//          if(strcmp(command, "DISARM") == 0)
+//          {
+//            if(disarm(state))
+//            {
+//              //not success
+//            }
+//            else
+//            {
+//              //success
+//            }
+//
+//          }
+//        }
+//        else if(strcmp(state, "STATIC_FIRE_LOGGING") == 0)
+//        {
+//          if(strcmp(command, "STOP") == 0)
+//          {
+//            strcpy(state,"ARMED");
+//          }
+//        }
+//        else
+//        {
+//
+//        }
+//      }
+
+			}
+
+			//WS2812_Send();
+			//HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+			//TIM4->CCR3 = *ptr;
+			/*
+			 for(int i = 0; i < 14; i++){
+
+			 int time = HAL_GetTick();
+			 double height_offset = LED_order[i]*1.0/LED_num_max;
+			 double color_offset = time*SPEED + height_offset;
+
+			 LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
+			 LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
+			 LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
+			 }
+			 setLEDs();
+
+			 uint8_t* data_gyro[100];
+			 //		for(int i = 0; i < 14; i++){
+			 //
+			 //			int time = HAL_GetTick();
+			 //			double height_offset = LED_order[i]*1.0/LED_num_max;
+			 //			double color_offset = time*SPEED + height_offset;
+			 //
+			 //			LED_Color_Data[i][0] = (uint32_t)MAX*triangle_space(color_offset+r_offset);
+			 //			LED_Color_Data[i][1] = (uint32_t)MAX*triangle_space(color_offset+g_offset);
+			 //			LED_Color_Data[i][2] = (uint32_t)MAX*triangle_space(color_offset+b_offset);
+			 //		}
+
+			 float timeElapsed = ((float)(HAL_GetTick() - lastTime)) / 1000;
+
+			 //float omegaZ = LG_Get_Gyro_Z() - calOmegaZ;
+			 //rotZ += omegaZ * timeElapsed;
+
+			 //int16_t accZ = LG_Get_Acc_X();
+
+			 //HG2_Get_Acc();
+			 //int16_t AccX = (int16_t)(HG2_Acc[1] << 8) | HG2_Acc[0];
+			 //float AccX = LG_Get_Acc_X();
+			 //float AccY = LG_Get_Acc_Y();
+			 //float AccZ = LG_Get_Acc_Z();
+
+			 //float GyroX = LG_Get_Gyro_X() - calOmegaX;
+			 //float GyroY = LG_Get_Gyro_Y() - calOmegaY;
+			 //float GyroZ = LG_Get_Gyro_Z() - calOmegaZ;
+
+			 lastTime = HAL_GetTick();
+
+			 int a = add(2, 5);
+
+			 int btr = MAX_M10s_bytesToRead(&hi2c2);
+			 if (btr == -1) Error_Handler();
+			 for (int i = 0; i < btr; i++)
+			 MAX_M10s_poll(&hi2c2);
+			 MAX_M10S_parse();
+
+			 /*
+			 sprintf(data_gyro, "%d\n", a);
+			 //sprintf( data_gyro,  "%d,%d,%d,%d\n", (int)(GyroX*1000), (int)(GyroY*1000), (int)(GyroZ*1000), lastTime);
+			 CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+			 HAL_Delay(1000);
+			 */
+//		int packetLenght = LoRA_parsePacket();
+//		if(packetLenght > 0){
+//			for(int i = 0; i < packetLenght; i++){
+//				data_gyro[i] = LoRA_Read_Register(0x00);
+//			}
+//		    CDC_Transmit_HS(data_gyro, strlen(packetLenght));
+//
+//		}
+			//write_EEPROM(1, 1);
+			// Start ADC Conversion
+			//HAL_Delay(100);
+			if (HAL_GetTick() - last_packet > 1000) {
+				connected = 0;
+			}
+
+			if (connected) {
+				LED_Color_Data[2][0] = 255;
+				LED_Color_Data[2][1] = 0;
+				LED_Color_Data[2][2] = 0;
+			} else {
+				LED_Color_Data[2][0] = 120;
+				LED_Color_Data[2][1] = 255;
+				LED_Color_Data[2][2] = 0;
+			}
+
+			if (!ARMED) {
+				HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
+				HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
+
+				HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
+				HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
+				HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
+				HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
+
+				HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
+				HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
+				HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
+				HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
+
+				LED_Color_Data[7][0] = 255;
+				LED_Color_Data[7][1] = 0;
+				LED_Color_Data[7][2] = 0;
+			} else {
+
+				HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 1);
+				HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 1);
+
+				LED_Color_Data[7][0] = 0;
+				LED_Color_Data[7][1] = 255;
+				LED_Color_Data[7][2] = 0;
+			}
+
+			int packet_lenght = LoRA_parsePacket();
+			char LoRA_data[50];
+			if (packet_lenght) {
+
+				connected = 1;
+				last_packet = HAL_GetTick();
+				for (int i = 0; i < packet_lenght; i++) {
+					LoRA_data[i] = LoRA_Read_Register(0x00);
+				}
+				LoRA_data[packet_lenght] = '\0';
+				//LoRA_data[packet_lenght+1] = '';
+				uint8_t* data_gyro[50];
+				//sprintf( data_gyro,  "%d   %d\n", strlen(LoRA_data), packet_lenght);
+				//CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+
+				//CDC_Transmit_HS(LoRA_data, packet_lenght);
+
+				if (strcmp(LoRA_data, "ARM") == 0) {
+					ARMED = 1;
+					LoRA_sendPacket("ARM SUCCESS");
+				}
+				if (strcmp(LoRA_data, "DISARM") == 0) {
+					ARMED = 0;
+					LoRA_sendPacket("DISARM SUCCESS");
+				}
+				if (strcmp(LoRA_data, "CONT") == 0) {
+
+					char cont_str[150];
+					uint8_t CONTS[8];
+					CONTS[0] = HAL_GPIO_ReadPin(CONT1_GPIO_Port, CONT1_Pin);
+					CONTS[1] = HAL_GPIO_ReadPin(CONT2_GPIO_Port, CONT2_Pin);
+					CONTS[2] = HAL_GPIO_ReadPin(CONT3_GPIO_Port, CONT3_Pin);
+					CONTS[3] = HAL_GPIO_ReadPin(CONT4_GPIO_Port, CONT4_Pin);
+					CONTS[4] = HAL_GPIO_ReadPin(CONT5_GPIO_Port, CONT5_Pin);
+					CONTS[5] = HAL_GPIO_ReadPin(CONT6_GPIO_Port, CONT6_Pin);
+					CONTS[6] = HAL_GPIO_ReadPin(CONT7_GPIO_Port, CONT7_Pin);
+					CONTS[7] = HAL_GPIO_ReadPin(CONT8_GPIO_Port, CONT8_Pin);
+
+					char message[100];
+					for (int i = 0; i < 8; i++) {
+						if (CONTS[i]) {
+							sprintf(message, "PYRO %d DOESN'T HAVE CONTINUITY",
+									i + 1);
+						} else {
+							sprintf(message, "PYRO %d HAS CONTINUITY", i + 1);
+						}
+
+						LoRA_sendPacket(message);
+						HAL_Delay(100);
+					}
+
+				}
+
+				if (strcmp(LoRA_data, "STATIC_FIRE") == 0) {
+					if (ARMED) {
+						LoRA_sendPacket("PYRO 1 FIRED");
+						//HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 1);
+						char LoRA_data[50];
+						int logging = 1;
+						while (logging) {
+							int packet_lenght;
+							long startTime = HAL_GetTick();
+							while (HAL_GetTick() - startTime < 10) {
+								packet_lenght = LoRA_parsePacket();
+								HAL_Delay(0.1);
+							}
+							if (packet_lenght) {
+								//flush data from buffer
+								//last_packet = HAL_GetTick();
+								for (int i = 0; i < packet_lenght; i++) {
+									LoRA_data[i] = LoRA_Read_Register(0x00);
+								}
+								LoRA_data[packet_lenght] = '\0';
+								if (strcmp(LoRA_data, "STOP") == 0) {
+									logging = 0;
+								}
+							}
+							LoRA_sendPacket("Fake data: 21231, 99999");
+						}
+
+					}
+
+				}
+
+				int channel_num;
+				char fire_data[50];
+				sscanf(LoRA_data, "%s %d", fire_data, &channel_num);
+				if (strcmp(fire_data, "FIRE") == 0) {
+					if (ARMED) {
+						switch (channel_num) {
+						case 1:
+							LoRA_sendPacket("PYRO 1 FIRED");
+
+							HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 1);
+							break;
+						case 2:
+							HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 1);
+							break;
+						case 3:
+							HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 1);
+							break;
+						case 4:
+							HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 1);
+							break;
+
+						case 5:
+							HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 1);
+							break;
+						case 6:
+							HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 1);
+							break;
+						case 7:
+							HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 1);
+							break;
+						case 8:
+							HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 1);
+							break;
+						default:
+							break;
+						}
+					} else {
+						LoRA_sendPacket("CANNOT FIRE, BOARD NOT ARMED");
+					}
+				}
+			}
+
+			//uint8_t data = read_EEPROM(1);
+			//sprintf( data_gyro,  "%d\n", DMA_data);
+
+			//HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -1516,10 +1864,10 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 }
 
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc) {
-  DMA_data = read_Data;
-  char data_gyro[100];
-  sprintf(data_gyro, "a\n");
-  CDC_Transmit_HS(data_gyro, strlen(data_gyro));
+DMA_data = read_Data;
+uint8_t* data_gyro[100];
+sprintf(data_gyro, "a\n");
+CDC_Transmit_HS(data_gyro, strlen(data_gyro));
 }
 /* USER CODE END 4 */
 

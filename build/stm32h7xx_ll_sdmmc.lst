@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cclXCP8f.s 			page 1
+ARM GAS  /tmp/ccBxPZhU.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
   29:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     [..] The SD/SDMMC MMC card host interface (SDMMC) provides an interface between the AHB
   30:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****          peripheral bus and MultiMedia cards (MMCs), SD memory cards, SDMMC cards and CE-ATA
   31:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****          devices.
-ARM GAS  /tmp/cclXCP8f.s 			page 2
+ARM GAS  /tmp/ccBxPZhU.s 			page 2
 
 
   32:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -118,7 +118,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
   86:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****            (++) Command Index
   87:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****            (++) Command Response type
   88:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****            (++) Command Wait
-ARM GAS  /tmp/cclXCP8f.s 			page 3
+ARM GAS  /tmp/ccBxPZhU.s 			page 3
 
 
   89:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****            (++) CPSM Status (Enable or Disable).
@@ -178,7 +178,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  143:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****      (#) The commands used for Read/Write/Erase operations are managed in
  144:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****          separate functions.
  145:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****          Each function allows to send the needed command with the related argument,
-ARM GAS  /tmp/cclXCP8f.s 			page 4
+ARM GAS  /tmp/ccBxPZhU.s 			page 4
 
 
  146:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****          then check the response.
@@ -238,7 +238,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  200:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** HAL_StatusTypeDef SDMMC_Init(SDMMC_TypeDef *SDMMCx, SDMMC_InitTypeDef Init)
  201:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** {
  202:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   uint32_t tmpreg = 0;
-ARM GAS  /tmp/cclXCP8f.s 			page 5
+ARM GAS  /tmp/ccBxPZhU.s 			page 5
 
 
  203:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -298,7 +298,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  257:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** /**
  258:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @brief  Write data (word) to Tx FIFO in blocking mode (polling)
  259:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @param  SDMMCx: Pointer to SDMMC register base
-ARM GAS  /tmp/cclXCP8f.s 			page 6
+ARM GAS  /tmp/ccBxPZhU.s 			page 6
 
 
  260:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @param  pWriteData: pointer to data to write
@@ -358,7 +358,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  314:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** }
  315:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  316:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** /**
-ARM GAS  /tmp/cclXCP8f.s 			page 7
+ARM GAS  /tmp/ccBxPZhU.s 			page 7
 
 
  317:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @brief  Set SDMMC Power state to OFF.
@@ -418,7 +418,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  371:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   MODIFY_REG(SDMMCx->CMD, CMD_CLEAR_MASK, tmpreg);
  372:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  373:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return HAL_OK;
-ARM GAS  /tmp/cclXCP8f.s 			page 8
+ARM GAS  /tmp/ccBxPZhU.s 			page 8
 
 
  374:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** }
@@ -478,7 +478,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  428:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   assert_param(IS_SDMMC_DPSM(Data->DPSM));
  429:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  430:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Set the SDMMC Data TimeOut value */
-ARM GAS  /tmp/cclXCP8f.s 			page 9
+ARM GAS  /tmp/ccBxPZhU.s 			page 9
 
 
  431:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   SDMMCx->DTIMER = Data->DataTimeOut;
@@ -538,7 +538,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  485:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  486:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return HAL_OK;
  487:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** }
-ARM GAS  /tmp/cclXCP8f.s 			page 10
+ARM GAS  /tmp/ccBxPZhU.s 			page 10
 
 
  488:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -598,7 +598,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  542:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Set Block Size for Card */
  543:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Argument         = (uint32_t)ReadAdd;
  544:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_READ_SINGLE_BLOCK;
-ARM GAS  /tmp/cclXCP8f.s 			page 11
+ARM GAS  /tmp/ccBxPZhU.s 			page 11
 
 
  545:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
@@ -658,7 +658,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  599:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_WRITE_SINGLE_BLOCK, SDMMC_CMDTIMEOUT);
  600:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  601:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return errorstate;
-ARM GAS  /tmp/cclXCP8f.s 			page 12
+ARM GAS  /tmp/ccBxPZhU.s 			page 12
 
 
  602:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** }
@@ -718,7 +718,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  656:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   */
  657:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** uint32_t SDMMC_CmdSDEraseEndAdd(SDMMC_TypeDef *SDMMCx, uint32_t EndAdd)
  658:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** {
-ARM GAS  /tmp/cclXCP8f.s 			page 13
+ARM GAS  /tmp/ccBxPZhU.s 			page 13
 
 
  659:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
@@ -778,7 +778,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  713:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
  714:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
  715:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
-ARM GAS  /tmp/cclXCP8f.s 			page 14
+ARM GAS  /tmp/ccBxPZhU.s 			page 14
 
 
  716:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
@@ -838,7 +838,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  770:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  771:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Check for error conditions */
  772:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_STOP_TRANSMISSION, SDMMC_STOPTRANSFERTIMEOUT);
-ARM GAS  /tmp/cclXCP8f.s 			page 15
+ARM GAS  /tmp/ccBxPZhU.s 			page 15
 
 
  773:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -898,7 +898,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  827:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Check for error conditions */
  828:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdError(SDMMCx);
  829:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 16
+ARM GAS  /tmp/ccBxPZhU.s 			page 16
 
 
  830:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return errorstate;
@@ -958,7 +958,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  884:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****      or SD card 1.x */
  885:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_APP_CMD, SDMMC_CMDTIMEOUT);
  886:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 17
+ARM GAS  /tmp/ccBxPZhU.s 			page 17
 
 
  887:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return errorstate;
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  941:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @param  SDMMCx: Pointer to SDMMC register base
  942:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @retval HAL status
  943:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   */
-ARM GAS  /tmp/cclXCP8f.s 			page 18
+ARM GAS  /tmp/ccBxPZhU.s 			page 18
 
 
  944:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** uint32_t SDMMC_CmdSendSCR(SDMMC_TypeDef *SDMMCx)
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  998:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Send CMD9 SEND_CSD */
  999:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Argument         = Argument;
 1000:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_SEND_CSD;
-ARM GAS  /tmp/cclXCP8f.s 			page 19
+ARM GAS  /tmp/ccBxPZhU.s 			page 19
 
 
 1001:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_LONG;
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1055:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
 1056:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Check for error conditions */
 1057:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_SET_REL_ADDR, SDMMC_CMDTIMEOUT);
-ARM GAS  /tmp/cclXCP8f.s 			page 20
+ARM GAS  /tmp/ccBxPZhU.s 			page 20
 
 
 1058:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1112:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @brief  Send the Status register command and check the response.
 1113:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @param  SDMMCx: Pointer to SDMMC register base
 1114:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   * @retval HAL status
-ARM GAS  /tmp/cclXCP8f.s 			page 21
+ARM GAS  /tmp/ccBxPZhU.s 			page 21
 
 
 1115:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   */
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1169:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
 1170:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Send CMD6 to activate SDR50 Mode and Power Limit 1.44W */
 1171:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* CMD Response: R1 */
-ARM GAS  /tmp/cclXCP8f.s 			page 22
+ARM GAS  /tmp/ccBxPZhU.s 			page 22
 
 
 1172:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Argument         = Argument; /* SDMMC_SDR25_SWITCH_PATTERN*/
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1226:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
 1227:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
 1228:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Check for error conditions */
-ARM GAS  /tmp/cclXCP8f.s 			page 23
+ARM GAS  /tmp/ccBxPZhU.s 			page 23
 
 
 1229:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   errorstate = SDMMC_GetCmdResp1(SDMMCx, SDMMC_CMD_HS_SEND_EXT_CSD, SDMMC_CMDTIMEOUT);
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1283:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   else if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL))
 1284:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
 1285:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CCRCFAIL);
-ARM GAS  /tmp/cclXCP8f.s 			page 24
+ARM GAS  /tmp/ccBxPZhU.s 			page 24
 
 
 1286:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1340:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     return SDMMC_ERROR_COM_CRC_FAILED;
 1341:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   }
 1342:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   else if ((response_r1 & SDMMC_OCR_ILLEGAL_CMD) == SDMMC_OCR_ILLEGAL_CMD)
-ARM GAS  /tmp/cclXCP8f.s 			page 25
+ARM GAS  /tmp/ccBxPZhU.s 			page 25
 
 
 1343:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1397:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   The SDMMC_CMDTIMEOUT is expressed in ms */
 1398:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   uint32_t count = SDMMC_CMDTIMEOUT * (SystemCoreClock / 8U / 1000U);
 1399:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 26
+ARM GAS  /tmp/ccBxPZhU.s 			page 26
 
 
 1400:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   do
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1454:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
 1455:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
 1456:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
-ARM GAS  /tmp/cclXCP8f.s 			page 27
+ARM GAS  /tmp/ccBxPZhU.s 			page 27
 
 
 1457:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1511:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   }
 1512:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
 1513:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   /* Check response received is of desired command */
-ARM GAS  /tmp/cclXCP8f.s 			page 28
+ARM GAS  /tmp/ccBxPZhU.s 			page 28
 
 
 1514:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   if (SDMMC_GetCommandResponse(SDMMCx) != SD_CMD)
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1568:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   if (__SDMMC_GET_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT))
 1569:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
 1570:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     /* Card is not SD V2.0 compliant */
-ARM GAS  /tmp/cclXCP8f.s 			page 29
+ARM GAS  /tmp/ccBxPZhU.s 			page 29
 
 
 1571:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     __SDMMC_CLEAR_FLAG(SDMMCx, SDMMC_FLAG_CTIMEOUT);
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
   36 0002 1B68     		ldr	r3, [r3]
   37 0004 0B4A     		ldr	r2, .L5+4
   38 0006 A2FB0323 		umull	r2, r3, r2, r3
-ARM GAS  /tmp/cclXCP8f.s 			page 30
+ARM GAS  /tmp/ccBxPZhU.s 			page 30
 
 
   39 000a 5A0A     		lsrs	r2, r3, #9
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
   77              	.L6:
   78              		.align	2
   79              	.L5:
-ARM GAS  /tmp/cclXCP8f.s 			page 31
+ARM GAS  /tmp/ccBxPZhU.s 			page 31
 
 
   80 0030 00000000 		.word	SystemCoreClock
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  215:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****              Init.HardwareFlowControl | \
  125              		.loc 1 215 18 view .LVU29
  126 0010 049A     		ldr	r2, [sp, #16]
-ARM GAS  /tmp/cclXCP8f.s 			page 32
+ARM GAS  /tmp/ccBxPZhU.s 			page 32
 
 
  214:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****              Init.BusWide             | \
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  170              		.section	.text.SDMMC_ReadFIFO,"ax",%progbits
  171              		.align	1
  172              		.global	SDMMC_ReadFIFO
-ARM GAS  /tmp/cclXCP8f.s 			page 33
+ARM GAS  /tmp/ccBxPZhU.s 			page 33
 
 
  173              		.syntax unified
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  269:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  220              		.loc 1 269 1 view .LVU52
  221 0008 7047     		bx	lr
-ARM GAS  /tmp/cclXCP8f.s 			page 34
+ARM GAS  /tmp/ccBxPZhU.s 			page 34
 
 
  222              		.cfi_endproc
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  311:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  272              		.loc 1 311 17 is_stmt 0 view .LVU61
  273 0000 0368     		ldr	r3, [r0]
-ARM GAS  /tmp/cclXCP8f.s 			page 35
+ARM GAS  /tmp/ccBxPZhU.s 			page 35
 
 
  274 0002 43F00203 		orr	r3, r3, #2
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  323              	SDMMC_GetPowerState:
  324              	.LVL24:
  325              	.LFB356:
-ARM GAS  /tmp/cclXCP8f.s 			page 36
+ARM GAS  /tmp/ccBxPZhU.s 			page 36
 
 
  339:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   return (SDMMCx->POWER & SDMMC_POWER_PWRCTRL);
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  365:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****                        Command->Response         | \
  368              		.loc 1 365 31 is_stmt 0 view .LVU85
  369 0004 4B68     		ldr	r3, [r1, #4]
-ARM GAS  /tmp/cclXCP8f.s 			page 37
+ARM GAS  /tmp/ccBxPZhU.s 			page 37
 
 
  366:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****                        Command->WaitForInterrupt | \
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  413              		.fpu fpv5-d16
  415              	SDMMC_GetCommandResponse:
  416              	.LVL32:
-ARM GAS  /tmp/cclXCP8f.s 			page 38
+ARM GAS  /tmp/ccBxPZhU.s 			page 38
 
 
  417              	.LFB358:
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  461              		.cfi_endproc
  462              	.LFE359:
  464              		.section	.text.SDMMC_ConfigData,"ax",%progbits
-ARM GAS  /tmp/cclXCP8f.s 			page 39
+ARM GAS  /tmp/ccBxPZhU.s 			page 39
 
 
  465              		.align	1
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  439:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****                        Data->DPSM);
  503              		.loc 1 439 28 view .LVU127
  504 000e 0A69     		ldr	r2, [r1, #16]
-ARM GAS  /tmp/cclXCP8f.s 			page 40
+ARM GAS  /tmp/ccBxPZhU.s 			page 40
 
 
  438:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****                        Data->TransferMode  | \
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  549              		.loc 1 457 1 view .LVU139
  550 0002 7047     		bx	lr
  551              		.cfi_endproc
-ARM GAS  /tmp/cclXCP8f.s 			page 41
+ARM GAS  /tmp/ccBxPZhU.s 			page 41
 
 
  552              	.LFE361:
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  487:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  602              		.loc 1 487 1 is_stmt 0 view .LVU148
  603 000a 0020     		movs	r0, #0
-ARM GAS  /tmp/cclXCP8f.s 			page 42
+ARM GAS  /tmp/ccBxPZhU.s 			page 42
 
 
  604              	.LVL47:
@@ -2518,7 +2518,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  823:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
  648              		.loc 1 823 34 is_stmt 0 view .LVU161
  649 000e 0493     		str	r3, [sp, #16]
-ARM GAS  /tmp/cclXCP8f.s 			page 43
+ARM GAS  /tmp/ccBxPZhU.s 			page 43
 
 
  824:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
@@ -2578,7 +2578,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  695              		.cfi_offset 5, -12
  696              		.cfi_offset 6, -8
  697              		.cfi_offset 14, -4
-ARM GAS  /tmp/cclXCP8f.s 			page 44
+ARM GAS  /tmp/ccBxPZhU.s 			page 44
 
 
  698 0002 0546     		mov	r5, r0
@@ -2638,7 +2638,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  736 0028 14F4005F 		tst	r4, #8192
  737 002c F3D1     		bne	.L30
 1277:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
-ARM GAS  /tmp/cclXCP8f.s 			page 45
+ARM GAS  /tmp/ccBxPZhU.s 			page 45
 
 
  738              		.loc 1 1277 3 is_stmt 1 view .LVU189
@@ -2698,7 +2698,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  775              		.loc 1 1298 7 is_stmt 0 view .LVU206
  776 004e 2846     		mov	r0, r5
  777              	.LVL60:
-ARM GAS  /tmp/cclXCP8f.s 			page 46
+ARM GAS  /tmp/ccBxPZhU.s 			page 46
 
 
 1298:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
@@ -2758,7 +2758,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  816              		.loc 1 1322 8 is_stmt 1 view .LVU222
 1322:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
  817              		.loc 1 1322 11 is_stmt 0 view .LVU223
-ARM GAS  /tmp/cclXCP8f.s 			page 47
+ARM GAS  /tmp/ccBxPZhU.s 			page 47
 
 
  818 007c 13F0805F 		tst	r3, #268435456
@@ -2818,7 +2818,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  854 00b2 13F4003F 		tst	r3, #131072
  855 00b6 36D1     		bne	.L47
 1362:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
-ARM GAS  /tmp/cclXCP8f.s 			page 48
+ARM GAS  /tmp/ccBxPZhU.s 			page 48
 
 
  856              		.loc 1 1362 8 is_stmt 1 view .LVU242
@@ -2878,7 +2878,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  896              	.L37:
 1320:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   }
  897              		.loc 1 1320 12 view .LVU257
-ARM GAS  /tmp/cclXCP8f.s 			page 49
+ARM GAS  /tmp/ccBxPZhU.s 			page 49
 
 
  898 00ec 8020     		movs	r0, #128
@@ -2938,7 +2938,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  941              		.loc 1 1364 12 view .LVU268
  942 012c 4FF40020 		mov	r0, #524288
  943 0130 D6E7     		b	.L28
-ARM GAS  /tmp/cclXCP8f.s 			page 50
+ARM GAS  /tmp/ccBxPZhU.s 			page 50
 
 
  944              	.L49:
@@ -2998,7 +2998,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  994              	.LCFI9:
  995              		.cfi_def_cfa_offset 40
  996 0004 0446     		mov	r4, r0
-ARM GAS  /tmp/cclXCP8f.s 			page 51
+ARM GAS  /tmp/ccBxPZhU.s 			page 51
 
 
  515:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   uint32_t errorstate;
@@ -3058,7 +3058,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  530:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  1033              		.loc 1 530 1 is_stmt 0 view .LVU293
  1034 002e 07B0     		add	sp, sp, #28
-ARM GAS  /tmp/cclXCP8f.s 			page 52
+ARM GAS  /tmp/ccBxPZhU.s 			page 52
 
 
  1035              	.LCFI10:
@@ -3118,7 +3118,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1080 000c 4FF48073 		mov	r3, #256
  1081 0010 0393     		str	r3, [sp, #12]
  546:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
-ARM GAS  /tmp/cclXCP8f.s 			page 53
+ARM GAS  /tmp/ccBxPZhU.s 			page 53
 
 
  1082              		.loc 1 546 3 is_stmt 1 view .LVU305
@@ -3178,7 +3178,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1126              		.loc 1 562 1 is_stmt 1 view -0
  1127              		.cfi_startproc
  1128              		@ args = 0, pretend = 0, frame = 24
-ARM GAS  /tmp/cclXCP8f.s 			page 54
+ARM GAS  /tmp/ccBxPZhU.s 			page 54
 
 
  1129              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -3238,7 +3238,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1167 001e FFF7FEFF 		bl	SDMMC_SendCommand
  1168              	.LVL78:
  575:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 55
+ARM GAS  /tmp/ccBxPZhU.s 			page 55
 
 
  1169              		.loc 1 575 3 is_stmt 1 view .LVU334
@@ -3298,7 +3298,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  591:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_WRITE_SINGLE_BLOCK;
  1216              		.loc 1 591 34 is_stmt 0 view .LVU344
  1217 0006 0191     		str	r1, [sp, #4]
-ARM GAS  /tmp/cclXCP8f.s 			page 56
+ARM GAS  /tmp/ccBxPZhU.s 			page 56
 
 
  592:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
@@ -3358,7 +3358,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1256              		.cfi_endproc
  1257              	.LFE367:
  1259              		.section	.text.SDMMC_CmdWriteMultiBlock,"ax",%progbits
-ARM GAS  /tmp/cclXCP8f.s 			page 57
+ARM GAS  /tmp/ccBxPZhU.s 			page 57
 
 
  1260              		.align	1
@@ -3418,7 +3418,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1302              		.loc 1 619 3 is_stmt 1 view .LVU373
  619:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
  1303              		.loc 1 619 34 is_stmt 0 view .LVU374
-ARM GAS  /tmp/cclXCP8f.s 			page 58
+ARM GAS  /tmp/ccBxPZhU.s 			page 58
 
 
  1304 0016 4FF48053 		mov	r3, #4096
@@ -3478,7 +3478,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1350              		.cfi_offset 4, -12
  1351              		.cfi_offset 5, -8
  1352              		.cfi_offset 14, -4
-ARM GAS  /tmp/cclXCP8f.s 			page 59
+ARM GAS  /tmp/ccBxPZhU.s 			page 59
 
 
  1353 0002 87B0     		sub	sp, sp, #28
@@ -3538,7 +3538,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1390 002a FFF7FEFF 		bl	SDMMC_GetCmdResp1
  1391              	.LVL91:
  649:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** }
-ARM GAS  /tmp/cclXCP8f.s 			page 60
+ARM GAS  /tmp/ccBxPZhU.s 			page 60
 
 
  1392              		.loc 1 649 3 is_stmt 1 view .LVU402
@@ -3598,7 +3598,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  665:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
  1438              		.loc 1 665 3 is_stmt 1 view .LVU413
  665:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
-ARM GAS  /tmp/cclXCP8f.s 			page 61
+ARM GAS  /tmp/ccBxPZhU.s 			page 61
 
 
  1439              		.loc 1 665 34 is_stmt 0 view .LVU414
@@ -3658,7 +3658,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1483              	SDMMC_CmdEraseStartAdd:
  1484              	.LVL96:
  1485              	.LFB371:
-ARM GAS  /tmp/cclXCP8f.s 			page 62
+ARM GAS  /tmp/ccBxPZhU.s 			page 62
 
 
  682:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
@@ -3718,7 +3718,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1524 001c 01A9     		add	r1, sp, #4
  1525              	.LVL97:
  692:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 63
+ARM GAS  /tmp/ccBxPZhU.s 			page 63
 
 
  1526              		.loc 1 692 9 view .LVU443
@@ -3778,7 +3778,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  708:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  1574              		.loc 1 708 3 view .LVU452
  711:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_ERASE_GRP_END;
-ARM GAS  /tmp/cclXCP8f.s 			page 64
+ARM GAS  /tmp/ccBxPZhU.s 			page 64
 
 
  1575              		.loc 1 711 3 view .LVU453
@@ -3838,7 +3838,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1613              		@ sp needed
  1614 0030 30BD     		pop	{r4, r5, pc}
  722:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 65
+ARM GAS  /tmp/ccBxPZhU.s 			page 65
 
 
  1615              		.loc 1 722 1 view .LVU470
@@ -3898,7 +3898,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1659              		.loc 1 739 34 is_stmt 0 view .LVU482
  1660 0012 0023     		movs	r3, #0
  1661 0014 0493     		str	r3, [sp, #16]
-ARM GAS  /tmp/cclXCP8f.s 			page 66
+ARM GAS  /tmp/ccBxPZhU.s 			page 66
 
 
  740:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
@@ -3958,7 +3958,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1706              		.loc 1 755 1 is_stmt 0 view .LVU494
  1707 0000 30B5     		push	{r4, r5, lr}
  1708              	.LCFI38:
-ARM GAS  /tmp/cclXCP8f.s 			page 67
+ARM GAS  /tmp/ccBxPZhU.s 			page 67
 
 
  1709              		.cfi_def_cfa_offset 12
@@ -4018,7 +4018,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1747              		.loc 1 769 9 is_stmt 0 view .LVU510
  1748 002c 01A9     		add	r1, sp, #4
  1749 002e FFF7FEFF 		bl	SDMMC_SendCommand
-ARM GAS  /tmp/cclXCP8f.s 			page 68
+ARM GAS  /tmp/ccBxPZhU.s 			page 68
 
 
  1750              	.LVL109:
@@ -4078,7 +4078,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1796              		.thumb
  1797              		.thumb_func
  1798              		.fpu fpv5-d16
-ARM GAS  /tmp/cclXCP8f.s 			page 69
+ARM GAS  /tmp/ccBxPZhU.s 			page 69
 
 
  1800              	SDMMC_CmdSelDesel:
@@ -4138,7 +4138,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1839              		.loc 1 802 3 is_stmt 1 view .LVU534
  802:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  1840              		.loc 1 802 9 is_stmt 0 view .LVU535
-ARM GAS  /tmp/cclXCP8f.s 			page 70
+ARM GAS  /tmp/ccBxPZhU.s 			page 70
 
 
  1841 001c 01A9     		add	r1, sp, #4
@@ -4198,7 +4198,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1889 0004 0446     		mov	r4, r0
  871:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   uint32_t errorstate;
  1890              		.loc 1 871 3 is_stmt 1 view .LVU544
-ARM GAS  /tmp/cclXCP8f.s 			page 71
+ARM GAS  /tmp/ccBxPZhU.s 			page 71
 
 
  872:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -4258,7 +4258,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  1927 002e 07B0     		add	sp, sp, #28
  1928              	.LCFI47:
  1929              		.cfi_def_cfa_offset 12
-ARM GAS  /tmp/cclXCP8f.s 			page 72
+ARM GAS  /tmp/ccBxPZhU.s 			page 72
 
 
  1930              		@ sp needed
@@ -4318,7 +4318,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  929:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
  1975              		.loc 1 929 3 is_stmt 1 view .LVU574
  929:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
-ARM GAS  /tmp/cclXCP8f.s 			page 73
+ARM GAS  /tmp/ccBxPZhU.s 			page 73
 
 
  1976              		.loc 1 929 34 is_stmt 0 view .LVU575
@@ -4378,7 +4378,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2021              		@ args = 0, pretend = 0, frame = 24
  2022              		@ frame_needed = 0, uses_anonymous_args = 0
  945:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
-ARM GAS  /tmp/cclXCP8f.s 			page 74
+ARM GAS  /tmp/ccBxPZhU.s 			page 74
 
 
  2023              		.loc 1 945 1 is_stmt 0 view .LVU587
@@ -4438,7 +4438,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2061              		.loc 1 958 16 is_stmt 0 view .LVU603
  2062 0022 41F28832 		movw	r2, #5000
  2063 0026 2946     		mov	r1, r5
-ARM GAS  /tmp/cclXCP8f.s 			page 75
+ARM GAS  /tmp/ccBxPZhU.s 			page 75
 
 
  2064 0028 2046     		mov	r0, r4
@@ -4498,7 +4498,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2110              		.loc 1 1049 34 view .LVU613
  2111 0008 0191     		str	r1, [sp, #4]
 1050:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
-ARM GAS  /tmp/cclXCP8f.s 			page 76
+ARM GAS  /tmp/ccBxPZhU.s 			page 76
 
 
  2112              		.loc 1 1050 3 is_stmt 1 view .LVU614
@@ -4558,7 +4558,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2153              		.global	SDMMC_CmdSleepMmc
  2154              		.syntax unified
  2155              		.thumb
-ARM GAS  /tmp/cclXCP8f.s 			page 77
+ARM GAS  /tmp/ccBxPZhU.s 			page 77
 
 
  2156              		.thumb_func
@@ -4618,7 +4618,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2197 001a 0593     		str	r3, [sp, #20]
 1079:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  2198              		.loc 1 1079 3 is_stmt 1 view .LVU643
-ARM GAS  /tmp/cclXCP8f.s 			page 78
+ARM GAS  /tmp/ccBxPZhU.s 			page 78
 
 
 1079:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -4678,7 +4678,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2246              	.LCFI61:
  2247              		.cfi_def_cfa_offset 40
  2248 0004 0446     		mov	r4, r0
-ARM GAS  /tmp/cclXCP8f.s 			page 79
+ARM GAS  /tmp/ccBxPZhU.s 			page 79
 
 
 1095:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   uint32_t errorstate;
@@ -4738,7 +4738,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1109:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  2285              		.loc 1 1109 1 is_stmt 0 view .LVU671
  2286 002e 07B0     		add	sp, sp, #28
-ARM GAS  /tmp/cclXCP8f.s 			page 80
+ARM GAS  /tmp/ccBxPZhU.s 			page 80
 
 
  2287              	.LCFI62:
@@ -4798,7 +4798,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2332              		.loc 1 1123 34 is_stmt 0 view .LVU682
  2333 000e 4FF48072 		mov	r2, #256
  2334 0012 0392     		str	r2, [sp, #12]
-ARM GAS  /tmp/cclXCP8f.s 			page 81
+ARM GAS  /tmp/ccBxPZhU.s 			page 81
 
 
 1124:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CPSM             = SDMMC_CPSM_ENABLE;
@@ -4858,7 +4858,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2379              		@ frame_needed = 0, uses_anonymous_args = 0
 1166:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   SDMMC_CmdInitTypeDef  sdmmc_cmdinit;
  2380              		.loc 1 1166 1 is_stmt 0 view .LVU695
-ARM GAS  /tmp/cclXCP8f.s 			page 82
+ARM GAS  /tmp/ccBxPZhU.s 			page 82
 
 
  2381 0000 30B5     		push	{r4, r5, lr}
@@ -4918,7 +4918,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2419              		.loc 1 1180 3 is_stmt 1 view .LVU711
 1180:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  2420              		.loc 1 1180 16 is_stmt 0 view .LVU712
-ARM GAS  /tmp/cclXCP8f.s 			page 83
+ARM GAS  /tmp/ccBxPZhU.s 			page 83
 
 
  2421 0022 41F28832 		movw	r2, #5000
@@ -4978,7 +4978,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2468 0008 0193     		str	r3, [sp, #4]
 1197:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
  2469              		.loc 1 1197 3 is_stmt 1 view .LVU722
-ARM GAS  /tmp/cclXCP8f.s 			page 84
+ARM GAS  /tmp/ccBxPZhU.s 			page 84
 
 
 1197:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_SHORT;
@@ -5038,7 +5038,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2511              		.thumb
  2512              		.thumb_func
  2513              		.fpu fpv5-d16
-ARM GAS  /tmp/cclXCP8f.s 			page 85
+ARM GAS  /tmp/ccBxPZhU.s 			page 85
 
 
  2515              	SDMMC_CmdSendEXTCSD:
@@ -5098,7 +5098,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2554              		.loc 1 1226 3 is_stmt 1 view .LVU751
 1226:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  2555              		.loc 1 1226 9 is_stmt 0 view .LVU752
-ARM GAS  /tmp/cclXCP8f.s 			page 86
+ARM GAS  /tmp/ccBxPZhU.s 			page 86
 
 
  2556 001c 01A9     		add	r1, sp, #4
@@ -5158,7 +5158,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2601 0004 1B68     		ldr	r3, [r3]
  2602 0006 144A     		ldr	r2, .L115+4
  2603 0008 A2FB0323 		umull	r2, r3, r2, r3
-ARM GAS  /tmp/cclXCP8f.s 			page 87
+ARM GAS  /tmp/ccBxPZhU.s 			page 87
 
 
  2604 000c 5A0A     		lsrs	r2, r3, #9
@@ -5218,7 +5218,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2642 0038 05D1     		bne	.L114
 1426:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   }
  2643              		.loc 1 1426 5 is_stmt 1 view .LVU780
-ARM GAS  /tmp/cclXCP8f.s 			page 88
+ARM GAS  /tmp/ccBxPZhU.s 			page 88
 
 
  2644 003a 084B     		ldr	r3, .L115+8
@@ -5278,7 +5278,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2688              		.fpu fpv5-d16
  2690              	SDMMC_CmdSendCID:
  2691              	.LVL165:
-ARM GAS  /tmp/cclXCP8f.s 			page 89
+ARM GAS  /tmp/ccBxPZhU.s 			page 89
 
 
  2692              	.LFB382:
@@ -5338,7 +5338,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2730 001c 01A9     		add	r1, sp, #4
  2731 001e FFF7FEFF 		bl	SDMMC_SendCommand
  2732              	.LVL166:
-ARM GAS  /tmp/cclXCP8f.s 			page 90
+ARM GAS  /tmp/ccBxPZhU.s 			page 90
 
 
  982:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
@@ -5398,7 +5398,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2778 0006 0191     		str	r1, [sp, #4]
 1000:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_LONG;
  2779              		.loc 1 1000 3 is_stmt 1 view .LVU819
-ARM GAS  /tmp/cclXCP8f.s 			page 91
+ARM GAS  /tmp/ccBxPZhU.s 			page 91
 
 
 1000:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.Response         = SDMMC_RESPONSE_LONG;
@@ -5458,7 +5458,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2820              		.global	SDMMC_GetCmdResp3
  2821              		.syntax unified
  2822              		.thumb
-ARM GAS  /tmp/cclXCP8f.s 			page 92
+ARM GAS  /tmp/ccBxPZhU.s 			page 92
 
 
  2823              		.thumb_func
@@ -5518,7 +5518,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2864 0022 F8D0     		beq	.L123
 1451:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****            ((sta_reg & SDMMC_FLAG_CMDACT) != 0U));
  2865              		.loc 1 1451 97 discriminator 1 view .LVU849
-ARM GAS  /tmp/cclXCP8f.s 			page 93
+ARM GAS  /tmp/ccBxPZhU.s 			page 93
 
 
  2866 0024 12F4005F 		tst	r2, #8192
@@ -5578,7 +5578,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  2909              		.global	SDMMC_CmdAppOperCommand
  2910              		.syntax unified
  2911              		.thumb
-ARM GAS  /tmp/cclXCP8f.s 			page 94
+ARM GAS  /tmp/ccBxPZhU.s 			page 94
 
 
  2912              		.thumb_func
@@ -5638,7 +5638,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  907:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  2953              		.loc 1 907 3 is_stmt 1 view .LVU876
  907:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 95
+ARM GAS  /tmp/ccBxPZhU.s 			page 95
 
 
  2954              		.loc 1 907 9 is_stmt 0 view .LVU877
@@ -5698,7 +5698,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3001              		.loc 1 1143 3 is_stmt 1 view .LVU886
 1144:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  3002              		.loc 1 1144 3 view .LVU887
-ARM GAS  /tmp/cclXCP8f.s 			page 96
+ARM GAS  /tmp/ccBxPZhU.s 			page 96
 
 
 1146:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.CmdIndex         = SDMMC_CMD_SEND_OP_COND;
@@ -5758,7 +5758,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3040 002a 10BD     		pop	{r4, pc}
 1157:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  3041              		.loc 1 1157 1 view .LVU905
-ARM GAS  /tmp/cclXCP8f.s 			page 97
+ARM GAS  /tmp/ccBxPZhU.s 			page 97
 
 
  3042              		.cfi_endproc
@@ -5818,7 +5818,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3089              	.LVL192:
  3090              	.L135:
 1486:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
-ARM GAS  /tmp/cclXCP8f.s 			page 98
+ARM GAS  /tmp/ccBxPZhU.s 			page 98
 
 
  3091              		.loc 1 1486 3 is_stmt 1 view .LVU915
@@ -5878,7 +5878,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3128 0044 21E0     		b	.L133
  3129              	.L144:
 1498:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 99
+ARM GAS  /tmp/ccBxPZhU.s 			page 99
 
 
  3130              		.loc 1 1498 5 is_stmt 1 view .LVU933
@@ -5938,7 +5938,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3169 006e 13F4804F 		tst	r3, #16384
  3170 0072 0BD1     		bne	.L141
 1536:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
-ARM GAS  /tmp/cclXCP8f.s 			page 100
+ARM GAS  /tmp/ccBxPZhU.s 			page 100
 
 
  3171              		.loc 1 1536 8 is_stmt 1 view .LVU949
@@ -5998,7 +5998,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3215              		.align	1
  3216              		.global	SDMMC_CmdSetRelAdd
  3217              		.syntax unified
-ARM GAS  /tmp/cclXCP8f.s 			page 101
+ARM GAS  /tmp/ccBxPZhU.s 			page 101
 
 
  3218              		.thumb
@@ -6058,7 +6058,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1028:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   (void)SDMMC_SendCommand(SDMMCx, &sdmmc_cmdinit);
  3260              		.loc 1 1028 34 is_stmt 0 view .LVU974
  3261 0018 4FF48053 		mov	r3, #4096
-ARM GAS  /tmp/cclXCP8f.s 			page 102
+ARM GAS  /tmp/ccBxPZhU.s 			page 102
 
 
  3262 001c 0593     		str	r3, [sp, #20]
@@ -6118,7 +6118,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
 1556:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
  3307              		.loc 1 1556 3 view .LVU986
 1556:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c **** 
-ARM GAS  /tmp/cclXCP8f.s 			page 103
+ARM GAS  /tmp/ccBxPZhU.s 			page 103
 
 
  3308              		.loc 1 1556 61 is_stmt 0 view .LVU987
@@ -6178,7 +6178,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3347 0032 4B6B     		ldr	r3, [r1, #52]
 1576:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   {
  3348              		.loc 1 1576 11 view .LVU1003
-ARM GAS  /tmp/cclXCP8f.s 			page 104
+ARM GAS  /tmp/ccBxPZhU.s 			page 104
 
 
  3349 0034 13F00103 		ands	r3, r3, #1
@@ -6238,7 +6238,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3388              	.L156:
 1562:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****     }
  3389              		.loc 1 1562 14 view .LVU1019
-ARM GAS  /tmp/cclXCP8f.s 			page 105
+ARM GAS  /tmp/ccBxPZhU.s 			page 105
 
 
  3390 0056 4FF00040 		mov	r0, #-2147483648
@@ -6298,7 +6298,7 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3437 000e 0293     		str	r3, [sp, #8]
  850:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
  3438              		.loc 1 850 3 is_stmt 1 view .LVU1029
-ARM GAS  /tmp/cclXCP8f.s 			page 106
+ARM GAS  /tmp/ccBxPZhU.s 			page 106
 
 
  850:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c ****   sdmmc_cmdinit.WaitForInterrupt = SDMMC_WAIT_NO;
@@ -6358,127 +6358,127 @@ ARM GAS  /tmp/cclXCP8f.s 			page 1
  3482              		.file 11 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
  3483              		.file 12 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h"
  3484              		.file 13 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_flash.h"
-ARM GAS  /tmp/cclXCP8f.s 			page 107
+ARM GAS  /tmp/ccBxPZhU.s 			page 107
 
 
  3485              		.file 14 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_ll_sdmmc.h"
  3486              		.file 15 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h"
  3487              		.file 16 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
-ARM GAS  /tmp/cclXCP8f.s 			page 108
+ARM GAS  /tmp/ccBxPZhU.s 			page 108
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 stm32h7xx_ll_sdmmc.c
-     /tmp/cclXCP8f.s:17     .text.SDMMC_GetCmdError:0000000000000000 $t
-     /tmp/cclXCP8f.s:24     .text.SDMMC_GetCmdError:0000000000000000 SDMMC_GetCmdError
-     /tmp/cclXCP8f.s:80     .text.SDMMC_GetCmdError:0000000000000030 $d
-     /tmp/cclXCP8f.s:87     .text.SDMMC_Init:0000000000000000 $t
-     /tmp/cclXCP8f.s:94     .text.SDMMC_Init:0000000000000000 SDMMC_Init
-     /tmp/cclXCP8f.s:166    .text.SDMMC_Init:0000000000000030 $d
-     /tmp/cclXCP8f.s:171    .text.SDMMC_ReadFIFO:0000000000000000 $t
-     /tmp/cclXCP8f.s:178    .text.SDMMC_ReadFIFO:0000000000000000 SDMMC_ReadFIFO
-     /tmp/cclXCP8f.s:196    .text.SDMMC_WriteFIFO:0000000000000000 $t
-     /tmp/cclXCP8f.s:203    .text.SDMMC_WriteFIFO:0000000000000000 SDMMC_WriteFIFO
-     /tmp/cclXCP8f.s:226    .text.SDMMC_PowerState_ON:0000000000000000 $t
-     /tmp/cclXCP8f.s:233    .text.SDMMC_PowerState_ON:0000000000000000 SDMMC_PowerState_ON
-     /tmp/cclXCP8f.s:256    .text.SDMMC_PowerState_Cycle:0000000000000000 $t
-     /tmp/cclXCP8f.s:263    .text.SDMMC_PowerState_Cycle:0000000000000000 SDMMC_PowerState_Cycle
-     /tmp/cclXCP8f.s:286    .text.SDMMC_PowerState_OFF:0000000000000000 $t
-     /tmp/cclXCP8f.s:293    .text.SDMMC_PowerState_OFF:0000000000000000 SDMMC_PowerState_OFF
-     /tmp/cclXCP8f.s:316    .text.SDMMC_GetPowerState:0000000000000000 $t
-     /tmp/cclXCP8f.s:323    .text.SDMMC_GetPowerState:0000000000000000 SDMMC_GetPowerState
-     /tmp/cclXCP8f.s:342    .text.SDMMC_SendCommand:0000000000000000 $t
-     /tmp/cclXCP8f.s:349    .text.SDMMC_SendCommand:0000000000000000 SDMMC_SendCommand
-     /tmp/cclXCP8f.s:403    .text.SDMMC_SendCommand:0000000000000020 $d
-     /tmp/cclXCP8f.s:408    .text.SDMMC_GetCommandResponse:0000000000000000 $t
-     /tmp/cclXCP8f.s:415    .text.SDMMC_GetCommandResponse:0000000000000000 SDMMC_GetCommandResponse
-     /tmp/cclXCP8f.s:434    .text.SDMMC_GetResponse:0000000000000000 $t
-     /tmp/cclXCP8f.s:441    .text.SDMMC_GetResponse:0000000000000000 SDMMC_GetResponse
-     /tmp/cclXCP8f.s:465    .text.SDMMC_ConfigData:0000000000000000 $t
-     /tmp/cclXCP8f.s:472    .text.SDMMC_ConfigData:0000000000000000 SDMMC_ConfigData
-     /tmp/cclXCP8f.s:530    .text.SDMMC_GetDataCounter:0000000000000000 $t
-     /tmp/cclXCP8f.s:537    .text.SDMMC_GetDataCounter:0000000000000000 SDMMC_GetDataCounter
-     /tmp/cclXCP8f.s:555    .text.SDMMC_GetFIFOCount:0000000000000000 $t
-     /tmp/cclXCP8f.s:562    .text.SDMMC_GetFIFOCount:0000000000000000 SDMMC_GetFIFOCount
-     /tmp/cclXCP8f.s:580    .text.SDMMC_SetSDMMCReadWaitMode:0000000000000000 $t
-     /tmp/cclXCP8f.s:587    .text.SDMMC_SetSDMMCReadWaitMode:0000000000000000 SDMMC_SetSDMMCReadWaitMode
-     /tmp/cclXCP8f.s:611    .text.SDMMC_CmdGoIdleState:0000000000000000 $t
-     /tmp/cclXCP8f.s:618    .text.SDMMC_CmdGoIdleState:0000000000000000 SDMMC_CmdGoIdleState
-     /tmp/cclXCP8f.s:676    .text.SDMMC_GetCmdResp1:0000000000000000 $t
-     /tmp/cclXCP8f.s:683    .text.SDMMC_GetCmdResp1:0000000000000000 SDMMC_GetCmdResp1
-     /tmp/cclXCP8f.s:963    .text.SDMMC_GetCmdResp1:000000000000014c $d
-     /tmp/cclXCP8f.s:972    .text.SDMMC_CmdBlockLength:0000000000000000 $t
-     /tmp/cclXCP8f.s:979    .text.SDMMC_CmdBlockLength:0000000000000000 SDMMC_CmdBlockLength
-     /tmp/cclXCP8f.s:1044   .text.SDMMC_CmdReadSingleBlock:0000000000000000 $t
-     /tmp/cclXCP8f.s:1051   .text.SDMMC_CmdReadSingleBlock:0000000000000000 SDMMC_CmdReadSingleBlock
-     /tmp/cclXCP8f.s:1116   .text.SDMMC_CmdReadMultiBlock:0000000000000000 $t
-     /tmp/cclXCP8f.s:1123   .text.SDMMC_CmdReadMultiBlock:0000000000000000 SDMMC_CmdReadMultiBlock
-     /tmp/cclXCP8f.s:1188   .text.SDMMC_CmdWriteSingleBlock:0000000000000000 $t
-     /tmp/cclXCP8f.s:1195   .text.SDMMC_CmdWriteSingleBlock:0000000000000000 SDMMC_CmdWriteSingleBlock
-     /tmp/cclXCP8f.s:1260   .text.SDMMC_CmdWriteMultiBlock:0000000000000000 $t
-     /tmp/cclXCP8f.s:1267   .text.SDMMC_CmdWriteMultiBlock:0000000000000000 SDMMC_CmdWriteMultiBlock
-     /tmp/cclXCP8f.s:1332   .text.SDMMC_CmdSDEraseStartAdd:0000000000000000 $t
-     /tmp/cclXCP8f.s:1339   .text.SDMMC_CmdSDEraseStartAdd:0000000000000000 SDMMC_CmdSDEraseStartAdd
-     /tmp/cclXCP8f.s:1404   .text.SDMMC_CmdSDEraseEndAdd:0000000000000000 $t
-     /tmp/cclXCP8f.s:1411   .text.SDMMC_CmdSDEraseEndAdd:0000000000000000 SDMMC_CmdSDEraseEndAdd
-     /tmp/cclXCP8f.s:1476   .text.SDMMC_CmdEraseStartAdd:0000000000000000 $t
-     /tmp/cclXCP8f.s:1483   .text.SDMMC_CmdEraseStartAdd:0000000000000000 SDMMC_CmdEraseStartAdd
-     /tmp/cclXCP8f.s:1548   .text.SDMMC_CmdEraseEndAdd:0000000000000000 $t
-ARM GAS  /tmp/cclXCP8f.s 			page 109
+     /tmp/ccBxPZhU.s:17     .text.SDMMC_GetCmdError:0000000000000000 $t
+     /tmp/ccBxPZhU.s:24     .text.SDMMC_GetCmdError:0000000000000000 SDMMC_GetCmdError
+     /tmp/ccBxPZhU.s:80     .text.SDMMC_GetCmdError:0000000000000030 $d
+     /tmp/ccBxPZhU.s:87     .text.SDMMC_Init:0000000000000000 $t
+     /tmp/ccBxPZhU.s:94     .text.SDMMC_Init:0000000000000000 SDMMC_Init
+     /tmp/ccBxPZhU.s:166    .text.SDMMC_Init:0000000000000030 $d
+     /tmp/ccBxPZhU.s:171    .text.SDMMC_ReadFIFO:0000000000000000 $t
+     /tmp/ccBxPZhU.s:178    .text.SDMMC_ReadFIFO:0000000000000000 SDMMC_ReadFIFO
+     /tmp/ccBxPZhU.s:196    .text.SDMMC_WriteFIFO:0000000000000000 $t
+     /tmp/ccBxPZhU.s:203    .text.SDMMC_WriteFIFO:0000000000000000 SDMMC_WriteFIFO
+     /tmp/ccBxPZhU.s:226    .text.SDMMC_PowerState_ON:0000000000000000 $t
+     /tmp/ccBxPZhU.s:233    .text.SDMMC_PowerState_ON:0000000000000000 SDMMC_PowerState_ON
+     /tmp/ccBxPZhU.s:256    .text.SDMMC_PowerState_Cycle:0000000000000000 $t
+     /tmp/ccBxPZhU.s:263    .text.SDMMC_PowerState_Cycle:0000000000000000 SDMMC_PowerState_Cycle
+     /tmp/ccBxPZhU.s:286    .text.SDMMC_PowerState_OFF:0000000000000000 $t
+     /tmp/ccBxPZhU.s:293    .text.SDMMC_PowerState_OFF:0000000000000000 SDMMC_PowerState_OFF
+     /tmp/ccBxPZhU.s:316    .text.SDMMC_GetPowerState:0000000000000000 $t
+     /tmp/ccBxPZhU.s:323    .text.SDMMC_GetPowerState:0000000000000000 SDMMC_GetPowerState
+     /tmp/ccBxPZhU.s:342    .text.SDMMC_SendCommand:0000000000000000 $t
+     /tmp/ccBxPZhU.s:349    .text.SDMMC_SendCommand:0000000000000000 SDMMC_SendCommand
+     /tmp/ccBxPZhU.s:403    .text.SDMMC_SendCommand:0000000000000020 $d
+     /tmp/ccBxPZhU.s:408    .text.SDMMC_GetCommandResponse:0000000000000000 $t
+     /tmp/ccBxPZhU.s:415    .text.SDMMC_GetCommandResponse:0000000000000000 SDMMC_GetCommandResponse
+     /tmp/ccBxPZhU.s:434    .text.SDMMC_GetResponse:0000000000000000 $t
+     /tmp/ccBxPZhU.s:441    .text.SDMMC_GetResponse:0000000000000000 SDMMC_GetResponse
+     /tmp/ccBxPZhU.s:465    .text.SDMMC_ConfigData:0000000000000000 $t
+     /tmp/ccBxPZhU.s:472    .text.SDMMC_ConfigData:0000000000000000 SDMMC_ConfigData
+     /tmp/ccBxPZhU.s:530    .text.SDMMC_GetDataCounter:0000000000000000 $t
+     /tmp/ccBxPZhU.s:537    .text.SDMMC_GetDataCounter:0000000000000000 SDMMC_GetDataCounter
+     /tmp/ccBxPZhU.s:555    .text.SDMMC_GetFIFOCount:0000000000000000 $t
+     /tmp/ccBxPZhU.s:562    .text.SDMMC_GetFIFOCount:0000000000000000 SDMMC_GetFIFOCount
+     /tmp/ccBxPZhU.s:580    .text.SDMMC_SetSDMMCReadWaitMode:0000000000000000 $t
+     /tmp/ccBxPZhU.s:587    .text.SDMMC_SetSDMMCReadWaitMode:0000000000000000 SDMMC_SetSDMMCReadWaitMode
+     /tmp/ccBxPZhU.s:611    .text.SDMMC_CmdGoIdleState:0000000000000000 $t
+     /tmp/ccBxPZhU.s:618    .text.SDMMC_CmdGoIdleState:0000000000000000 SDMMC_CmdGoIdleState
+     /tmp/ccBxPZhU.s:676    .text.SDMMC_GetCmdResp1:0000000000000000 $t
+     /tmp/ccBxPZhU.s:683    .text.SDMMC_GetCmdResp1:0000000000000000 SDMMC_GetCmdResp1
+     /tmp/ccBxPZhU.s:963    .text.SDMMC_GetCmdResp1:000000000000014c $d
+     /tmp/ccBxPZhU.s:972    .text.SDMMC_CmdBlockLength:0000000000000000 $t
+     /tmp/ccBxPZhU.s:979    .text.SDMMC_CmdBlockLength:0000000000000000 SDMMC_CmdBlockLength
+     /tmp/ccBxPZhU.s:1044   .text.SDMMC_CmdReadSingleBlock:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1051   .text.SDMMC_CmdReadSingleBlock:0000000000000000 SDMMC_CmdReadSingleBlock
+     /tmp/ccBxPZhU.s:1116   .text.SDMMC_CmdReadMultiBlock:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1123   .text.SDMMC_CmdReadMultiBlock:0000000000000000 SDMMC_CmdReadMultiBlock
+     /tmp/ccBxPZhU.s:1188   .text.SDMMC_CmdWriteSingleBlock:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1195   .text.SDMMC_CmdWriteSingleBlock:0000000000000000 SDMMC_CmdWriteSingleBlock
+     /tmp/ccBxPZhU.s:1260   .text.SDMMC_CmdWriteMultiBlock:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1267   .text.SDMMC_CmdWriteMultiBlock:0000000000000000 SDMMC_CmdWriteMultiBlock
+     /tmp/ccBxPZhU.s:1332   .text.SDMMC_CmdSDEraseStartAdd:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1339   .text.SDMMC_CmdSDEraseStartAdd:0000000000000000 SDMMC_CmdSDEraseStartAdd
+     /tmp/ccBxPZhU.s:1404   .text.SDMMC_CmdSDEraseEndAdd:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1411   .text.SDMMC_CmdSDEraseEndAdd:0000000000000000 SDMMC_CmdSDEraseEndAdd
+     /tmp/ccBxPZhU.s:1476   .text.SDMMC_CmdEraseStartAdd:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1483   .text.SDMMC_CmdEraseStartAdd:0000000000000000 SDMMC_CmdEraseStartAdd
+     /tmp/ccBxPZhU.s:1548   .text.SDMMC_CmdEraseEndAdd:0000000000000000 $t
+ARM GAS  /tmp/ccBxPZhU.s 			page 109
 
 
-     /tmp/cclXCP8f.s:1555   .text.SDMMC_CmdEraseEndAdd:0000000000000000 SDMMC_CmdEraseEndAdd
-     /tmp/cclXCP8f.s:1620   .text.SDMMC_CmdErase:0000000000000000 $t
-     /tmp/cclXCP8f.s:1627   .text.SDMMC_CmdErase:0000000000000000 SDMMC_CmdErase
-     /tmp/cclXCP8f.s:1692   .text.SDMMC_CmdStopTransfer:0000000000000000 $t
-     /tmp/cclXCP8f.s:1699   .text.SDMMC_CmdStopTransfer:0000000000000000 SDMMC_CmdStopTransfer
-     /tmp/cclXCP8f.s:1788   .text.SDMMC_CmdStopTransfer:0000000000000054 $d
-     /tmp/cclXCP8f.s:1793   .text.SDMMC_CmdSelDesel:0000000000000000 $t
-     /tmp/cclXCP8f.s:1800   .text.SDMMC_CmdSelDesel:0000000000000000 SDMMC_CmdSelDesel
-     /tmp/cclXCP8f.s:1865   .text.SDMMC_CmdAppCommand:0000000000000000 $t
-     /tmp/cclXCP8f.s:1872   .text.SDMMC_CmdAppCommand:0000000000000000 SDMMC_CmdAppCommand
-     /tmp/cclXCP8f.s:1937   .text.SDMMC_CmdBusWidth:0000000000000000 $t
-     /tmp/cclXCP8f.s:1944   .text.SDMMC_CmdBusWidth:0000000000000000 SDMMC_CmdBusWidth
-     /tmp/cclXCP8f.s:2009   .text.SDMMC_CmdSendSCR:0000000000000000 $t
-     /tmp/cclXCP8f.s:2016   .text.SDMMC_CmdSendSCR:0000000000000000 SDMMC_CmdSendSCR
-     /tmp/cclXCP8f.s:2079   .text.SDMMC_CmdSetRelAddMmc:0000000000000000 $t
-     /tmp/cclXCP8f.s:2086   .text.SDMMC_CmdSetRelAddMmc:0000000000000000 SDMMC_CmdSetRelAddMmc
-     /tmp/cclXCP8f.s:2152   .text.SDMMC_CmdSleepMmc:0000000000000000 $t
-     /tmp/cclXCP8f.s:2159   .text.SDMMC_CmdSleepMmc:0000000000000000 SDMMC_CmdSleepMmc
-     /tmp/cclXCP8f.s:2224   .text.SDMMC_CmdSendStatus:0000000000000000 $t
-     /tmp/cclXCP8f.s:2231   .text.SDMMC_CmdSendStatus:0000000000000000 SDMMC_CmdSendStatus
-     /tmp/cclXCP8f.s:2296   .text.SDMMC_CmdStatusRegister:0000000000000000 $t
-     /tmp/cclXCP8f.s:2303   .text.SDMMC_CmdStatusRegister:0000000000000000 SDMMC_CmdStatusRegister
-     /tmp/cclXCP8f.s:2366   .text.SDMMC_CmdSwitch:0000000000000000 $t
-     /tmp/cclXCP8f.s:2373   .text.SDMMC_CmdSwitch:0000000000000000 SDMMC_CmdSwitch
-     /tmp/cclXCP8f.s:2438   .text.SDMMC_CmdVoltageSwitch:0000000000000000 $t
-     /tmp/cclXCP8f.s:2445   .text.SDMMC_CmdVoltageSwitch:0000000000000000 SDMMC_CmdVoltageSwitch
-     /tmp/cclXCP8f.s:2508   .text.SDMMC_CmdSendEXTCSD:0000000000000000 $t
-     /tmp/cclXCP8f.s:2515   .text.SDMMC_CmdSendEXTCSD:0000000000000000 SDMMC_CmdSendEXTCSD
-     /tmp/cclXCP8f.s:2580   .text.SDMMC_GetCmdResp2:0000000000000000 $t
-     /tmp/cclXCP8f.s:2587   .text.SDMMC_GetCmdResp2:0000000000000000 SDMMC_GetCmdResp2
-     /tmp/cclXCP8f.s:2676   .text.SDMMC_GetCmdResp2:0000000000000054 $d
-     /tmp/cclXCP8f.s:2683   .text.SDMMC_CmdSendCID:0000000000000000 $t
-     /tmp/cclXCP8f.s:2690   .text.SDMMC_CmdSendCID:0000000000000000 SDMMC_CmdSendCID
-     /tmp/cclXCP8f.s:2750   .text.SDMMC_CmdSendCSD:0000000000000000 $t
-     /tmp/cclXCP8f.s:2757   .text.SDMMC_CmdSendCSD:0000000000000000 SDMMC_CmdSendCSD
-     /tmp/cclXCP8f.s:2819   .text.SDMMC_GetCmdResp3:0000000000000000 $t
-     /tmp/cclXCP8f.s:2826   .text.SDMMC_GetCmdResp3:0000000000000000 SDMMC_GetCmdResp3
-     /tmp/cclXCP8f.s:2901   .text.SDMMC_GetCmdResp3:0000000000000044 $d
-     /tmp/cclXCP8f.s:2908   .text.SDMMC_CmdAppOperCommand:0000000000000000 $t
-     /tmp/cclXCP8f.s:2915   .text.SDMMC_CmdAppOperCommand:0000000000000000 SDMMC_CmdAppOperCommand
-     /tmp/cclXCP8f.s:2977   .text.SDMMC_CmdOpCondition:0000000000000000 $t
-     /tmp/cclXCP8f.s:2984   .text.SDMMC_CmdOpCondition:0000000000000000 SDMMC_CmdOpCondition
-     /tmp/cclXCP8f.s:3046   .text.SDMMC_GetCmdResp6:0000000000000000 $t
-     /tmp/cclXCP8f.s:3053   .text.SDMMC_GetCmdResp6:0000000000000000 SDMMC_GetCmdResp6
-     /tmp/cclXCP8f.s:3208   .text.SDMMC_GetCmdResp6:0000000000000098 $d
-     /tmp/cclXCP8f.s:3215   .text.SDMMC_CmdSetRelAdd:0000000000000000 $t
-     /tmp/cclXCP8f.s:3222   .text.SDMMC_CmdSetRelAdd:0000000000000000 SDMMC_CmdSetRelAdd
-     /tmp/cclXCP8f.s:3289   .text.SDMMC_GetCmdResp7:0000000000000000 $t
-     /tmp/cclXCP8f.s:3296   .text.SDMMC_GetCmdResp7:0000000000000000 SDMMC_GetCmdResp7
-     /tmp/cclXCP8f.s:3398   .text.SDMMC_GetCmdResp7:000000000000005c $d
-     /tmp/cclXCP8f.s:3404   .text.SDMMC_CmdOperCond:0000000000000000 $t
-     /tmp/cclXCP8f.s:3411   .text.SDMMC_CmdOperCond:0000000000000000 SDMMC_CmdOperCond
+     /tmp/ccBxPZhU.s:1555   .text.SDMMC_CmdEraseEndAdd:0000000000000000 SDMMC_CmdEraseEndAdd
+     /tmp/ccBxPZhU.s:1620   .text.SDMMC_CmdErase:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1627   .text.SDMMC_CmdErase:0000000000000000 SDMMC_CmdErase
+     /tmp/ccBxPZhU.s:1692   .text.SDMMC_CmdStopTransfer:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1699   .text.SDMMC_CmdStopTransfer:0000000000000000 SDMMC_CmdStopTransfer
+     /tmp/ccBxPZhU.s:1788   .text.SDMMC_CmdStopTransfer:0000000000000054 $d
+     /tmp/ccBxPZhU.s:1793   .text.SDMMC_CmdSelDesel:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1800   .text.SDMMC_CmdSelDesel:0000000000000000 SDMMC_CmdSelDesel
+     /tmp/ccBxPZhU.s:1865   .text.SDMMC_CmdAppCommand:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1872   .text.SDMMC_CmdAppCommand:0000000000000000 SDMMC_CmdAppCommand
+     /tmp/ccBxPZhU.s:1937   .text.SDMMC_CmdBusWidth:0000000000000000 $t
+     /tmp/ccBxPZhU.s:1944   .text.SDMMC_CmdBusWidth:0000000000000000 SDMMC_CmdBusWidth
+     /tmp/ccBxPZhU.s:2009   .text.SDMMC_CmdSendSCR:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2016   .text.SDMMC_CmdSendSCR:0000000000000000 SDMMC_CmdSendSCR
+     /tmp/ccBxPZhU.s:2079   .text.SDMMC_CmdSetRelAddMmc:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2086   .text.SDMMC_CmdSetRelAddMmc:0000000000000000 SDMMC_CmdSetRelAddMmc
+     /tmp/ccBxPZhU.s:2152   .text.SDMMC_CmdSleepMmc:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2159   .text.SDMMC_CmdSleepMmc:0000000000000000 SDMMC_CmdSleepMmc
+     /tmp/ccBxPZhU.s:2224   .text.SDMMC_CmdSendStatus:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2231   .text.SDMMC_CmdSendStatus:0000000000000000 SDMMC_CmdSendStatus
+     /tmp/ccBxPZhU.s:2296   .text.SDMMC_CmdStatusRegister:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2303   .text.SDMMC_CmdStatusRegister:0000000000000000 SDMMC_CmdStatusRegister
+     /tmp/ccBxPZhU.s:2366   .text.SDMMC_CmdSwitch:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2373   .text.SDMMC_CmdSwitch:0000000000000000 SDMMC_CmdSwitch
+     /tmp/ccBxPZhU.s:2438   .text.SDMMC_CmdVoltageSwitch:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2445   .text.SDMMC_CmdVoltageSwitch:0000000000000000 SDMMC_CmdVoltageSwitch
+     /tmp/ccBxPZhU.s:2508   .text.SDMMC_CmdSendEXTCSD:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2515   .text.SDMMC_CmdSendEXTCSD:0000000000000000 SDMMC_CmdSendEXTCSD
+     /tmp/ccBxPZhU.s:2580   .text.SDMMC_GetCmdResp2:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2587   .text.SDMMC_GetCmdResp2:0000000000000000 SDMMC_GetCmdResp2
+     /tmp/ccBxPZhU.s:2676   .text.SDMMC_GetCmdResp2:0000000000000054 $d
+     /tmp/ccBxPZhU.s:2683   .text.SDMMC_CmdSendCID:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2690   .text.SDMMC_CmdSendCID:0000000000000000 SDMMC_CmdSendCID
+     /tmp/ccBxPZhU.s:2750   .text.SDMMC_CmdSendCSD:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2757   .text.SDMMC_CmdSendCSD:0000000000000000 SDMMC_CmdSendCSD
+     /tmp/ccBxPZhU.s:2819   .text.SDMMC_GetCmdResp3:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2826   .text.SDMMC_GetCmdResp3:0000000000000000 SDMMC_GetCmdResp3
+     /tmp/ccBxPZhU.s:2901   .text.SDMMC_GetCmdResp3:0000000000000044 $d
+     /tmp/ccBxPZhU.s:2908   .text.SDMMC_CmdAppOperCommand:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2915   .text.SDMMC_CmdAppOperCommand:0000000000000000 SDMMC_CmdAppOperCommand
+     /tmp/ccBxPZhU.s:2977   .text.SDMMC_CmdOpCondition:0000000000000000 $t
+     /tmp/ccBxPZhU.s:2984   .text.SDMMC_CmdOpCondition:0000000000000000 SDMMC_CmdOpCondition
+     /tmp/ccBxPZhU.s:3046   .text.SDMMC_GetCmdResp6:0000000000000000 $t
+     /tmp/ccBxPZhU.s:3053   .text.SDMMC_GetCmdResp6:0000000000000000 SDMMC_GetCmdResp6
+     /tmp/ccBxPZhU.s:3208   .text.SDMMC_GetCmdResp6:0000000000000098 $d
+     /tmp/ccBxPZhU.s:3215   .text.SDMMC_CmdSetRelAdd:0000000000000000 $t
+     /tmp/ccBxPZhU.s:3222   .text.SDMMC_CmdSetRelAdd:0000000000000000 SDMMC_CmdSetRelAdd
+     /tmp/ccBxPZhU.s:3289   .text.SDMMC_GetCmdResp7:0000000000000000 $t
+     /tmp/ccBxPZhU.s:3296   .text.SDMMC_GetCmdResp7:0000000000000000 SDMMC_GetCmdResp7
+     /tmp/ccBxPZhU.s:3398   .text.SDMMC_GetCmdResp7:000000000000005c $d
+     /tmp/ccBxPZhU.s:3404   .text.SDMMC_CmdOperCond:0000000000000000 $t
+     /tmp/ccBxPZhU.s:3411   .text.SDMMC_CmdOperCond:0000000000000000 SDMMC_CmdOperCond
 
 UNDEFINED SYMBOLS
 SystemCoreClock
