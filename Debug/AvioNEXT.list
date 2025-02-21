@@ -56,7 +56,7 @@ Disassembly of section .text:
  80002e2:	2301      	movs	r3, #1
  80002e4:	7023      	strb	r3, [r4, #0]
  80002e6:	bd10      	pop	{r4, pc}
- 80002e8:	240002d8 	.word	0x240002d8
+ 80002e8:	240003c8 	.word	0x240003c8
  80002ec:	00000000 	.word	0x00000000
  80002f0:	0801bbe0 	.word	0x0801bbe0
 
@@ -5517,7 +5517,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
  800296a:	617b      	str	r3, [r7, #20]
  800296c:	697b      	ldr	r3, [r7, #20]
     /**ADC1 GPIO Configuration
-    PC0     ------> ADC1_INP10
+    PA2     ------> ADC1_INP14
     */
     GPIO_InitStruct.Pin = ARM_CHECK_Pin;
  800296e:	2301      	movs	r3, #1
@@ -6852,7 +6852,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
  80032f6:	68fb      	ldr	r3, [r7, #12]
   /* USER CODE BEGIN TIM13_MspInit 1 */
 
-  /* USER CODE END TIM13_MspInit 1 */
+  /* USER CODE END TIM14_MspInit 1 */
   }
 
 }
@@ -26656,7 +26656,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
         break;
  800af5a:	e000      	b.n	800af5e <HAL_RCCEx_PeriphCLKConfig+0x66e>
         break;
- 800af5c:	bf00      	nop
+ 800c8e4:	bf00      	nop
     }
 
     if (ret == HAL_OK)
@@ -26680,8 +26680,8 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
     {
       /* set overall return value */
       status = ret;
- 800af7c:	f897 3117 	ldrb.w	r3, [r7, #279]	; 0x117
- 800af80:	f887 3116 	strb.w	r3, [r7, #278]	; 0x116
+ 800c904:	f897 3117 	ldrb.w	r3, [r7, #279]	; 0x117
+ 800c908:	f887 3116 	strb.w	r3, [r7, #278]	; 0x116
     }
   }
 #endif /*FDCAN1 || FDCAN2*/

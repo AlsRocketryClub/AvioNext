@@ -114,172 +114,57 @@ void LoRA_Write_Register(uint8_t addr, uint8_t data){
 
 }
 
-
-void LoRA_sleep(void){
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_SLEEP);
+float LG2_Get_Gyro_X(){
+	uint8_t Gyro_L = LG2_Read_Register(0x22);
+	uint8_t Gyro_H = LG2_Read_Register(0x23);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (float)Gyro*(1*8.75)/1000;
+	return omega;
 }
 
-void LoRA_set_frequency(long frequency){
-	uint64_t frf = ((uint64_t)frequency << 19) / 32000000;
+float LG2_Get_Gyro_Y(){
+	uint8_t Gyro_L = LG2_Read_Register(0x24);
+	uint8_t Gyro_H = LG2_Read_Register(0x25);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (float)Gyro*(1*8.75)/1000;
 
-	LoRA_Write_Register(REG_FRF_MSB, (uint8_t)(frf >> 16));
-	LoRA_Write_Register(REG_FRF_MID, (uint8_t)(frf >> 8));
-	LoRA_Write_Register(REG_FRF_LSB, (uint8_t)(frf >> 0));
+	return omega;
 }
 
-void LoRA_idle(){
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_STDBY);
+float LG2_Get_Gyro_Z(){
+	uint8_t Gyro_L = LG2_Read_Register(0x26);
+	uint8_t Gyro_H = LG2_Read_Register(0x27);
+	int16_t Gyro = ((int16_t) Gyro_H << 8) | Gyro_L;
+	float omega = (float)Gyro*(1*8.75)/1000;
+
+	return omega;
 }
 
-void LoRA_setOCP(uint8_t mA){
-	  uint8_t ocpTrim = 27;
+float LG2_Get_Acc_X(){
+	uint8_t Acc_L = LG2_Read_Register(0x28);
+	uint8_t Acc_H = LG2_Read_Register(0x29);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-	  if (mA <= 120) {
-	    ocpTrim = (mA - 45) / 5;
-	  } else if (mA <=240) {
-	    ocpTrim = (mA + 30) / 10;
-	  }
-
-	  LoRA_Write_Register(REG_OCP, 0x20 | (0x1F & ocpTrim));
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000)- 0.134732 - 0.104937;
+	return AccSI;
 }
 
-void LoRA_setTxPower(int level){
-    // PA BOOST
-    if (level > 17) {
-      if (level > 20) {
-        level = 20;
-      }
+float LG2_Get_Acc_Y(){
+	uint8_t Acc_L = LG2_Read_Register(0x2A);
+	uint8_t Acc_H = LG2_Read_Register(0x2B);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-      // subtract 3 from level, so 18 - 20 maps to 15 - 17
-      level -= 3;
-
-      // High Power +20 dBm Operation (Semtech SX1276/77/78/79 5.4.3.)
-      LoRA_Write_Register(REG_PA_DAC, 0x87);
-      LoRA_setOCP(140);
-    } else {
-      if (level < 2) {
-        level = 2;
-      }
-      //Default value PA_HF/LF or +17dBm
-      LoRA_Write_Register(REG_PA_DAC, 0x84);
-      LoRA_setOCP(100);
-    }
-
-    LoRA_Write_Register(REG_PA_CONFIG, PA_BOOST | (level - 2));
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000) + 0.384580;
+	return AccSI;
 }
 
-void LoRA_explicit_header_mode(){
-	LoRA_Write_Register(REG_MODEM_CONFIG_1, LoRA_Read_Register(REG_MODEM_CONFIG_1) & 0xFE);
-}
+float LG2_Get_Acc_Z(){
+	uint8_t Acc_L = LG2_Read_Register(0x2C);
+	uint8_t Acc_H = LG2_Read_Register(0x2D);
+	int16_t Acc = ((int16_t) Acc_H << 8) | Acc_L;
 
-void LoRA_begin(long frequency){
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-	uint8_t version = LoRA_Read_Register(REG_VERSION);
-    char data_debug[100];
-	sprintf( data_debug,  "%x\n", version);
-	CDC_Transmit_HS(data_debug, strlen(data_debug));
-
-	LoRA_sleep();
-	LoRA_set_frequency(frequency);
-
-	LoRA_Write_Register(REG_FIFO_RX_BASE_ADDR, 0);
-	LoRA_Write_Register(REG_FIFO_TX_BASE_ADDR, 0);
-
-	LoRA_Write_Register(REG_LNA, LoRA_Read_Register(REG_LNA) | 0x03); //LNA settings
-
-	LoRA_Write_Register(REG_MODEM_CONFIG_3, 0x04);
-
-	LoRA_setTxPower(17);
-
-}
-
-
-void LoRA_beginPacket(){
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-	LoRA_Write_Register(REG_PAYLOAD_LENGTH, 0);
-}
-
-void LoRA_endPacket(){
-	LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_TX);
-
-	while((LoRA_Read_Register(REG_IRQ_FLAGS) & IRQ_TX_DONE_MASK) == 0){
-
-	}
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, IRQ_TX_DONE_MASK);
-
-}
-
-
-int LoRA_parsePacket(){
-	int packetLenght = 0;
-	int irqFlags = LoRA_Read_Register(REG_IRQ_FLAGS);
-
-	LoRA_explicit_header_mode();
-
-	LoRA_Write_Register(REG_IRQ_FLAGS, irqFlags);
-
-	if ((irqFlags & IRQ_RX_DONE_MASK) && (irqFlags & IRQ_PAYLOAD_CRC_ERROR_MASK) == 0) {
-		packetLenght = LoRA_Read_Register(REG_RX_NB_BYTES);
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, LoRA_Read_Register(REG_FIFO_RX_CURRENT_ADDR));
-		LoRA_idle();
-	} else if (LoRA_Read_Register(REG_OP_MODE) != (MODE_LONG_RANGE_MODE | MODE_RX_SINGLE)){
-		LoRA_Write_Register(REG_FIFO_ADDR_PTR, 0);
-
-		LoRA_Write_Register(REG_OP_MODE, MODE_LONG_RANGE_MODE | MODE_RX_SINGLE);
-	}
-	return packetLenght;
-
-}
-
-void LoRA_sendPacket(char * data){
-    LoRA_beginPacket();
-    for(int i = 0; i < strlen(data); i++){
-    	LoRA_Write_Register(REG_FIFO, data[i]);
-    }
-    LoRA_Write_Register(REG_PAYLOAD_LENGTH, strlen(data));
-    LoRA_endPacket();
-}
-
-
-int recv_packet(char *LoRA_data, int max_length) {
-	int packet_length = LoRA_parsePacket();
-	if (max_length - 1 < packet_length) //-1 for the null terminator
-			{
-		return 0;
-	}
-	if (packet_length) {
-		for (int i = 0; i < packet_length; i++) {
-			LoRA_data[i] = LoRA_Read_Register(0x00);
-		}
-		LoRA_data[packet_length] = '\0';
-		return packet_length;
-	} else {
-		return 0;
-	}
-}
-
-void reliable_send_packet(char *LoRA_data) {
-	uint16_t length = strlen(LoRA_data) + 1; //+1 for the \0
-	char acknowledge[length];
-	LoRA_sendPacket(LoRA_data);
-	while (1) {
-
-		if (recv_packet(acknowledge, length)) {
-			//cehck crc
-			if (strcmp(acknowledge, LoRA_data) != 0) {
-				LoRA_sendPacket(LoRA_data);
-			} else {
-				break;
-			}
-		}
-
-		//delay
-	}
+	float AccSI = ((float)Acc *  (0.061*9.81) /1000) + 0.005841;
+	return AccSI;
 }
 
 void setServo(int servoNum, float angle) {
@@ -441,4 +326,3 @@ void setLEDs(uint8_t LED_Color_Data[14][3]) {
 			(NUM_LEDS_3 * 24) + 58); //DMA for LEDS 3
 
 }
-
