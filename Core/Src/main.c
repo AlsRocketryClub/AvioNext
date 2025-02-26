@@ -37,6 +37,7 @@
 /* USER CODE BEGIN PD */
 
 #define PI 3.14159265359
+#define FLIGHTNAME "flight%03d.csv"
 
 //#define MAX_PACKET_LENGTH 250
 
@@ -403,16 +404,92 @@ int main(void)
 	char dummy[50];
 	disarm(dummy);
 
-
-	FR_Status = f_mount(&FatFs, SDPath, 1);
-
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
 	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
 
-	FR_Status = f_open(&Fil, "MyTextFile.txt", FA_WRITE | FA_READ | FA_CREATE_ALWAYS);
-	f_puts("testing 1 2\n", &Fil);
-	f_close(&Fil);
+
+  FRESULT card_stat = f_mount(&FatFs, SDPath, 1);
+
+  if (card_stat != FR_OK) {
+    // Try mounting SD card again 5 times
+    for (int i=0; i<5; i++) {
+      card_stat = f_mount(&FatFs, SDPath, 1);
+      HAL_Delay(1000);
+    }
+    if (card_stat != FR_OK) 
+      CDC_Transmit_HS("Failed to mount SD card", strlen("Failed to mount SD card"));
+  }
+
+  char filename[13];
+  uint32_t flightnum = 0;
+
+  FRESULT file_stat;
+
+  do { // Increment flightnum until an unused filename is found
+
+    sprintf(filename, FLIGHTNAME, flightnum);
+    file_stat = f_open(&Fil, filename, FA_READ);
+    flightnum++;
+    f_close(&Fil);
+
+  } while (file_stat == FR_OK);
+
+  file_stat = f_open(&Fil, filename, FA_WRITE | FA_READ | FA_CREATE_ALWAYS);
+
+  if (file_stat != FR_OK) {
+    while(1) {
+      CDC_Transmit_HS("Failed to open file for logging file",
+        strlen("Failed to open file for logging file"));
+    }
+    // Plus other error handling
+  }
+
+
+  FRESULT write_stat;
+
+  float madeupdata = 0; // Replace with actual data
+  
+  uint8_t disconnected = 0; // 0 for false; 1 for true
+  uint64_t missed_data = 0;
+
+
+  while(1) { // Main loop
+    
+    if (disconnected) { // When disconnected, attempt to reconnect
+      CDC_Transmit_HS("Disconnected\n",
+        strlen("Disconnected\n"));
+      missed_data++;
+      card_stat = f_mount(&FatFs, SDPath, 1); // Attempt to mount the card again
+      if (card_stat == FR_OK) {
+        file_stat = f_open(&Fil, filename, FA_OPEN_APPEND | FA_WRITE); // Open flight file again (don't create)
+        disconnected = 0; // Claim disconnect flag
+      }
+    }
+
+    char data[10];
+    sprintf(data, "%.5f, ", madeupdata);
+
+    write_stat = f_puts(data, &Fil);
+    if (write_stat <= 0) disconnected = 1; // Raise disconnect flag
+
+
+    madeupdata++;
+
+    if (madeupdata > 200) break; // For testing
+
+    HAL_Delay(50);
+
+  }
+
+  char message[50];
+  sprintf(message, "Missed data points: %d\n", missed_data);
+  if (!disconnected) f_puts(message, &Fil);
+
+  HAL_Delay(50);
+  CDC_Transmit_HS(message, 50);
+  
+  f_close(&Fil);
 
 	LoRA_begin(868000000);
 	communicationHandler(
