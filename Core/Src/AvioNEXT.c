@@ -1,5 +1,4 @@
 #include "main.h"
-#include "LoRA"
 extern SPI_HandleTypeDef hspi2;
 extern SPI_HandleTypeDef hspi3;
 extern I2C_HandleTypeDef hi2c2;

@@ -39,6 +39,8 @@ C_SOURCES =  \
 Core/Src/main.c \
 Core/Src/StatusDisplay.c \
 Core/Src/AvioNEXT.c \
+Core/Src/math_utils.c \
+Core/Src/random.c \
 Core/Src/LG_IMU.c \
 Core/Src/stm32h7xx_it.c \
 Core/Src/stm32h7xx_hal_msp.c \

@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccHm4MgD.s 			page 1
+ARM GAS  /tmp/ccEukSSi.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
   29:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****          (+) Services HAL APIs
   30:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
   31:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   @endverbatim
-ARM GAS  /tmp/ccHm4MgD.s 			page 2
+ARM GAS  /tmp/ccEukSSi.s 			page 2
 
 
   32:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   ******************************************************************************
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
   86:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****  *  @brief    Initialization and de-initialization functions
   87:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****  *
   88:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** @verbatim
-ARM GAS  /tmp/ccHm4MgD.s 			page 3
+ARM GAS  /tmp/ccEukSSi.s 			page 3
 
 
   89:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****  ===============================================================================
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  143:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****    __HAL_ART_ENABLE();                           /* Enable the Cortex-M4 ART */
  144:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** #endif /* DUAL_CORE &&  CORE_CM4 */
  145:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
-ARM GAS  /tmp/ccHm4MgD.s 			page 4
+ARM GAS  /tmp/ccEukSSi.s 			page 4
 
 
  146:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   /* Set Interrupt Group Priority */
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  200:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****  __HAL_RCC_AHB4_RELEASE_RESET();
  201:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
  202:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   __HAL_RCC_APB3_FORCE_RESET();
-ARM GAS  /tmp/ccHm4MgD.s 			page 5
+ARM GAS  /tmp/ccEukSSi.s 			page 5
 
 
  203:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   __HAL_RCC_APB3_RELEASE_RESET();
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  239:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** __weak void HAL_MspDeInit(void)
  240:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
   48              		.loc 1 240 1 view -0
-ARM GAS  /tmp/ccHm4MgD.s 			page 6
+ARM GAS  /tmp/ccEukSSi.s 			page 6
 
 
   49              		.cfi_startproc
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  199:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****  __HAL_RCC_AHB4_RELEASE_RESET();
   94              		.loc 1 199 3 view .LVU11
   95 0020 174A     		ldr	r2, .L5+16
-ARM GAS  /tmp/ccHm4MgD.s 			page 7
+ARM GAS  /tmp/ccEukSSi.s 			page 7
 
 
   96 0022 C3F88820 		str	r2, [r3, #136]
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  136 0070 00440258 		.word	1476543488
  137 0074 1150E900 		.word	15290385
  138 0078 23800002 		.word	33587235
-ARM GAS  /tmp/ccHm4MgD.s 			page 8
+ARM GAS  /tmp/ccEukSSi.s 			page 8
 
 
  139 007c 71020300 		.word	197233
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  269:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
  270:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****     /* Configure the SysTick to have interrupt in 1ms time basis*/
  271:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****     if (HAL_SYSTICK_Config(SystemCoreClock / (1000UL / (uint32_t)uwTickFreq)) > 0U)
-ARM GAS  /tmp/ccHm4MgD.s 			page 9
+ARM GAS  /tmp/ccEukSSi.s 			page 9
 
 
  272:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****     {
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  199 0026 01D9     		bls	.L17
  284:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   }
  200              		.loc 1 284 12 view .LVU40
-ARM GAS  /tmp/ccHm4MgD.s 			page 10
+ARM GAS  /tmp/ccEukSSi.s 			page 10
 
 
  201 0028 0120     		movs	r0, #1
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  250              	.LCFI2:
  251              		.cfi_def_cfa_offset 8
  252              		.cfi_offset 4, -8
-ARM GAS  /tmp/ccHm4MgD.s 			page 11
+ARM GAS  /tmp/ccEukSSi.s 			page 11
 
 
  253              		.cfi_offset 14, -4
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  290              		.loc 1 166 3 is_stmt 1 view .LVU66
  166:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** #endif /* DUAL_CORE && CORE_CM4 */
  291              		.loc 1 166 19 is_stmt 0 view .LVU67
-ARM GAS  /tmp/ccHm4MgD.s 			page 12
+ARM GAS  /tmp/ccEukSSi.s 			page 12
 
 
  292 0032 094B     		ldr	r3, .L25+12
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  292:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @}
  293:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   */
  294:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
-ARM GAS  /tmp/ccHm4MgD.s 			page 13
+ARM GAS  /tmp/ccEukSSi.s 			page 13
 
 
  295:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** /** @addtogroup HAL_Group2
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  355              	.L28:
  356 0010 00000000 		.word	.LANCHOR0
  357 0014 00000000 		.word	uwTick
-ARM GAS  /tmp/ccHm4MgD.s 			page 14
+ARM GAS  /tmp/ccEukSSi.s 			page 14
 
 
  358              		.cfi_endproc
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  348:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
  399              		.loc 1 348 1 is_stmt 1 view -0
  400              		.cfi_startproc
-ARM GAS  /tmp/ccHm4MgD.s 			page 15
+ARM GAS  /tmp/ccEukSSi.s 			page 15
 
 
  401              		@ args = 0, pretend = 0, frame = 0
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  442              		.loc 1 363 18 is_stmt 0 view .LVU95
  443 0002 084B     		ldr	r3, .L41
  444 0004 1C78     		ldrb	r4, [r3]	@ zero_extendqisi2
-ARM GAS  /tmp/ccHm4MgD.s 			page 16
+ARM GAS  /tmp/ccEukSSi.s 			page 16
 
 
  445              		.loc 1 363 6 view .LVU96
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  471 0018 0028     		cmp	r0, #0
  472 001a F7D0     		beq	.L37
  377:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****     }
-ARM GAS  /tmp/ccHm4MgD.s 			page 17
+ARM GAS  /tmp/ccEukSSi.s 			page 17
 
 
  473              		.loc 1 377 7 is_stmt 1 view .LVU108
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  521              	HAL_Delay:
  522              	.LVL20:
  523              	.LFB360:
-ARM GAS  /tmp/ccHm4MgD.s 			page 18
+ARM GAS  /tmp/ccEukSSi.s 			page 18
 
 
  392:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  413:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   }
  414:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
  415:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   while ((HAL_GetTick() - tickstart) < wait)
-ARM GAS  /tmp/ccHm4MgD.s 			page 19
+ARM GAS  /tmp/ccEukSSi.s 			page 19
 
 
  416:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   {
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  432:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   /* Disable SysTick Interrupt */
  433:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
  593              		.loc 1 433 3 view .LVU132
-ARM GAS  /tmp/ccHm4MgD.s 			page 20
+ARM GAS  /tmp/ccEukSSi.s 			page 20
 
 
  594              		.loc 1 433 17 is_stmt 0 view .LVU133
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  633              	.L56:
  634 000c 10E000E0 		.word	-536813552
  635              		.cfi_endproc
-ARM GAS  /tmp/ccHm4MgD.s 			page 21
+ARM GAS  /tmp/ccEukSSi.s 			page 21
 
 
  636              	.LFE362:
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  678              		@ link register save eliminated.
  467:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****    return((DBGMCU->IDCODE) >> 16);
  679              		.loc 1 467 4 view .LVU143
-ARM GAS  /tmp/ccHm4MgD.s 			page 22
+ARM GAS  /tmp/ccEukSSi.s 			page 22
 
 
  680              		.loc 1 467 18 is_stmt 0 view .LVU144
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  727              		.thumb_func
  728              		.fpu fpv5-d16
  730              	HAL_GetUIDw0:
-ARM GAS  /tmp/ccHm4MgD.s 			page 23
+ARM GAS  /tmp/ccEukSSi.s 			page 23
 
 
  731              	.LFB366:
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  769              	.L72:
  770 0006 00BF     		.align	2
  771              	.L71:
-ARM GAS  /tmp/ccHm4MgD.s 			page 24
+ARM GAS  /tmp/ccEukSSi.s 			page 24
 
 
  772 0008 04E8F11F 		.word	535947268
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  512:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE1: VREF_OUT2 around 2.048 V.
  513:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *                                                This requires VDDA equal to or higher than 2.4 V
  514:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *            @arg SYSCFG_VREFBUF_VOLTAGE_SCALE2: VREF_OUT3 around 1.8 V.
-ARM GAS  /tmp/ccHm4MgD.s 			page 25
+ARM GAS  /tmp/ccEukSSi.s 			page 25
 
 
  515:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *                                                This requires VDDA equal to or higher than 2.1 V
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  847              		.cfi_startproc
  848              		@ args = 0, pretend = 0, frame = 0
  849              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  /tmp/ccHm4MgD.s 			page 26
+ARM GAS  /tmp/ccEukSSi.s 			page 26
 
 
  850              		@ link register save eliminated.
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  554:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** }
  890              		.loc 1 554 1 is_stmt 0 view .LVU170
  891 000c 7047     		bx	lr
-ARM GAS  /tmp/ccHm4MgD.s 			page 27
+ARM GAS  /tmp/ccEukSSi.s 			page 27
 
 
  892              	.L84:
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  932              		.loc 1 570 8 view .LVU177
  933              		.loc 1 570 9 is_stmt 0 view .LVU178
  934 0012 074B     		ldr	r3, .L92
-ARM GAS  /tmp/ccHm4MgD.s 			page 28
+ARM GAS  /tmp/ccEukSSi.s 			page 28
 
 
  935 0014 1B68     		ldr	r3, [r3]
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  586:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** void HAL_SYSCFG_DisableVREFBUF(void)
  587:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
  976              		.loc 1 587 1 is_stmt 1 view -0
-ARM GAS  /tmp/ccHm4MgD.s 			page 29
+ARM GAS  /tmp/ccEukSSi.s 			page 29
 
 
  977              		.cfi_startproc
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1015 0004 23F46003 		bic	r3, r3, #14680064
  1016 0008 0343     		orrs	r3, r3, r0
  1017 000a 5360     		str	r3, [r2, #4]
-ARM GAS  /tmp/ccHm4MgD.s 			page 30
+ARM GAS  /tmp/ccEukSSi.s 			page 30
 
 
  606:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** }
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  635:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
  636:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   MODIFY_REG(SYSCFG->PMCR, (uint32_t) SYSCFG_AnalogSwitch, (uint32_t)(SYSCFG_SwitchState));
  1045              		.loc 1 636 3 view .LVU198
-ARM GAS  /tmp/ccHm4MgD.s 			page 31
+ARM GAS  /tmp/ccEukSSi.s 			page 31
 
 
  1046 0000 034A     		ldr	r2, .L101
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1087              	.LFE376:
  1089              		.section	.text.HAL_SYSCFG_DisableBOOST,"ax",%progbits
  1090              		.align	1
-ARM GAS  /tmp/ccHm4MgD.s 			page 32
+ARM GAS  /tmp/ccEukSSi.s 			page 32
 
 
  1091              		.global	HAL_SYSCFG_DisableBOOST
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  671:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *   @arg SYSCFG_BOOT_ADDR0 : Select the boot address0
  672:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *   @arg SYSCFG_BOOT_ADDR1:  Select the boot address1
  673:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @param  BootAddress :Specifies the CM7 Boot Address to be loaded in Address0 or Address1
-ARM GAS  /tmp/ccHm4MgD.s 			page 33
+ARM GAS  /tmp/ccEukSSi.s 			page 33
 
 
  674:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @retval None
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1160              	.LVL39:
  1161              		.loc 1 696 5 view .LVU215
  1162 0024 C2F80C13 		str	r1, [r2, #780]
-ARM GAS  /tmp/ccHm4MgD.s 			page 34
+ARM GAS  /tmp/ccEukSSi.s 			page 34
 
 
  697:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** #endif /*DUAL_CORE*/
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  733:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @retval None
  734:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   */
  735:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** void HAL_SYSCFG_EnableCM7BOOT(void)
-ARM GAS  /tmp/ccHm4MgD.s 			page 35
+ARM GAS  /tmp/ccEukSSi.s 			page 35
 
 
  736:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1194 000a 7047     		bx	lr
  1195              	.L116:
  1196              		.align	2
-ARM GAS  /tmp/ccHm4MgD.s 			page 36
+ARM GAS  /tmp/ccEukSSi.s 			page 36
 
 
  1197              	.L115:
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  793:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @brief  To Enable optimize the I/O speed when the product voltage is low.
  794:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @note   This bit is active only if PRODUCT_BELOW_25V user option bit is set. It must be
  795:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *         used only if the product supply voltage is below 2.5 V. Setting this bit when VDD is
-ARM GAS  /tmp/ccHm4MgD.s 			page 37
+ARM GAS  /tmp/ccEukSSi.s 			page 37
 
 
  796:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *         higher than 2.5 V might be destructive.
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  818:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   CLEAR_BIT(SYSCFG->CCCSR, SYSCFG_CCCSR_HSLV);
  1275              		.loc 1 818 3 view .LVU227
  1276 0000 024A     		ldr	r2, .L124
-ARM GAS  /tmp/ccHm4MgD.s 			page 38
+ARM GAS  /tmp/ccEukSSi.s 			page 38
 
 
  1277 0002 136A     		ldr	r3, [r2, #32]
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1314              	.L128:
  1315 000e 00BF     		.align	2
  1316              	.L127:
-ARM GAS  /tmp/ccHm4MgD.s 			page 39
+ARM GAS  /tmp/ccEukSSi.s 			page 39
 
 
  1317 0010 00040058 		.word	1476396032
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1355              	.LFE384:
  1357              		.section	.text.HAL_SYSCFG_ADC2ALT_Rout0Config,"ax",%progbits
  1358              		.align	1
-ARM GAS  /tmp/ccHm4MgD.s 			page 40
+ARM GAS  /tmp/ccEukSSi.s 			page 40
 
 
  1359              		.global	HAL_SYSCFG_ADC2ALT_Rout0Config
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1380              		.loc 1 889 1 is_stmt 0 view .LVU242
  1381 000c 7047     		bx	lr
  1382              	.L134:
-ARM GAS  /tmp/ccHm4MgD.s 			page 41
+ARM GAS  /tmp/ccEukSSi.s 			page 41
 
 
  1383 000e 00BF     		.align	2
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1425              		.thumb
  1426              		.thumb_func
  1427              		.fpu fpv5-d16
-ARM GAS  /tmp/ccHm4MgD.s 			page 42
+ARM GAS  /tmp/ccEukSSi.s 			page 42
 
 
  1429              	HAL_DBGMCU_EnableDBGSleepMode:
@@ -2518,7 +2518,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1467 0002 5368     		ldr	r3, [r2, #4]
  1468 0004 23F00103 		bic	r3, r3, #1
  1469 0008 5360     		str	r3, [r2, #4]
-ARM GAS  /tmp/ccHm4MgD.s 			page 43
+ARM GAS  /tmp/ccEukSSi.s 			page 43
 
 
  923:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** }
@@ -2578,7 +2578,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1517              	.LFB390:
  934:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
  935:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** /**
-ARM GAS  /tmp/ccHm4MgD.s 			page 44
+ARM GAS  /tmp/ccEukSSi.s 			page 44
 
 
  936:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @brief  Disable the Debug Module during Domain1/CDomain STOP mode
@@ -2638,7 +2638,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1558 000a 7047     		bx	lr
  1559              	.L152:
  1560              		.align	2
-ARM GAS  /tmp/ccHm4MgD.s 			page 45
+ARM GAS  /tmp/ccEukSSi.s 			page 45
 
 
  1561              	.L151:
@@ -2698,7 +2698,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  966:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   */
  967:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** void HAL_EnableDomain2DBGSleepMode(void)
  968:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
-ARM GAS  /tmp/ccHm4MgD.s 			page 46
+ARM GAS  /tmp/ccEukSSi.s 			page 46
 
 
  969:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_SLEEPD2);
@@ -2758,7 +2758,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
 1023:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** void HAL_EnableDomain3DBGStopMode(void)
 1024:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** {
  1605              		.loc 1 1024 1 is_stmt 1 view -0
-ARM GAS  /tmp/ccHm4MgD.s 			page 47
+ARM GAS  /tmp/ccEukSSi.s 			page 47
 
 
  1606              		.cfi_startproc
@@ -2818,7 +2818,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1651              	.LFE394:
  1653              		.section	.text.HAL_EnableDomain3DBGStandbyMode,"ax",%progbits
  1654              		.align	1
-ARM GAS  /tmp/ccHm4MgD.s 			page 48
+ARM GAS  /tmp/ccEukSSi.s 			page 48
 
 
  1655              		.global	HAL_EnableDomain3DBGStandbyMode
@@ -2878,7 +2878,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1694              		@ args = 0, pretend = 0, frame = 0
  1695              		@ frame_needed = 0, uses_anonymous_args = 0
  1696              		@ link register save eliminated.
-ARM GAS  /tmp/ccHm4MgD.s 			page 49
+ARM GAS  /tmp/ccEukSSi.s 			page 49
 
 
 1054:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STANDBYD3);
@@ -2938,7 +2938,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1737 000e 00BF     		.align	2
  1738              	.L169:
  1739 0010 00400052 		.word	1375748096
-ARM GAS  /tmp/ccHm4MgD.s 			page 50
+ARM GAS  /tmp/ccEukSSi.s 			page 50
 
 
  1740              		.cfi_endproc
@@ -2998,7 +2998,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
 1085:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @param   EXTI_Line: Specifies the EXTI LINE, it can be one of the following values,
 1086:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *         (EXTI_LINE0....EXTI_LINE87)excluding :line45, line81,line83 which are reserved
 1087:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @param   EXTI_Edge: Specifies  EXTI line Edge used.
-ARM GAS  /tmp/ccHm4MgD.s 			page 51
+ARM GAS  /tmp/ccEukSSi.s 			page 51
 
 
 1088:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *          This parameter can be one of the following values :
@@ -3058,7 +3058,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1819              		.loc 1 1105 4 is_stmt 1 view .LVU294
  1820 0030 1A68     		ldr	r2, [r3]
  1821 0032 0243     		orrs	r2, r2, r0
-ARM GAS  /tmp/ccHm4MgD.s 			page 52
+ARM GAS  /tmp/ccEukSSi.s 			page 52
 
 
  1822 0034 1A60     		str	r2, [r3]
@@ -3118,7 +3118,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1863              		@ link register save eliminated.
  1864              		.loc 1 1120 1 is_stmt 0 view .LVU300
  1865 0000 10B4     		push	{r4}
-ARM GAS  /tmp/ccHm4MgD.s 			page 53
+ARM GAS  /tmp/ccEukSSi.s 			page 53
 
 
  1866              	.LCFI8:
@@ -3178,7 +3178,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  1907              		@ args = 0, pretend = 0, frame = 0
  1908              		@ frame_needed = 0, uses_anonymous_args = 0
  1909              		@ link register save eliminated.
-ARM GAS  /tmp/ccHm4MgD.s 			page 54
+ARM GAS  /tmp/ccEukSSi.s 			page 54
 
 
 1136:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   /* Check the parameters */
@@ -3238,7 +3238,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
 1161:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @param   EXTI_Mode: Specifies which EXTI line is used as interrupt or an event.
 1162:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *          This parameter can be one or a combination of the following values :
 1163:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *   @arg EXTI_MODE_IT :  Interrupt Mode selected
-ARM GAS  /tmp/ccHm4MgD.s 			page 55
+ARM GAS  /tmp/ccEukSSi.s 			page 55
 
 
 1164:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   *   @arg EXTI_MODE_EVT : Event Mode selected
@@ -3298,7 +3298,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
 1186:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   }
 1187:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
 1188:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   if( (EXTI_Mode & EXTI_MODE_EVT) == EXTI_MODE_EVT)
-ARM GAS  /tmp/ccHm4MgD.s 			page 56
+ARM GAS  /tmp/ccEukSSi.s 			page 56
 
 
  1973              		.loc 1 1188 3 view .LVU319
@@ -3358,7 +3358,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  2014 004c 1C68     		ldr	r4, [r3]
  2015 004e 00F01F06 		and	r6, r0, #31
  2016 0052 0125     		movs	r5, #1
-ARM GAS  /tmp/ccHm4MgD.s 			page 57
+ARM GAS  /tmp/ccEukSSi.s 			page 57
 
 
  2017 0054 B540     		lsls	r5, r5, r6
@@ -3418,7 +3418,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
 1211:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @param   EXTI_LineCmd controls (Enable/Disable) the EXTI line.
 1212:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c **** 
 1213:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   * @retval None
-ARM GAS  /tmp/ccHm4MgD.s 			page 58
+ARM GAS  /tmp/ccEukSSi.s 			page 58
 
 
 1214:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   */
@@ -3478,7 +3478,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  2062              		@ frame_needed = 0, uses_anonymous_args = 0
  2063              		@ link register save eliminated.
  2064              		.loc 1 1264 1 is_stmt 0 view .LVU335
-ARM GAS  /tmp/ccHm4MgD.s 			page 59
+ARM GAS  /tmp/ccEukSSi.s 			page 59
 
 
  2065 0000 70B4     		push	{r4, r5, r6}
@@ -3538,7 +3538,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  2100              	.L199:
 1284:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   }
 1285:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   else
-ARM GAS  /tmp/ccHm4MgD.s 			page 60
+ARM GAS  /tmp/ccEukSSi.s 			page 60
 
 
 1286:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   {
@@ -3598,7 +3598,7 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  2144 0060 1944     		add	r1, r1, r3
  2145              	.LVL66:
 1287:Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c ****   }
-ARM GAS  /tmp/ccHm4MgD.s 			page 61
+ARM GAS  /tmp/ccEukSSi.s 			page 61
 
 
  2146              		.loc 1 1287 62 view .LVU356
@@ -3641,187 +3641,187 @@ ARM GAS  /tmp/ccHm4MgD.s 			page 1
  2188              		.file 15 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
  2189              		.file 16 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h"
  2190              		.file 17 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h"
-ARM GAS  /tmp/ccHm4MgD.s 			page 62
+ARM GAS  /tmp/ccEukSSi.s 			page 62
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 stm32h7xx_hal.c
-     /tmp/ccHm4MgD.s:17     .text.HAL_MspInit:0000000000000000 $t
-     /tmp/ccHm4MgD.s:25     .text.HAL_MspInit:0000000000000000 HAL_MspInit
-     /tmp/ccHm4MgD.s:39     .text.HAL_MspDeInit:0000000000000000 $t
-     /tmp/ccHm4MgD.s:46     .text.HAL_MspDeInit:0000000000000000 HAL_MspDeInit
-     /tmp/ccHm4MgD.s:59     .text.HAL_DeInit:0000000000000000 $t
-     /tmp/ccHm4MgD.s:66     .text.HAL_DeInit:0000000000000000 HAL_DeInit
-     /tmp/ccHm4MgD.s:136    .text.HAL_DeInit:0000000000000070 $d
-     /tmp/ccHm4MgD.s:148    .text.HAL_InitTick:0000000000000000 $t
-     /tmp/ccHm4MgD.s:155    .text.HAL_InitTick:0000000000000000 HAL_InitTick
-     /tmp/ccHm4MgD.s:229    .text.HAL_InitTick:0000000000000044 $d
-     /tmp/ccHm4MgD.s:236    .text.HAL_Init:0000000000000000 $t
-     /tmp/ccHm4MgD.s:243    .text.HAL_Init:0000000000000000 HAL_Init
-     /tmp/ccHm4MgD.s:320    .text.HAL_Init:000000000000004c $d
-     /tmp/ccHm4MgD.s:328    .text.HAL_IncTick:0000000000000000 $t
-     /tmp/ccHm4MgD.s:335    .text.HAL_IncTick:0000000000000000 HAL_IncTick
-     /tmp/ccHm4MgD.s:356    .text.HAL_IncTick:0000000000000010 $d
+     /tmp/ccEukSSi.s:17     .text.HAL_MspInit:0000000000000000 $t
+     /tmp/ccEukSSi.s:25     .text.HAL_MspInit:0000000000000000 HAL_MspInit
+     /tmp/ccEukSSi.s:39     .text.HAL_MspDeInit:0000000000000000 $t
+     /tmp/ccEukSSi.s:46     .text.HAL_MspDeInit:0000000000000000 HAL_MspDeInit
+     /tmp/ccEukSSi.s:59     .text.HAL_DeInit:0000000000000000 $t
+     /tmp/ccEukSSi.s:66     .text.HAL_DeInit:0000000000000000 HAL_DeInit
+     /tmp/ccEukSSi.s:136    .text.HAL_DeInit:0000000000000070 $d
+     /tmp/ccEukSSi.s:148    .text.HAL_InitTick:0000000000000000 $t
+     /tmp/ccEukSSi.s:155    .text.HAL_InitTick:0000000000000000 HAL_InitTick
+     /tmp/ccEukSSi.s:229    .text.HAL_InitTick:0000000000000044 $d
+     /tmp/ccEukSSi.s:236    .text.HAL_Init:0000000000000000 $t
+     /tmp/ccEukSSi.s:243    .text.HAL_Init:0000000000000000 HAL_Init
+     /tmp/ccEukSSi.s:320    .text.HAL_Init:000000000000004c $d
+     /tmp/ccEukSSi.s:328    .text.HAL_IncTick:0000000000000000 $t
+     /tmp/ccEukSSi.s:335    .text.HAL_IncTick:0000000000000000 HAL_IncTick
+     /tmp/ccEukSSi.s:356    .text.HAL_IncTick:0000000000000010 $d
                             *COM*:0000000000000004 uwTick
-     /tmp/ccHm4MgD.s:362    .text.HAL_GetTick:0000000000000000 $t
-     /tmp/ccHm4MgD.s:369    .text.HAL_GetTick:0000000000000000 HAL_GetTick
-     /tmp/ccHm4MgD.s:385    .text.HAL_GetTick:0000000000000008 $d
-     /tmp/ccHm4MgD.s:390    .text.HAL_GetTickPrio:0000000000000000 $t
-     /tmp/ccHm4MgD.s:397    .text.HAL_GetTickPrio:0000000000000000 HAL_GetTickPrio
-     /tmp/ccHm4MgD.s:412    .text.HAL_GetTickPrio:0000000000000008 $d
-     /tmp/ccHm4MgD.s:417    .text.HAL_SetTickFreq:0000000000000000 $t
-     /tmp/ccHm4MgD.s:424    .text.HAL_SetTickFreq:0000000000000000 HAL_SetTickFreq
-     /tmp/ccHm4MgD.s:481    .text.HAL_SetTickFreq:0000000000000024 $d
-     /tmp/ccHm4MgD.s:487    .text.HAL_GetTickFreq:0000000000000000 $t
-     /tmp/ccHm4MgD.s:494    .text.HAL_GetTickFreq:0000000000000000 HAL_GetTickFreq
-     /tmp/ccHm4MgD.s:509    .text.HAL_GetTickFreq:0000000000000008 $d
-     /tmp/ccHm4MgD.s:514    .text.HAL_Delay:0000000000000000 $t
-     /tmp/ccHm4MgD.s:521    .text.HAL_Delay:0000000000000000 HAL_Delay
-     /tmp/ccHm4MgD.s:574    .text.HAL_Delay:0000000000000024 $d
-     /tmp/ccHm4MgD.s:579    .text.HAL_SuspendTick:0000000000000000 $t
-     /tmp/ccHm4MgD.s:586    .text.HAL_SuspendTick:0000000000000000 HAL_SuspendTick
-     /tmp/ccHm4MgD.s:604    .text.HAL_SuspendTick:000000000000000c $d
-     /tmp/ccHm4MgD.s:609    .text.HAL_ResumeTick:0000000000000000 $t
-     /tmp/ccHm4MgD.s:616    .text.HAL_ResumeTick:0000000000000000 HAL_ResumeTick
-     /tmp/ccHm4MgD.s:634    .text.HAL_ResumeTick:000000000000000c $d
-     /tmp/ccHm4MgD.s:639    .text.HAL_GetHalVersion:0000000000000000 $t
-     /tmp/ccHm4MgD.s:646    .text.HAL_GetHalVersion:0000000000000000 HAL_GetHalVersion
-     /tmp/ccHm4MgD.s:660    .text.HAL_GetHalVersion:0000000000000004 $d
-     /tmp/ccHm4MgD.s:665    .text.HAL_GetREVID:0000000000000000 $t
-     /tmp/ccHm4MgD.s:672    .text.HAL_GetREVID:0000000000000000 HAL_GetREVID
-     /tmp/ccHm4MgD.s:689    .text.HAL_GetREVID:0000000000000008 $d
-     /tmp/ccHm4MgD.s:694    .text.HAL_GetDEVID:0000000000000000 $t
-     /tmp/ccHm4MgD.s:701    .text.HAL_GetDEVID:0000000000000000 HAL_GetDEVID
-     /tmp/ccHm4MgD.s:718    .text.HAL_GetDEVID:000000000000000c $d
-     /tmp/ccHm4MgD.s:723    .text.HAL_GetUIDw0:0000000000000000 $t
-     /tmp/ccHm4MgD.s:730    .text.HAL_GetUIDw0:0000000000000000 HAL_GetUIDw0
-     /tmp/ccHm4MgD.s:745    .text.HAL_GetUIDw0:0000000000000008 $d
-     /tmp/ccHm4MgD.s:750    .text.HAL_GetUIDw1:0000000000000000 $t
-     /tmp/ccHm4MgD.s:757    .text.HAL_GetUIDw1:0000000000000000 HAL_GetUIDw1
-     /tmp/ccHm4MgD.s:772    .text.HAL_GetUIDw1:0000000000000008 $d
-     /tmp/ccHm4MgD.s:777    .text.HAL_GetUIDw2:0000000000000000 $t
-     /tmp/ccHm4MgD.s:784    .text.HAL_GetUIDw2:0000000000000000 HAL_GetUIDw2
-ARM GAS  /tmp/ccHm4MgD.s 			page 63
+     /tmp/ccEukSSi.s:362    .text.HAL_GetTick:0000000000000000 $t
+     /tmp/ccEukSSi.s:369    .text.HAL_GetTick:0000000000000000 HAL_GetTick
+     /tmp/ccEukSSi.s:385    .text.HAL_GetTick:0000000000000008 $d
+     /tmp/ccEukSSi.s:390    .text.HAL_GetTickPrio:0000000000000000 $t
+     /tmp/ccEukSSi.s:397    .text.HAL_GetTickPrio:0000000000000000 HAL_GetTickPrio
+     /tmp/ccEukSSi.s:412    .text.HAL_GetTickPrio:0000000000000008 $d
+     /tmp/ccEukSSi.s:417    .text.HAL_SetTickFreq:0000000000000000 $t
+     /tmp/ccEukSSi.s:424    .text.HAL_SetTickFreq:0000000000000000 HAL_SetTickFreq
+     /tmp/ccEukSSi.s:481    .text.HAL_SetTickFreq:0000000000000024 $d
+     /tmp/ccEukSSi.s:487    .text.HAL_GetTickFreq:0000000000000000 $t
+     /tmp/ccEukSSi.s:494    .text.HAL_GetTickFreq:0000000000000000 HAL_GetTickFreq
+     /tmp/ccEukSSi.s:509    .text.HAL_GetTickFreq:0000000000000008 $d
+     /tmp/ccEukSSi.s:514    .text.HAL_Delay:0000000000000000 $t
+     /tmp/ccEukSSi.s:521    .text.HAL_Delay:0000000000000000 HAL_Delay
+     /tmp/ccEukSSi.s:574    .text.HAL_Delay:0000000000000024 $d
+     /tmp/ccEukSSi.s:579    .text.HAL_SuspendTick:0000000000000000 $t
+     /tmp/ccEukSSi.s:586    .text.HAL_SuspendTick:0000000000000000 HAL_SuspendTick
+     /tmp/ccEukSSi.s:604    .text.HAL_SuspendTick:000000000000000c $d
+     /tmp/ccEukSSi.s:609    .text.HAL_ResumeTick:0000000000000000 $t
+     /tmp/ccEukSSi.s:616    .text.HAL_ResumeTick:0000000000000000 HAL_ResumeTick
+     /tmp/ccEukSSi.s:634    .text.HAL_ResumeTick:000000000000000c $d
+     /tmp/ccEukSSi.s:639    .text.HAL_GetHalVersion:0000000000000000 $t
+     /tmp/ccEukSSi.s:646    .text.HAL_GetHalVersion:0000000000000000 HAL_GetHalVersion
+     /tmp/ccEukSSi.s:660    .text.HAL_GetHalVersion:0000000000000004 $d
+     /tmp/ccEukSSi.s:665    .text.HAL_GetREVID:0000000000000000 $t
+     /tmp/ccEukSSi.s:672    .text.HAL_GetREVID:0000000000000000 HAL_GetREVID
+     /tmp/ccEukSSi.s:689    .text.HAL_GetREVID:0000000000000008 $d
+     /tmp/ccEukSSi.s:694    .text.HAL_GetDEVID:0000000000000000 $t
+     /tmp/ccEukSSi.s:701    .text.HAL_GetDEVID:0000000000000000 HAL_GetDEVID
+     /tmp/ccEukSSi.s:718    .text.HAL_GetDEVID:000000000000000c $d
+     /tmp/ccEukSSi.s:723    .text.HAL_GetUIDw0:0000000000000000 $t
+     /tmp/ccEukSSi.s:730    .text.HAL_GetUIDw0:0000000000000000 HAL_GetUIDw0
+     /tmp/ccEukSSi.s:745    .text.HAL_GetUIDw0:0000000000000008 $d
+     /tmp/ccEukSSi.s:750    .text.HAL_GetUIDw1:0000000000000000 $t
+     /tmp/ccEukSSi.s:757    .text.HAL_GetUIDw1:0000000000000000 HAL_GetUIDw1
+     /tmp/ccEukSSi.s:772    .text.HAL_GetUIDw1:0000000000000008 $d
+     /tmp/ccEukSSi.s:777    .text.HAL_GetUIDw2:0000000000000000 $t
+     /tmp/ccEukSSi.s:784    .text.HAL_GetUIDw2:0000000000000000 HAL_GetUIDw2
+ARM GAS  /tmp/ccEukSSi.s 			page 63
 
 
-     /tmp/ccHm4MgD.s:799    .text.HAL_GetUIDw2:0000000000000008 $d
-     /tmp/ccHm4MgD.s:804    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:811    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000000 HAL_SYSCFG_VREFBUF_VoltageScalingConfig
-     /tmp/ccHm4MgD.s:831    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000010 $d
-     /tmp/ccHm4MgD.s:836    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:843    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000000 HAL_SYSCFG_VREFBUF_HighImpedanceConfig
-     /tmp/ccHm4MgD.s:863    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000010 $d
-     /tmp/ccHm4MgD.s:868    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:875    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000000 HAL_SYSCFG_VREFBUF_TrimmingConfig
-     /tmp/ccHm4MgD.s:895    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000010 $d
-     /tmp/ccHm4MgD.s:900    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000000 $t
-     /tmp/ccHm4MgD.s:907    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000000 HAL_SYSCFG_EnableVREFBUF
-     /tmp/ccHm4MgD.s:962    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000030 $d
-     /tmp/ccHm4MgD.s:967    .text.HAL_SYSCFG_DisableVREFBUF:0000000000000000 $t
-     /tmp/ccHm4MgD.s:974    .text.HAL_SYSCFG_DisableVREFBUF:0000000000000000 HAL_SYSCFG_DisableVREFBUF
-     /tmp/ccHm4MgD.s:991    .text.HAL_SYSCFG_DisableVREFBUF:000000000000000c $d
-     /tmp/ccHm4MgD.s:996    .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1003   .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000000 HAL_SYSCFG_ETHInterfaceSelect
-     /tmp/ccHm4MgD.s:1023   .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1028   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1035   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000000 HAL_SYSCFG_AnalogSwitchConfig
-     /tmp/ccHm4MgD.s:1056   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1061   .text.HAL_SYSCFG_EnableBOOST:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1068   .text.HAL_SYSCFG_EnableBOOST:0000000000000000 HAL_SYSCFG_EnableBOOST
-     /tmp/ccHm4MgD.s:1085   .text.HAL_SYSCFG_EnableBOOST:000000000000000c $d
-     /tmp/ccHm4MgD.s:1090   .text.HAL_SYSCFG_DisableBOOST:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1097   .text.HAL_SYSCFG_DisableBOOST:0000000000000000 HAL_SYSCFG_DisableBOOST
-     /tmp/ccHm4MgD.s:1114   .text.HAL_SYSCFG_DisableBOOST:000000000000000c $d
-     /tmp/ccHm4MgD.s:1119   .text.HAL_SYSCFG_CM7BootAddConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1126   .text.HAL_SYSCFG_CM7BootAddConfig:0000000000000000 HAL_SYSCFG_CM7BootAddConfig
-     /tmp/ccHm4MgD.s:1168   .text.HAL_SYSCFG_CM7BootAddConfig:000000000000002c $d
-     /tmp/ccHm4MgD.s:1174   .text.HAL_EnableCompensationCell:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1181   .text.HAL_EnableCompensationCell:0000000000000000 HAL_EnableCompensationCell
-     /tmp/ccHm4MgD.s:1198   .text.HAL_EnableCompensationCell:000000000000000c $d
-     /tmp/ccHm4MgD.s:1203   .text.HAL_DisableCompensationCell:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1210   .text.HAL_DisableCompensationCell:0000000000000000 HAL_DisableCompensationCell
-     /tmp/ccHm4MgD.s:1227   .text.HAL_DisableCompensationCell:000000000000000c $d
-     /tmp/ccHm4MgD.s:1232   .text.HAL_SYSCFG_EnableIOSpeedOptimize:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1239   .text.HAL_SYSCFG_EnableIOSpeedOptimize:0000000000000000 HAL_SYSCFG_EnableIOSpeedOptimize
-     /tmp/ccHm4MgD.s:1256   .text.HAL_SYSCFG_EnableIOSpeedOptimize:000000000000000c $d
-     /tmp/ccHm4MgD.s:1261   .text.HAL_SYSCFG_DisableIOSpeedOptimize:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1268   .text.HAL_SYSCFG_DisableIOSpeedOptimize:0000000000000000 HAL_SYSCFG_DisableIOSpeedOptimize
-     /tmp/ccHm4MgD.s:1285   .text.HAL_SYSCFG_DisableIOSpeedOptimize:000000000000000c $d
-     /tmp/ccHm4MgD.s:1290   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1297   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000000 HAL_SYSCFG_CompensationCodeSelect
-     /tmp/ccHm4MgD.s:1317   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1322   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1329   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000000 HAL_SYSCFG_CompensationCodeConfig
-     /tmp/ccHm4MgD.s:1353   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000014 $d
-     /tmp/ccHm4MgD.s:1358   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1365   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000000 HAL_SYSCFG_ADC2ALT_Rout0Config
-     /tmp/ccHm4MgD.s:1385   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1390   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1397   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000000 HAL_SYSCFG_ADC2ALT_Rout1Config
-     /tmp/ccHm4MgD.s:1417   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1422   .text.HAL_DBGMCU_EnableDBGSleepMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1429   .text.HAL_DBGMCU_EnableDBGSleepMode:0000000000000000 HAL_DBGMCU_EnableDBGSleepMode
-ARM GAS  /tmp/ccHm4MgD.s 			page 64
+     /tmp/ccEukSSi.s:799    .text.HAL_GetUIDw2:0000000000000008 $d
+     /tmp/ccEukSSi.s:804    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:811    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000000 HAL_SYSCFG_VREFBUF_VoltageScalingConfig
+     /tmp/ccEukSSi.s:831    .text.HAL_SYSCFG_VREFBUF_VoltageScalingConfig:0000000000000010 $d
+     /tmp/ccEukSSi.s:836    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:843    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000000 HAL_SYSCFG_VREFBUF_HighImpedanceConfig
+     /tmp/ccEukSSi.s:863    .text.HAL_SYSCFG_VREFBUF_HighImpedanceConfig:0000000000000010 $d
+     /tmp/ccEukSSi.s:868    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:875    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000000 HAL_SYSCFG_VREFBUF_TrimmingConfig
+     /tmp/ccEukSSi.s:895    .text.HAL_SYSCFG_VREFBUF_TrimmingConfig:0000000000000010 $d
+     /tmp/ccEukSSi.s:900    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000000 $t
+     /tmp/ccEukSSi.s:907    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000000 HAL_SYSCFG_EnableVREFBUF
+     /tmp/ccEukSSi.s:962    .text.HAL_SYSCFG_EnableVREFBUF:0000000000000030 $d
+     /tmp/ccEukSSi.s:967    .text.HAL_SYSCFG_DisableVREFBUF:0000000000000000 $t
+     /tmp/ccEukSSi.s:974    .text.HAL_SYSCFG_DisableVREFBUF:0000000000000000 HAL_SYSCFG_DisableVREFBUF
+     /tmp/ccEukSSi.s:991    .text.HAL_SYSCFG_DisableVREFBUF:000000000000000c $d
+     /tmp/ccEukSSi.s:996    .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000000 $t
+     /tmp/ccEukSSi.s:1003   .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000000 HAL_SYSCFG_ETHInterfaceSelect
+     /tmp/ccEukSSi.s:1023   .text.HAL_SYSCFG_ETHInterfaceSelect:0000000000000010 $d
+     /tmp/ccEukSSi.s:1028   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1035   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000000 HAL_SYSCFG_AnalogSwitchConfig
+     /tmp/ccEukSSi.s:1056   .text.HAL_SYSCFG_AnalogSwitchConfig:0000000000000010 $d
+     /tmp/ccEukSSi.s:1061   .text.HAL_SYSCFG_EnableBOOST:0000000000000000 $t
+     /tmp/ccEukSSi.s:1068   .text.HAL_SYSCFG_EnableBOOST:0000000000000000 HAL_SYSCFG_EnableBOOST
+     /tmp/ccEukSSi.s:1085   .text.HAL_SYSCFG_EnableBOOST:000000000000000c $d
+     /tmp/ccEukSSi.s:1090   .text.HAL_SYSCFG_DisableBOOST:0000000000000000 $t
+     /tmp/ccEukSSi.s:1097   .text.HAL_SYSCFG_DisableBOOST:0000000000000000 HAL_SYSCFG_DisableBOOST
+     /tmp/ccEukSSi.s:1114   .text.HAL_SYSCFG_DisableBOOST:000000000000000c $d
+     /tmp/ccEukSSi.s:1119   .text.HAL_SYSCFG_CM7BootAddConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1126   .text.HAL_SYSCFG_CM7BootAddConfig:0000000000000000 HAL_SYSCFG_CM7BootAddConfig
+     /tmp/ccEukSSi.s:1168   .text.HAL_SYSCFG_CM7BootAddConfig:000000000000002c $d
+     /tmp/ccEukSSi.s:1174   .text.HAL_EnableCompensationCell:0000000000000000 $t
+     /tmp/ccEukSSi.s:1181   .text.HAL_EnableCompensationCell:0000000000000000 HAL_EnableCompensationCell
+     /tmp/ccEukSSi.s:1198   .text.HAL_EnableCompensationCell:000000000000000c $d
+     /tmp/ccEukSSi.s:1203   .text.HAL_DisableCompensationCell:0000000000000000 $t
+     /tmp/ccEukSSi.s:1210   .text.HAL_DisableCompensationCell:0000000000000000 HAL_DisableCompensationCell
+     /tmp/ccEukSSi.s:1227   .text.HAL_DisableCompensationCell:000000000000000c $d
+     /tmp/ccEukSSi.s:1232   .text.HAL_SYSCFG_EnableIOSpeedOptimize:0000000000000000 $t
+     /tmp/ccEukSSi.s:1239   .text.HAL_SYSCFG_EnableIOSpeedOptimize:0000000000000000 HAL_SYSCFG_EnableIOSpeedOptimize
+     /tmp/ccEukSSi.s:1256   .text.HAL_SYSCFG_EnableIOSpeedOptimize:000000000000000c $d
+     /tmp/ccEukSSi.s:1261   .text.HAL_SYSCFG_DisableIOSpeedOptimize:0000000000000000 $t
+     /tmp/ccEukSSi.s:1268   .text.HAL_SYSCFG_DisableIOSpeedOptimize:0000000000000000 HAL_SYSCFG_DisableIOSpeedOptimize
+     /tmp/ccEukSSi.s:1285   .text.HAL_SYSCFG_DisableIOSpeedOptimize:000000000000000c $d
+     /tmp/ccEukSSi.s:1290   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000000 $t
+     /tmp/ccEukSSi.s:1297   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000000 HAL_SYSCFG_CompensationCodeSelect
+     /tmp/ccEukSSi.s:1317   .text.HAL_SYSCFG_CompensationCodeSelect:0000000000000010 $d
+     /tmp/ccEukSSi.s:1322   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1329   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000000 HAL_SYSCFG_CompensationCodeConfig
+     /tmp/ccEukSSi.s:1353   .text.HAL_SYSCFG_CompensationCodeConfig:0000000000000014 $d
+     /tmp/ccEukSSi.s:1358   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000000 $t
+     /tmp/ccEukSSi.s:1365   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000000 HAL_SYSCFG_ADC2ALT_Rout0Config
+     /tmp/ccEukSSi.s:1385   .text.HAL_SYSCFG_ADC2ALT_Rout0Config:0000000000000010 $d
+     /tmp/ccEukSSi.s:1390   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000000 $t
+     /tmp/ccEukSSi.s:1397   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000000 HAL_SYSCFG_ADC2ALT_Rout1Config
+     /tmp/ccEukSSi.s:1417   .text.HAL_SYSCFG_ADC2ALT_Rout1Config:0000000000000010 $d
+     /tmp/ccEukSSi.s:1422   .text.HAL_DBGMCU_EnableDBGSleepMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1429   .text.HAL_DBGMCU_EnableDBGSleepMode:0000000000000000 HAL_DBGMCU_EnableDBGSleepMode
+ARM GAS  /tmp/ccEukSSi.s 			page 64
 
 
-     /tmp/ccHm4MgD.s:1446   .text.HAL_DBGMCU_EnableDBGSleepMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1451   .text.HAL_DBGMCU_DisableDBGSleepMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1458   .text.HAL_DBGMCU_DisableDBGSleepMode:0000000000000000 HAL_DBGMCU_DisableDBGSleepMode
-     /tmp/ccHm4MgD.s:1475   .text.HAL_DBGMCU_DisableDBGSleepMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1480   .text.HAL_DBGMCU_EnableDBGStopMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1487   .text.HAL_DBGMCU_EnableDBGStopMode:0000000000000000 HAL_DBGMCU_EnableDBGStopMode
-     /tmp/ccHm4MgD.s:1504   .text.HAL_DBGMCU_EnableDBGStopMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1509   .text.HAL_DBGMCU_DisableDBGStopMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1516   .text.HAL_DBGMCU_DisableDBGStopMode:0000000000000000 HAL_DBGMCU_DisableDBGStopMode
-     /tmp/ccHm4MgD.s:1533   .text.HAL_DBGMCU_DisableDBGStopMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1538   .text.HAL_DBGMCU_EnableDBGStandbyMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1545   .text.HAL_DBGMCU_EnableDBGStandbyMode:0000000000000000 HAL_DBGMCU_EnableDBGStandbyMode
-     /tmp/ccHm4MgD.s:1562   .text.HAL_DBGMCU_EnableDBGStandbyMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1567   .text.HAL_DBGMCU_DisableDBGStandbyMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1574   .text.HAL_DBGMCU_DisableDBGStandbyMode:0000000000000000 HAL_DBGMCU_DisableDBGStandbyMode
-     /tmp/ccHm4MgD.s:1591   .text.HAL_DBGMCU_DisableDBGStandbyMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1596   .text.HAL_EnableDomain3DBGStopMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1603   .text.HAL_EnableDomain3DBGStopMode:0000000000000000 HAL_EnableDomain3DBGStopMode
-     /tmp/ccHm4MgD.s:1620   .text.HAL_EnableDomain3DBGStopMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1625   .text.HAL_DisableDomain3DBGStopMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1632   .text.HAL_DisableDomain3DBGStopMode:0000000000000000 HAL_DisableDomain3DBGStopMode
-     /tmp/ccHm4MgD.s:1649   .text.HAL_DisableDomain3DBGStopMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1654   .text.HAL_EnableDomain3DBGStandbyMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1661   .text.HAL_EnableDomain3DBGStandbyMode:0000000000000000 HAL_EnableDomain3DBGStandbyMode
-     /tmp/ccHm4MgD.s:1678   .text.HAL_EnableDomain3DBGStandbyMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1683   .text.HAL_DisableDomain3DBGStandbyMode:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1690   .text.HAL_DisableDomain3DBGStandbyMode:0000000000000000 HAL_DisableDomain3DBGStandbyMode
-     /tmp/ccHm4MgD.s:1707   .text.HAL_DisableDomain3DBGStandbyMode:000000000000000c $d
-     /tmp/ccHm4MgD.s:1712   .text.HAL_SetFMCMemorySwappingConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1719   .text.HAL_SetFMCMemorySwappingConfig:0000000000000000 HAL_SetFMCMemorySwappingConfig
-     /tmp/ccHm4MgD.s:1739   .text.HAL_SetFMCMemorySwappingConfig:0000000000000010 $d
-     /tmp/ccHm4MgD.s:1744   .text.HAL_GetFMCMemorySwappingConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1751   .text.HAL_GetFMCMemorySwappingConfig:0000000000000000 HAL_GetFMCMemorySwappingConfig
-     /tmp/ccHm4MgD.s:1768   .text.HAL_GetFMCMemorySwappingConfig:000000000000000c $d
-     /tmp/ccHm4MgD.s:1773   .text.HAL_EXTI_EdgeConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1780   .text.HAL_EXTI_EdgeConfig:0000000000000000 HAL_EXTI_EdgeConfig
-     /tmp/ccHm4MgD.s:1844   .text.HAL_EXTI_EdgeConfig:0000000000000048 $d
-     /tmp/ccHm4MgD.s:1849   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1856   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000000 HAL_EXTI_GenerateSWInterrupt
-     /tmp/ccHm4MgD.s:1890   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000020 $d
-     /tmp/ccHm4MgD.s:1895   .text.HAL_EXTI_D1_ClearFlag:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1902   .text.HAL_EXTI_D1_ClearFlag:0000000000000000 HAL_EXTI_D1_ClearFlag
-     /tmp/ccHm4MgD.s:1926   .text.HAL_EXTI_D1_ClearFlag:0000000000000014 $d
-     /tmp/ccHm4MgD.s:1931   .text.HAL_EXTI_D1_EventInputConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:1938   .text.HAL_EXTI_D1_EventInputConfig:0000000000000000 HAL_EXTI_D1_EventInputConfig
-     /tmp/ccHm4MgD.s:2043   .text.HAL_EXTI_D1_EventInputConfig:0000000000000074 $d
-     /tmp/ccHm4MgD.s:2049   .text.HAL_EXTI_D3_EventInputConfig:0000000000000000 $t
-     /tmp/ccHm4MgD.s:2056   .text.HAL_EXTI_D3_EventInputConfig:0000000000000000 HAL_EXTI_D3_EventInputConfig
-     /tmp/ccHm4MgD.s:2151   .text.HAL_EXTI_D3_EventInputConfig:0000000000000064 $d
-     /tmp/ccHm4MgD.s:2164   .data.uwTickFreq:0000000000000000 uwTickFreq
-     /tmp/ccHm4MgD.s:2171   .data.uwTickPrio:0000000000000000 uwTickPrio
-     /tmp/ccHm4MgD.s:2167   .data.uwTickPrio:0000000000000000 $d
+     /tmp/ccEukSSi.s:1446   .text.HAL_DBGMCU_EnableDBGSleepMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1451   .text.HAL_DBGMCU_DisableDBGSleepMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1458   .text.HAL_DBGMCU_DisableDBGSleepMode:0000000000000000 HAL_DBGMCU_DisableDBGSleepMode
+     /tmp/ccEukSSi.s:1475   .text.HAL_DBGMCU_DisableDBGSleepMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1480   .text.HAL_DBGMCU_EnableDBGStopMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1487   .text.HAL_DBGMCU_EnableDBGStopMode:0000000000000000 HAL_DBGMCU_EnableDBGStopMode
+     /tmp/ccEukSSi.s:1504   .text.HAL_DBGMCU_EnableDBGStopMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1509   .text.HAL_DBGMCU_DisableDBGStopMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1516   .text.HAL_DBGMCU_DisableDBGStopMode:0000000000000000 HAL_DBGMCU_DisableDBGStopMode
+     /tmp/ccEukSSi.s:1533   .text.HAL_DBGMCU_DisableDBGStopMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1538   .text.HAL_DBGMCU_EnableDBGStandbyMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1545   .text.HAL_DBGMCU_EnableDBGStandbyMode:0000000000000000 HAL_DBGMCU_EnableDBGStandbyMode
+     /tmp/ccEukSSi.s:1562   .text.HAL_DBGMCU_EnableDBGStandbyMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1567   .text.HAL_DBGMCU_DisableDBGStandbyMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1574   .text.HAL_DBGMCU_DisableDBGStandbyMode:0000000000000000 HAL_DBGMCU_DisableDBGStandbyMode
+     /tmp/ccEukSSi.s:1591   .text.HAL_DBGMCU_DisableDBGStandbyMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1596   .text.HAL_EnableDomain3DBGStopMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1603   .text.HAL_EnableDomain3DBGStopMode:0000000000000000 HAL_EnableDomain3DBGStopMode
+     /tmp/ccEukSSi.s:1620   .text.HAL_EnableDomain3DBGStopMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1625   .text.HAL_DisableDomain3DBGStopMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1632   .text.HAL_DisableDomain3DBGStopMode:0000000000000000 HAL_DisableDomain3DBGStopMode
+     /tmp/ccEukSSi.s:1649   .text.HAL_DisableDomain3DBGStopMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1654   .text.HAL_EnableDomain3DBGStandbyMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1661   .text.HAL_EnableDomain3DBGStandbyMode:0000000000000000 HAL_EnableDomain3DBGStandbyMode
+     /tmp/ccEukSSi.s:1678   .text.HAL_EnableDomain3DBGStandbyMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1683   .text.HAL_DisableDomain3DBGStandbyMode:0000000000000000 $t
+     /tmp/ccEukSSi.s:1690   .text.HAL_DisableDomain3DBGStandbyMode:0000000000000000 HAL_DisableDomain3DBGStandbyMode
+     /tmp/ccEukSSi.s:1707   .text.HAL_DisableDomain3DBGStandbyMode:000000000000000c $d
+     /tmp/ccEukSSi.s:1712   .text.HAL_SetFMCMemorySwappingConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1719   .text.HAL_SetFMCMemorySwappingConfig:0000000000000000 HAL_SetFMCMemorySwappingConfig
+     /tmp/ccEukSSi.s:1739   .text.HAL_SetFMCMemorySwappingConfig:0000000000000010 $d
+     /tmp/ccEukSSi.s:1744   .text.HAL_GetFMCMemorySwappingConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1751   .text.HAL_GetFMCMemorySwappingConfig:0000000000000000 HAL_GetFMCMemorySwappingConfig
+     /tmp/ccEukSSi.s:1768   .text.HAL_GetFMCMemorySwappingConfig:000000000000000c $d
+     /tmp/ccEukSSi.s:1773   .text.HAL_EXTI_EdgeConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1780   .text.HAL_EXTI_EdgeConfig:0000000000000000 HAL_EXTI_EdgeConfig
+     /tmp/ccEukSSi.s:1844   .text.HAL_EXTI_EdgeConfig:0000000000000048 $d
+     /tmp/ccEukSSi.s:1849   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000000 $t
+     /tmp/ccEukSSi.s:1856   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000000 HAL_EXTI_GenerateSWInterrupt
+     /tmp/ccEukSSi.s:1890   .text.HAL_EXTI_GenerateSWInterrupt:0000000000000020 $d
+     /tmp/ccEukSSi.s:1895   .text.HAL_EXTI_D1_ClearFlag:0000000000000000 $t
+     /tmp/ccEukSSi.s:1902   .text.HAL_EXTI_D1_ClearFlag:0000000000000000 HAL_EXTI_D1_ClearFlag
+     /tmp/ccEukSSi.s:1926   .text.HAL_EXTI_D1_ClearFlag:0000000000000014 $d
+     /tmp/ccEukSSi.s:1931   .text.HAL_EXTI_D1_EventInputConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:1938   .text.HAL_EXTI_D1_EventInputConfig:0000000000000000 HAL_EXTI_D1_EventInputConfig
+     /tmp/ccEukSSi.s:2043   .text.HAL_EXTI_D1_EventInputConfig:0000000000000074 $d
+     /tmp/ccEukSSi.s:2049   .text.HAL_EXTI_D3_EventInputConfig:0000000000000000 $t
+     /tmp/ccEukSSi.s:2056   .text.HAL_EXTI_D3_EventInputConfig:0000000000000000 HAL_EXTI_D3_EventInputConfig
+     /tmp/ccEukSSi.s:2151   .text.HAL_EXTI_D3_EventInputConfig:0000000000000064 $d
+     /tmp/ccEukSSi.s:2164   .data.uwTickFreq:0000000000000000 uwTickFreq
+     /tmp/ccEukSSi.s:2171   .data.uwTickPrio:0000000000000000 uwTickPrio
+     /tmp/ccEukSSi.s:2167   .data.uwTickPrio:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 HAL_SYSTICK_Config
 HAL_NVIC_SetPriority
 SystemCoreClock
-ARM GAS  /tmp/ccHm4MgD.s 			page 65
+ARM GAS  /tmp/ccEukSSi.s 			page 65
 
 
 HAL_NVIC_SetPriorityGrouping

@@ -49,5 +49,3 @@ uint8_t read_EEPROM(uint32_t address);
 int disarm(char *state);
 
 int arm(char *state);
-
-void multiplyQuat(double r[4], double s[4]);

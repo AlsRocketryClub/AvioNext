@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccnylg5Y.s 			page 1
+ARM GAS  /tmp/ccltrKXC.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
   48              	.LC10:
   49 0044 42415220 		.ascii	"BAR 2\000"
   49      3200
-ARM GAS  /tmp/ccnylg5Y.s 			page 2
+ARM GAS  /tmp/ccltrKXC.s 			page 2
 
 
   50 004a 0000     		.align	2
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
   92 0008 FFF7FEFF 		bl	strcmp
   93              	.LVL2:
   94              		.loc 1 10 5 view .LVU5
-ARM GAS  /tmp/ccnylg5Y.s 			page 3
+ARM GAS  /tmp/ccltrKXC.s 			page 3
 
 
   95 000c 10B9     		cbnz	r0, .L2
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  105              	.L2:
  106              	.LBB3:
   13:Core/Src/StatusDisplay.c **** 		statusArray[1] = status;
-ARM GAS  /tmp/ccnylg5Y.s 			page 4
+ARM GAS  /tmp/ccltrKXC.s 			page 4
 
 
  107              		.loc 1 13 9 is_stmt 1 view .LVU9
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  147 0042 E6E7     		b	.L1
  148              	.L6:
   22:Core/Src/StatusDisplay.c **** 		statusArray[4] = status;
-ARM GAS  /tmp/ccnylg5Y.s 			page 5
+ARM GAS  /tmp/ccltrKXC.s 			page 5
 
 
  149              		.loc 1 22 9 is_stmt 1 view .LVU24
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  189 0072 CEE7     		b	.L1
  190              	.L9:
   31:Core/Src/StatusDisplay.c **** 		statusArray[7] = status;
-ARM GAS  /tmp/ccnylg5Y.s 			page 6
+ARM GAS  /tmp/ccltrKXC.s 			page 6
 
 
  191              		.loc 1 31 9 is_stmt 1 view .LVU39
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  231 00a2 B6E7     		b	.L1
  232              	.L12:
   40:Core/Src/StatusDisplay.c **** 		statusArray[10] = status;
-ARM GAS  /tmp/ccnylg5Y.s 			page 7
+ARM GAS  /tmp/ccltrKXC.s 			page 7
 
 
  233              		.loc 1 40 9 is_stmt 1 view .LVU54
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  273 00d2 9EE7     		b	.L1
  274              	.L15:
   49:Core/Src/StatusDisplay.c **** 		statusArray[13] = status;
-ARM GAS  /tmp/ccnylg5Y.s 			page 8
+ARM GAS  /tmp/ccltrKXC.s 			page 8
 
 
  275              		.loc 1 49 9 is_stmt 1 view .LVU69
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  325              		@ frame_needed = 0, uses_anonymous_args = 0
  326 0000 10B5     		push	{r4, lr}
  327              	.LCFI1:
-ARM GAS  /tmp/ccnylg5Y.s 			page 9
+ARM GAS  /tmp/ccltrKXC.s 			page 9
 
 
  328              		.cfi_def_cfa_offset 8
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  369 002e 03F82A2C 		strb	r2, [r3, #-42]
  370 0032 17E0     		b	.L23
  371              	.L24:
-ARM GAS  /tmp/ccnylg5Y.s 			page 10
+ARM GAS  /tmp/ccltrKXC.s 			page 10
 
 
   70:Core/Src/StatusDisplay.c **** 			} else {
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  411              		.loc 1 59 3 is_stmt 1 view .LVU107
   59:Core/Src/StatusDisplay.c **** 		case 0: //RED LED, critical module malfunction
  412              		.loc 1 59 22 is_stmt 0 view .LVU108
-ARM GAS  /tmp/ccnylg5Y.s 			page 11
+ARM GAS  /tmp/ccltrKXC.s 			page 11
 
 
  413 006a 0E4B     		ldr	r3, .L28+4
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  453 009e 00BF     		.align	2
  454              	.L28:
  455 00a0 D34D6210 		.word	274877907
-ARM GAS  /tmp/ccnylg5Y.s 			page 12
+ARM GAS  /tmp/ccltrKXC.s 			page 12
 
 
  456 00a4 00000000 		.word	statusArray
@@ -687,21 +687,21 @@ ARM GAS  /tmp/ccnylg5Y.s 			page 1
  482              		.file 14 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
  483              		.file 15 "Core/Inc/AvioNEXT.h"
  484              		.file 16 "<built-in>"
-ARM GAS  /tmp/ccnylg5Y.s 			page 13
+ARM GAS  /tmp/ccltrKXC.s 			page 13
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 StatusDisplay.c
-     /tmp/ccnylg5Y.s:17     .rodata.setStatus.str1.4:0000000000000000 $d
-     /tmp/ccnylg5Y.s:60     .text.setStatus:0000000000000000 $t
-     /tmp/ccnylg5Y.s:68     .text.setStatus:0000000000000000 setStatus
-     /tmp/ccnylg5Y.s:294    .text.setStatus:00000000000000e8 $d
+     /tmp/ccltrKXC.s:17     .rodata.setStatus.str1.4:0000000000000000 $d
+     /tmp/ccltrKXC.s:60     .text.setStatus:0000000000000000 $t
+     /tmp/ccltrKXC.s:68     .text.setStatus:0000000000000000 setStatus
+     /tmp/ccltrKXC.s:294    .text.setStatus:00000000000000e8 $d
                             *COM*:000000000000000e statusArray
-     /tmp/ccnylg5Y.s:313    .text.updateStatus:0000000000000000 $t
-     /tmp/ccnylg5Y.s:320    .text.updateStatus:0000000000000000 updateStatus
-     /tmp/ccnylg5Y.s:455    .text.updateStatus:00000000000000a0 $d
-     /tmp/ccnylg5Y.s:466    .rodata.brightness:0000000000000000 brightness
-     /tmp/ccnylg5Y.s:463    .rodata.brightness:0000000000000000 $d
+     /tmp/ccltrKXC.s:313    .text.updateStatus:0000000000000000 $t
+     /tmp/ccltrKXC.s:320    .text.updateStatus:0000000000000000 updateStatus
+     /tmp/ccltrKXC.s:455    .text.updateStatus:00000000000000a0 $d
+     /tmp/ccltrKXC.s:466    .rodata.brightness:0000000000000000 brightness
+     /tmp/ccltrKXC.s:463    .rodata.brightness:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 strcmp

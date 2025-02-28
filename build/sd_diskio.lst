@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccz7gYyM.s 			page 1
+ARM GAS  /tmp/ccAOM6ls.s 			page 1
 
 
    1              		.cpu cortex-m7
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
   29:FATFS/Target/sd_diskio.c **** #include "sd_diskio.h"
   30:FATFS/Target/sd_diskio.c **** 
   31:FATFS/Target/sd_diskio.c **** #include <string.h>
-ARM GAS  /tmp/ccz7gYyM.s 			page 2
+ARM GAS  /tmp/ccAOM6ls.s 			page 2
 
 
   32:FATFS/Target/sd_diskio.c **** 
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
   86:FATFS/Target/sd_diskio.c **** /* Private function prototypes -----------------------------------------------*/
   87:FATFS/Target/sd_diskio.c **** static DSTATUS SD_CheckStatus(BYTE lun);
   88:FATFS/Target/sd_diskio.c **** DSTATUS SD_initialize (BYTE);
-ARM GAS  /tmp/ccz7gYyM.s 			page 3
+ARM GAS  /tmp/ccAOM6ls.s 			page 3
 
 
   89:FATFS/Target/sd_diskio.c **** DSTATUS SD_status (BYTE);
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
   36              		.cfi_offset 3, -8
   37              		.cfi_offset 14, -4
  135:FATFS/Target/sd_diskio.c ****   Stat = STA_NOINIT;
-ARM GAS  /tmp/ccz7gYyM.s 			page 4
+ARM GAS  /tmp/ccAOM6ls.s 			page 4
 
 
   38              		.loc 1 135 3 is_stmt 1 view .LVU2
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  150:FATFS/Target/sd_diskio.c **** DSTATUS SD_initialize(BYTE lun)
  151:FATFS/Target/sd_diskio.c **** {
   80              		.loc 1 151 1 is_stmt 1 view -0
-ARM GAS  /tmp/ccz7gYyM.s 			page 5
+ARM GAS  /tmp/ccAOM6ls.s 			page 5
 
 
   81              		.cfi_startproc
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  118              		.cfi_endproc
  119              	.LFE352:
  121              		.section	.text.SD_status,"ax",%progbits
-ARM GAS  /tmp/ccz7gYyM.s 			page 6
+ARM GAS  /tmp/ccAOM6ls.s 			page 6
 
 
  122              		.align	1
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  167              	.LCFI3:
  168              		.cfi_def_cfa_offset 16
  169              		.cfi_offset 3, -16
-ARM GAS  /tmp/ccz7gYyM.s 			page 7
+ARM GAS  /tmp/ccAOM6ls.s 			page 7
 
 
  170              		.cfi_offset 4, -12
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  209              		.cfi_endproc
  210              	.LFE350:
  212              		.section	.text.SD_read,"ax",%progbits
-ARM GAS  /tmp/ccz7gYyM.s 			page 8
+ARM GAS  /tmp/ccAOM6ls.s 			page 8
 
 
  213              		.align	1
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  203:FATFS/Target/sd_diskio.c **** 
  204:FATFS/Target/sd_diskio.c ****   if (SD_CheckStatusWithTimeout(SD_TIMEOUT) < 0)
  241              		.loc 1 204 3 view .LVU49
-ARM GAS  /tmp/ccz7gYyM.s 			page 9
+ARM GAS  /tmp/ccAOM6ls.s 			page 9
 
 
  242              		.loc 1 204 7 is_stmt 0 view .LVU50
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  277              		.loc 1 222 7 discriminator 2 view .LVU62
  220:FATFS/Target/sd_diskio.c ****       while((ReadStatus == 0) && ((HAL_GetTick() - timeout) < SD_TIMEOUT))
  278              		.loc 1 220 12 discriminator 2 view .LVU63
-ARM GAS  /tmp/ccz7gYyM.s 			page 10
+ARM GAS  /tmp/ccAOM6ls.s 			page 10
 
 
  220:FATFS/Target/sd_diskio.c ****       while((ReadStatus == 0) && ((HAL_GetTick() - timeout) < SD_TIMEOUT))
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  317              		.loc 1 233 14 view .LVU78
  318              		.loc 1 233 16 is_stmt 0 view .LVU79
  319 005a FFF7FEFF 		bl	HAL_GetTick
-ARM GAS  /tmp/ccz7gYyM.s 			page 11
+ARM GAS  /tmp/ccAOM6ls.s 			page 11
 
 
  320              	.LVL22:
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  261:FATFS/Target/sd_diskio.c ****           /* wait until the read is successful or a timeout occurs */
  262:FATFS/Target/sd_diskio.c **** 
  263:FATFS/Target/sd_diskio.c ****           timeout = HAL_GetTick();
-ARM GAS  /tmp/ccz7gYyM.s 			page 12
+ARM GAS  /tmp/ccAOM6ls.s 			page 12
 
 
  264:FATFS/Target/sd_diskio.c ****           while((ReadStatus == 0) && ((HAL_GetTick() - timeout) < SD_TIMEOUT))
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  298:FATFS/Target/sd_diskio.c **** /* USER CODE BEGIN beforeWriteSection */
  299:FATFS/Target/sd_diskio.c **** /* can be used to modify previous code / undefine following code / add new code */
  300:FATFS/Target/sd_diskio.c **** /* USER CODE END beforeWriteSection */
-ARM GAS  /tmp/ccz7gYyM.s 			page 13
+ARM GAS  /tmp/ccAOM6ls.s 			page 13
 
 
  301:FATFS/Target/sd_diskio.c **** /**
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  396 000e 47F23050 		movw	r0, #30000
  397              	.LVL31:
  398              		.loc 1 325 7 view .LVU99
-ARM GAS  /tmp/ccz7gYyM.s 			page 14
+ARM GAS  /tmp/ccAOM6ls.s 			page 14
 
 
  399 0012 FFF7FEFF 		bl	SD_CheckStatusWithTimeout
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  353:FATFS/Target/sd_diskio.c ****       }
  425              		.loc 1 353 7 discriminator 2 view .LVU108
  351:FATFS/Target/sd_diskio.c ****       while((WriteStatus == 0) && ((HAL_GetTick() - timeout) < SD_TIMEOUT))
-ARM GAS  /tmp/ccz7gYyM.s 			page 15
+ARM GAS  /tmp/ccAOM6ls.s 			page 15
 
 
  426              		.loc 1 351 12 discriminator 2 view .LVU109
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  464              	.L40:
  465              		.loc 1 364 14 view .LVU124
  466              		.loc 1 364 16 is_stmt 0 view .LVU125
-ARM GAS  /tmp/ccz7gYyM.s 			page 16
+ARM GAS  /tmp/ccAOM6ls.s 			page 16
 
 
  467 005a FFF7FEFF 		bl	HAL_GetTick
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  391:FATFS/Target/sd_diskio.c ****         buff += BLOCKSIZE;
  392:FATFS/Target/sd_diskio.c **** 
  393:FATFS/Target/sd_diskio.c ****         ret = BSP_SD_WriteBlocks_DMA((uint32_t*)scratch, (uint32_t)sector++, 1);
-ARM GAS  /tmp/ccz7gYyM.s 			page 17
+ARM GAS  /tmp/ccAOM6ls.s 			page 17
 
 
  394:FATFS/Target/sd_diskio.c ****         if (ret == MSD_OK) {
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  428:FATFS/Target/sd_diskio.c ****   */
  429:FATFS/Target/sd_diskio.c **** #if _USE_IOCTL == 1
  430:FATFS/Target/sd_diskio.c **** DRESULT SD_ioctl(BYTE lun, BYTE cmd, void *buff)
-ARM GAS  /tmp/ccz7gYyM.s 			page 18
+ARM GAS  /tmp/ccAOM6ls.s 			page 18
 
 
  431:FATFS/Target/sd_diskio.c **** {
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  446:FATFS/Target/sd_diskio.c ****     BSP_SD_GetCardInfo(&CardInfo);
  554              		.loc 1 446 5 view .LVU144
  555 001e 01A8     		add	r0, sp, #4
-ARM GAS  /tmp/ccz7gYyM.s 			page 19
+ARM GAS  /tmp/ccAOM6ls.s 			page 19
 
 
  556 0020 FFF7FEFF 		bl	BSP_SD_GetCardInfo
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  461:FATFS/Target/sd_diskio.c ****     *(DWORD*)buff = CardInfo.LogBlockSize / SD_DEFAULT_BLOCK_SIZE;
  594              		.loc 1 461 5 view .LVU161
  595              		.loc 1 461 29 is_stmt 0 view .LVU162
-ARM GAS  /tmp/ccz7gYyM.s 			page 20
+ARM GAS  /tmp/ccAOM6ls.s 			page 20
 
 
  596 0040 089B     		ldr	r3, [sp, #32]
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  640              	BSP_SD_WriteCpltCallback:
  641              	.LFB357:
  471:FATFS/Target/sd_diskio.c **** #endif /* _USE_IOCTL == 1 */
-ARM GAS  /tmp/ccz7gYyM.s 			page 21
+ARM GAS  /tmp/ccAOM6ls.s 			page 21
 
 
  472:FATFS/Target/sd_diskio.c **** 
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  672              		.cfi_startproc
  673              		@ args = 0, pretend = 0, frame = 0
  674              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  /tmp/ccz7gYyM.s 			page 22
+ARM GAS  /tmp/ccAOM6ls.s 			page 22
 
 
  675              		@ link register save eliminated.
@@ -1318,52 +1318,52 @@ ARM GAS  /tmp/ccz7gYyM.s 			page 1
  736              		.file 15 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_sd.h"
  737              		.file 16 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h"
  738              		.file 17 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h"
-ARM GAS  /tmp/ccz7gYyM.s 			page 23
+ARM GAS  /tmp/ccAOM6ls.s 			page 23
 
 
  739              		.file 18 "/nix/store/9w2nhnv8b84a8yg8jsii47ikl60bz16p-gcc-arm-embedded-9.3.1/arm-none-eabi/include
  740              		.file 19 "Middlewares/Third_Party/FatFs/src/ff_gen_drv.h"
  741              		.file 20 "FATFS/Target/sd_diskio.h"
  742              		.file 21 "FATFS/Target/bsp_driver_sd.h"
-ARM GAS  /tmp/ccz7gYyM.s 			page 24
+ARM GAS  /tmp/ccAOM6ls.s 			page 24
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 sd_diskio.c
-     /tmp/ccz7gYyM.s:17     .text.SD_CheckStatus:0000000000000000 $t
-     /tmp/ccz7gYyM.s:24     .text.SD_CheckStatus:0000000000000000 SD_CheckStatus
-     /tmp/ccz7gYyM.s:65     .text.SD_CheckStatus:0000000000000020 $d
-     /tmp/ccz7gYyM.s:70     .text.SD_initialize:0000000000000000 $t
-     /tmp/ccz7gYyM.s:77     .text.SD_initialize:0000000000000000 SD_initialize
-     /tmp/ccz7gYyM.s:117    .text.SD_initialize:000000000000001c $d
-     /tmp/ccz7gYyM.s:122    .text.SD_status:0000000000000000 $t
-     /tmp/ccz7gYyM.s:129    .text.SD_status:0000000000000000 SD_status
-     /tmp/ccz7gYyM.s:152    .text.SD_CheckStatusWithTimeout:0000000000000000 $t
-     /tmp/ccz7gYyM.s:158    .text.SD_CheckStatusWithTimeout:0000000000000000 SD_CheckStatusWithTimeout
-     /tmp/ccz7gYyM.s:213    .text.SD_read:0000000000000000 $t
-     /tmp/ccz7gYyM.s:220    .text.SD_read:0000000000000000 SD_read
-     /tmp/ccz7gYyM.s:352    .text.SD_read:000000000000007c $d
-     /tmp/ccz7gYyM.s:357    .text.SD_write:0000000000000000 $t
-     /tmp/ccz7gYyM.s:364    .text.SD_write:0000000000000000 SD_write
-     /tmp/ccz7gYyM.s:500    .text.SD_write:000000000000007c $d
-     /tmp/ccz7gYyM.s:505    .text.SD_ioctl:0000000000000000 $t
-     /tmp/ccz7gYyM.s:512    .text.SD_ioctl:0000000000000000 SD_ioctl
-     /tmp/ccz7gYyM.s:548    .text.SD_ioctl:000000000000001a $d
-     /tmp/ccz7gYyM.s:552    .text.SD_ioctl:000000000000001e $t
-     /tmp/ccz7gYyM.s:628    .text.SD_ioctl:0000000000000054 $d
-     /tmp/ccz7gYyM.s:633    .text.BSP_SD_WriteCpltCallback:0000000000000000 $t
-     /tmp/ccz7gYyM.s:640    .text.BSP_SD_WriteCpltCallback:0000000000000000 BSP_SD_WriteCpltCallback
-     /tmp/ccz7gYyM.s:657    .text.BSP_SD_WriteCpltCallback:0000000000000008 $d
-     /tmp/ccz7gYyM.s:662    .text.BSP_SD_ReadCpltCallback:0000000000000000 $t
-     /tmp/ccz7gYyM.s:669    .text.BSP_SD_ReadCpltCallback:0000000000000000 BSP_SD_ReadCpltCallback
-     /tmp/ccz7gYyM.s:686    .text.BSP_SD_ReadCpltCallback:0000000000000008 $d
-     /tmp/ccz7gYyM.s:715    .rodata.SD_Driver:0000000000000000 SD_Driver
-     /tmp/ccz7gYyM.s:692    .bss.ReadStatus:0000000000000000 $d
-     /tmp/ccz7gYyM.s:696    .bss.ReadStatus:0000000000000000 ReadStatus
-     /tmp/ccz7gYyM.s:699    .bss.WriteStatus:0000000000000000 $d
-     /tmp/ccz7gYyM.s:703    .bss.WriteStatus:0000000000000000 WriteStatus
-     /tmp/ccz7gYyM.s:709    .data.Stat:0000000000000000 Stat
-     /tmp/ccz7gYyM.s:712    .rodata.SD_Driver:0000000000000000 $d
+     /tmp/ccAOM6ls.s:17     .text.SD_CheckStatus:0000000000000000 $t
+     /tmp/ccAOM6ls.s:24     .text.SD_CheckStatus:0000000000000000 SD_CheckStatus
+     /tmp/ccAOM6ls.s:65     .text.SD_CheckStatus:0000000000000020 $d
+     /tmp/ccAOM6ls.s:70     .text.SD_initialize:0000000000000000 $t
+     /tmp/ccAOM6ls.s:77     .text.SD_initialize:0000000000000000 SD_initialize
+     /tmp/ccAOM6ls.s:117    .text.SD_initialize:000000000000001c $d
+     /tmp/ccAOM6ls.s:122    .text.SD_status:0000000000000000 $t
+     /tmp/ccAOM6ls.s:129    .text.SD_status:0000000000000000 SD_status
+     /tmp/ccAOM6ls.s:152    .text.SD_CheckStatusWithTimeout:0000000000000000 $t
+     /tmp/ccAOM6ls.s:158    .text.SD_CheckStatusWithTimeout:0000000000000000 SD_CheckStatusWithTimeout
+     /tmp/ccAOM6ls.s:213    .text.SD_read:0000000000000000 $t
+     /tmp/ccAOM6ls.s:220    .text.SD_read:0000000000000000 SD_read
+     /tmp/ccAOM6ls.s:352    .text.SD_read:000000000000007c $d
+     /tmp/ccAOM6ls.s:357    .text.SD_write:0000000000000000 $t
+     /tmp/ccAOM6ls.s:364    .text.SD_write:0000000000000000 SD_write
+     /tmp/ccAOM6ls.s:500    .text.SD_write:000000000000007c $d
+     /tmp/ccAOM6ls.s:505    .text.SD_ioctl:0000000000000000 $t
+     /tmp/ccAOM6ls.s:512    .text.SD_ioctl:0000000000000000 SD_ioctl
+     /tmp/ccAOM6ls.s:548    .text.SD_ioctl:000000000000001a $d
+     /tmp/ccAOM6ls.s:552    .text.SD_ioctl:000000000000001e $t
+     /tmp/ccAOM6ls.s:628    .text.SD_ioctl:0000000000000054 $d
+     /tmp/ccAOM6ls.s:633    .text.BSP_SD_WriteCpltCallback:0000000000000000 $t
+     /tmp/ccAOM6ls.s:640    .text.BSP_SD_WriteCpltCallback:0000000000000000 BSP_SD_WriteCpltCallback
+     /tmp/ccAOM6ls.s:657    .text.BSP_SD_WriteCpltCallback:0000000000000008 $d
+     /tmp/ccAOM6ls.s:662    .text.BSP_SD_ReadCpltCallback:0000000000000000 $t
+     /tmp/ccAOM6ls.s:669    .text.BSP_SD_ReadCpltCallback:0000000000000000 BSP_SD_ReadCpltCallback
+     /tmp/ccAOM6ls.s:686    .text.BSP_SD_ReadCpltCallback:0000000000000008 $d
+     /tmp/ccAOM6ls.s:715    .rodata.SD_Driver:0000000000000000 SD_Driver
+     /tmp/ccAOM6ls.s:692    .bss.ReadStatus:0000000000000000 $d
+     /tmp/ccAOM6ls.s:696    .bss.ReadStatus:0000000000000000 ReadStatus
+     /tmp/ccAOM6ls.s:699    .bss.WriteStatus:0000000000000000 $d
+     /tmp/ccAOM6ls.s:703    .bss.WriteStatus:0000000000000000 WriteStatus
+     /tmp/ccAOM6ls.s:709    .data.Stat:0000000000000000 Stat
+     /tmp/ccAOM6ls.s:712    .rodata.SD_Driver:0000000000000000 $d
 
 UNDEFINED SYMBOLS
 BSP_SD_GetCardState
