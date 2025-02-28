@@ -18,12 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "math_utils.h"
 #include "fatfs.h"
 #include "usb_device.h"
-#include "communication_protocol.h"
-#include "rocket_comms.h"
-#include "random.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "AvioNEXT.h"
@@ -60,8 +57,6 @@ DMA_HandleTypeDef hdma_adc3;
 FDCAN_HandleTypeDef hfdcan3;
 
 I2C_HandleTypeDef hi2c2;
-
-RNG_HandleTypeDef hrng;
 
 SD_HandleTypeDef hsd2;
 
@@ -109,6 +104,7 @@ static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
 static void MX_TIM14_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -118,27 +114,6 @@ static void MX_TIM14_Init(void);
 
 volatile int datasentflag = 0;
 uint8_t LED_Color_Data[14][3];
-
-//TODO: remove
-int disarm(char *state) {
-	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-	HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
-	HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
-	HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
-	HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
-	HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
-	HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
-	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
-
-	setStatus("ARM", 2);
-
-	strcpy(state, "DISARMED");
-	return 0;
-}
 
 uint8_t Baro2_Read_Register(uint8_t addr) {
 	uint8_t reg_value;
@@ -280,7 +255,15 @@ int main(void)
 
   /* USER CODE END 2 */
 
-	
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -602,7 +585,6 @@ static void MX_I2C2_Init(void)
   /* USER CODE END I2C2_Init 2 */
 
 }
-
 
 /**
   * @brief SDMMC2 Initialization Function

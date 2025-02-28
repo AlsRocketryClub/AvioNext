@@ -84,27 +84,6 @@ void HG2_Get_Acc(int16_t* data){
 	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, 1);
 }
 
-uint8_t LoRA_Read_Register(uint8_t addr){
-	uint8_t reg_value;
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
-
-	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi3, &reg_value, 1, 100);
-
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-	return reg_value;
-}
-
-void LoRA_Write_Register(uint8_t addr, uint8_t data){
-	addr |= (1<<7);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 0);
-	HAL_SPI_Transmit(&hspi3, &addr, 1, 100);
-	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, 1);
-
-}
-
 float LG2_Get_Gyro_X(){
 	uint8_t Gyro_L = LG2_Read_Register(0x22);
 	uint8_t Gyro_H = LG2_Read_Register(0x23);

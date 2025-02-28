@@ -1,12 +1,12 @@
 #include "communication_protocol.h"
 #include "LoRa.h"
+#include "StatusDisplay.h"
 
 //to do: arm disarm and the state machine in sending reliable should be separated into new file
 #include "main.h"
 #include "fatfs.h"
 extern TIM_HandleTypeDef htim4;
 extern ADC_HandleTypeDef hadc1;
-extern uint32_t LED_Color_Data[NUM_LEDS_0 + NUM_LEDS_1 + NUM_LEDS_2 + NUM_LEDS_3][3];
 extern FATFS FatFs;
 extern FIL Fil;
 extern FRESULT FR_Status;
@@ -26,17 +26,8 @@ int disarm(char *state) {
 	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
 
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	setServo(1, 0);
 
-	LED_Color_Data[7][0] = 255;
-	LED_Color_Data[7][1] = 0;
-	LED_Color_Data[7][2] = 0;
-
-	LED_Color_Data[2][0] = 255;
-	LED_Color_Data[2][1] = 0;
-	LED_Color_Data[2][2] = 0;
-	setLEDs();
-
+	setStatus("ARM", 2);
 	strcpy(state, "DISARMED");
 	return 0;
 }
@@ -49,10 +40,8 @@ int arm(char *state) {
 	setServo(1, 100);
 
 	strcpy(state, "ARMED");
-	LED_Color_Data[7][0] = 0;
-	LED_Color_Data[7][1] = 255;
-	LED_Color_Data[7][2] = 0;
-	setLEDs();
+
+	setStatus("ARM", 0);
 	return 0;
 }
 
