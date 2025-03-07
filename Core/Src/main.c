@@ -27,6 +27,7 @@
 #include "LG_IMU.h"
 #include "max_m10s.h"
 #include "StatusDisplay.h"
+#include "rocket_comms.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
