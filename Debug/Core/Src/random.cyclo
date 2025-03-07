@@ -1,2 +1,0 @@
-../Core/Src/random.c:11:6:MX_RNG_Init	2
-../Core/Src/random.c:34:10:rand_range	4
