@@ -1,0 +1,7 @@
+../Core/Src/rocket_comms.c:14:5:disarm	16	static
+../Core/Src/rocket_comms.c:35:5:arm	16	static
+../Core/Src/rocket_comms.c:48:6:pyro_check_continuity	24	static
+../Core/Src/rocket_comms.c:68:6:rocketReliableReceiveHandle	16	static
+../Core/Src/rocket_comms.c:72:6:rocketStreamReceiveHandle	16	static
+../Core/Src/rocket_comms.c:76:7:rocketStreamSendHandle	24	static
+../Core/Src/rocket_comms.c:95:27:rocketReliableSendHandle	56	static

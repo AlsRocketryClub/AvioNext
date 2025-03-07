@@ -28,6 +28,8 @@
 #include "max_m10s.h"
 #include "StatusDisplay.h"
 #include "rocket_comms.h"
+
+#define FLIGHTNAME "flight%03d.csv"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

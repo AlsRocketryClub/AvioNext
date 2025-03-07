@@ -1,0 +1,14 @@
+../Core/Src/AvioNEXT.c:51:9:HG2_Read_Register	24	static
+../Core/Src/AvioNEXT.c:64:6:HG2_Write_Register	16	static
+../Core/Src/AvioNEXT.c:73:6:HG2_Get_Acc	24	static
+../Core/Src/AvioNEXT.c:87:7:LG2_Get_Gyro_X	16	static
+../Core/Src/AvioNEXT.c:95:7:LG2_Get_Gyro_Y	16	static
+../Core/Src/AvioNEXT.c:104:7:LG2_Get_Gyro_Z	16	static
+../Core/Src/AvioNEXT.c:113:7:LG2_Get_Acc_X	16	static
+../Core/Src/AvioNEXT.c:122:7:LG2_Get_Acc_Y	16	static
+../Core/Src/AvioNEXT.c:131:7:LG2_Get_Acc_Z	16	static
+../Core/Src/AvioNEXT.c:140:6:setServo	24	static
+../Core/Src/AvioNEXT.c:166:8:triangle_space	32	static
+../Core/Src/AvioNEXT.c:178:5:write_EEPROM	40	static
+../Core/Src/AvioNEXT.c:193:9:read_EEPROM	40	static
+../Core/Src/AvioNEXT.c:206:6:setLEDs	72	static

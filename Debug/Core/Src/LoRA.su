@@ -1,0 +1,15 @@
+../Core/Src/LoRA.c:74:9:LoRA_Read_Register	24	static
+../Core/Src/LoRA.c:86:6:LoRA_Write_Register	16	static
+../Core/Src/LoRA.c:96:6:LoRA_sleep	8	static
+../Core/Src/LoRA.c:100:6:LoRA_set_frequency	32	static
+../Core/Src/LoRA.c:108:6:LoRA_idle	8	static
+../Core/Src/LoRA.c:112:6:LoRA_setOCP	24	static
+../Core/Src/LoRA.c:124:6:LoRA_setTxPower	16	static
+../Core/Src/LoRA.c:149:6:LoRA_explicit_header_mode	8	static
+../Core/Src/LoRA.c:153:6:LoRA_begin	120	static
+../Core/Src/LoRA.c:177:6:LoRA_beginPacket	8	static
+../Core/Src/LoRA.c:184:6:LoRA_endPacket	8	static
+../Core/Src/LoRA.c:197:5:LoRA_parsePacket	16	static
+../Core/Src/LoRA.c:220:6:LoRA_sendPacket	288	static
+../Core/Src/LoRA.c:261:5:recv_packet	32	static
+../Core/Src/LoRA.c:284:6:reliable_send_packet	64	dynamic

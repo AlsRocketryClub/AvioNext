@@ -1,0 +1,3 @@
+../Core/Src/math_utils.c:1:6:multiplyQuat	64	static
+../Core/Src/math_utils.c:13:8:dotProduct	16	static
+../Core/Src/math_utils.c:17:8:magnitude	16	static
