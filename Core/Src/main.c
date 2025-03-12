@@ -38,6 +38,7 @@
 
 #define PI 3.14159265359
 #define FLIGHTNAME "flight%03d.csv"
+#define FILENAME "waterloo_data.csv"
 
 //#define MAX_PACKET_LENGTH 250
 
@@ -418,24 +419,14 @@ int main(void)
       HAL_Delay(1000);
     }
     if (card_stat != FR_OK) 
+      while(1)
       CDC_Transmit_HS("Failed to mount SD card", strlen("Failed to mount SD card"));
   }
 
-  char filename[13];
   uint32_t flightnum = 0;
 
   FRESULT file_stat;
-
-  do { // Increment flightnum until an unused filename is found
-
-    sprintf(filename, FLIGHTNAME, flightnum);
-    file_stat = f_open(&Fil, filename, FA_READ);
-    flightnum++;
-    f_close(&Fil);
-
-  } while (file_stat == FR_OK);
-
-  file_stat = f_open(&Fil, filename, FA_WRITE | FA_READ | FA_CREATE_ALWAYS);
+  file_stat = f_open(&Fil, FILENAME, FA_READ);
 
   if (file_stat != FR_OK) {
     while(1) {
@@ -445,65 +436,46 @@ int main(void)
     // Plus other error handling
   }
 
+  float elapsed_time;
+  float accel;
+  float baro;
 
-  FRESULT write_stat;
+  TCHAR *tchar_line[100];
+  uint8_t turn = 0;
+  while (f_gets(tchar_line, 100, &Fil) ) {
 
-  float madeupdata = 0; // Replace with actual data
-  
-  uint8_t disconnected = 0; // 0 for false; 1 for true
-  uint64_t missed_data = 0;
-
-
-  while(1) { // Main loop
+    char *dpoint = strtok(tchar_line, ",");
+    while (dpoint != NULL) {
+      float num = atof(dpoint);
     
-    if (disconnected) { // When disconnected, attempt to reconnect
-      CDC_Transmit_HS("Disconnected\n",
-        strlen("Disconnected\n"));
-      missed_data++;
-      card_stat = f_mount(&FatFs, SDPath, 1); // Attempt to mount the card again
-      if (card_stat == FR_OK) {
-        file_stat = f_open(&Fil, filename, FA_OPEN_APPEND | FA_WRITE); // Open flight file again (don't create)
-        disconnected = 0; // Claim disconnect flag
+      switch (turn)
+      {
+      case 1:
+        accel = num;
+        break;
+      
+      case 2:
+        baro = num;
+        break;
+
+      default:
+        elapsed_time = num;
+        break;
       }
+      turn = (turn + 1)%3;
+
+      dpoint = strtok(NULL, ",");
     }
 
-    char data[10];
-    sprintf(data, "%.5f, ", madeupdata);
+    
 
-    write_stat = f_puts(data, &Fil);
-    if (write_stat <= 0) disconnected = 1; // Raise disconnect flag
-
-
-    madeupdata++;
-
-    if (madeupdata > 200) break; // For testing
-
-    HAL_Delay(50);
-
+    char message[100];
+    sprintf(message, "time: %.2f;    accel: %.2f;    baro: %.2f\n", elapsed_time, accel, baro);
+    CDC_Transmit_HS(message, strlen(message));
+    HAL_Delay(10);
   }
 
-  char message[50];
-  sprintf(message, "Missed data points: %d\n", missed_data);
-  if (!disconnected) f_puts(message, &Fil);
 
-  HAL_Delay(50);
-  CDC_Transmit_HS(message, 50);
-  
-  f_close(&Fil);
-
-	LoRA_begin(868000000);
-	communicationHandler(
-			  rocketReliableReceiveHandle,
-			  rocketStreamReceiveHandle,
-			  rocketStreamSendHandle,
-			  rocketReliableSendHandle,
-			  RECEIVING_RELIABLE
-	  );
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  /* USER CODE END 3 */
 }
 
 /**
