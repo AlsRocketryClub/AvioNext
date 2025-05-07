@@ -337,14 +337,14 @@ int main(void)
 
 
    TxData[0] = 0x10;
-//   if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3, &TxHeader, TxData)!= HAL_OK)
-//   {
-//	   CDC_Transmit_HS("badT", 4);
-//	   HAL_Delay (1000);
-//
-//
-//   }
-		CDC_Transmit_HS("hi", 2);
+   if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan3, &TxHeader, TxData)!= HAL_OK)
+   {
+	   CDC_Transmit_HS("badT", 4);
+	   HAL_Delay (1000);
+
+
+   }
+	CDC_Transmit_HS("hi", 2);
 
    HAL_Delay (1000);
   }
@@ -1158,7 +1158,7 @@ static void MX_FDCAN3_Init(void)
   /* USER CODE END FDCAN3_Init 1 */
   hfdcan3.Instance = FDCAN3;
   hfdcan3.Init.FrameFormat = FDCAN_FRAME_FD_NO_BRS;
-  hfdcan3.Init.Mode = FDCAN_MODE_NORMAL;
+  hfdcan3.Init.Mode = FDCAN_MODE_INTERNAL_LOOPBACK;
   hfdcan3.Init.AutoRetransmission = ENABLE;
   hfdcan3.Init.TransmitPause = DISABLE;
   hfdcan3.Init.ProtocolException = DISABLE;
