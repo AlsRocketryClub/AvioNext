@@ -20,15 +20,14 @@
 #include "main.h"
 #include "fatfs.h"
 #include "usb_device.h"
-#include "communication_protocol.h"
-#include "rocket_comms.h"
-#include "random.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "AvioNEXT.h"
-#include "LG_IMU.h"
-#include "max_m10s.h"
-#include "StatusDisplay.h"
+//#include "AvioNEXT.h"
+//#include "LG_IMU.h"
+//#include "max_m10s.h"
+//#include "StatusDisplay.h"
+#include "LoRA.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +70,6 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim13;
-TIM_HandleTypeDef htim14;
 DMA_HandleTypeDef hdma_tim2_ch3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 DMA_HandleTypeDef hdma_tim3_ch1;
@@ -105,7 +103,6 @@ static void MX_SPI1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_SDMMC2_SD_Init(void);
 static void MX_TIM13_Init(void);
-static void MX_TIM14_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -113,109 +110,6 @@ static void MX_TIM14_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-volatile int datasentflag = 0;
-uint8_t LED_Color_Data[14][3];
-
-//TODO: remove
-int disarm(char *state) {
-	HAL_GPIO_WritePin(ARM1_GPIO_Port, ARM1_Pin, 0);
-	HAL_GPIO_WritePin(ARM2_GPIO_Port, ARM2_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO1_GPIO_Port, PYRO1_Pin, 0);
-	HAL_GPIO_WritePin(PYRO2_GPIO_Port, PYRO2_Pin, 0);
-	HAL_GPIO_WritePin(PYRO3_GPIO_Port, PYRO3_Pin, 0);
-	HAL_GPIO_WritePin(PYRO4_GPIO_Port, PYRO4_Pin, 0);
-
-	HAL_GPIO_WritePin(PYRO5_GPIO_Port, PYRO5_Pin, 0);
-	HAL_GPIO_WritePin(PYRO6_GPIO_Port, PYRO6_Pin, 0);
-	HAL_GPIO_WritePin(PYRO7_GPIO_Port, PYRO7_Pin, 0);
-	HAL_GPIO_WritePin(PYRO8_GPIO_Port, PYRO8_Pin, 0);
-
-	setStatus("ARM", 2);
-
-	strcpy(state, "DISARMED");
-	return 0;
-}
-
-uint8_t Baro2_Read_Register(uint8_t addr) {
-	uint8_t reg_value;
-	addr |= (1 << 7);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, 0);
-
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Receive(&hspi2, &reg_value, 1, 100);
-
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, 1);
-
-	return reg_value;
-}
-
-void Baro2_Write_Register(uint8_t addr, uint8_t data) {
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, 0);
-	HAL_SPI_Transmit(&hspi2, &addr, 1, 100);
-	HAL_SPI_Transmit(&hspi2, &data, 1, 100);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, 1);
-
-}
-
-void Baro2_Configure(){
-	int16_t cal_val = 0; //calibration value for soldering stresses, measured on 19/08/2024
-	int8_t cal_L = (int8_t)cal_val;
-	int8_t cal_H = (int8_t)(cal_val>>8);
-
-	Baro2_Write_Register(0x18, cal_L);
-	Baro2_Write_Register(0x19, cal_H);
-
-
-	Baro2_Write_Register(0x10, 0b01000000); //50Hz refresh rate, low pass off
-	Baro2_Write_Register(0x11, 0b00000010); //enables low noise mode
-}
-
-int32_t Baro2_Get_Pressure(){
-	uint8_t BARO_L = Baro2_Read_Register(0x28);
-	uint8_t BARO_M = Baro2_Read_Register(0x29);
-	uint8_t BARO_H = Baro2_Read_Register(0x2A);
-
-	int32_t BARO = 0;
-	BARO = ((int32_t)BARO_H << 24) | ((int32_t)BARO_M << 16) | ((int32_t)BARO_L << 8);
-	return BARO;
-
-}
-
-int mount_SD() {
-	int status = f_mount(&SDFatFS, (TCHAR const*) SDPath, 0);
-	return status;
-}
-
-double x[4];
-double y[4];
-double z[4];
-
-void multiplyQuat(double r[4], double s[4], double *result) {
-	double temp[4];
-	temp[0] = r[0] * s[0] - r[1] * s[1] - r[2] * s[2] - r[3] * s[3];
-	temp[1] = r[0] * s[1] + r[1] * s[0] - r[2] * s[3] + r[3] * s[2];
-	temp[2] = r[0] * s[2] + r[1] * s[3] + r[2] * s[0] - r[3] * s[1];
-	temp[3] = r[0] * s[3] - r[1] * s[2] + r[2] * s[1] + r[3] * s[0];
-
-	for (int i = 0; i < 4; i++) {
-		result[i] = temp[i];
-	}
-}
-
-double dotProduct(double a[4], double b[4]) {
-	return (a[1] * b[1] + a[2] * b[2] + a[3] * b[3]);
-}
-
-double magnitude(double vector[4]) {
-	return sqrt(
-			vector[0] * vector[0] + vector[1] * vector[1]
-					+ vector[2] * vector[2] + vector[3] * vector[3]);
-}
-
-FATFS FatFs;
-FIL Fil;
-FRESULT FR_Status;
 /* USER CODE END 0 */
 
 /**
@@ -226,13 +120,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-	char state[50] = "DISARMED";
-
-
-	FRESULT res; /* FatFs function common result code */
-	uint32_t byteswritten, bytesread; /* File write/read counts */
-	uint8_t wtext[] = "STM32 FATFS works great!"; /* File write buffer */
-	uint8_t rtext[_MAX_SS];/* File read buffer */
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -274,200 +161,24 @@ int main(void)
   MX_FATFS_Init();
   MX_SDMMC2_SD_Init();
   MX_TIM13_Init();
-  MX_TIM14_Init();
-  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
+  LoRA_begin(86000000);
 
-	//if (MAX_M10s_init(&hi2c2))
-	//	Error_Handler();
-
-	//MAX_M10S_init(&hi2c2);
-	const int MAX = 50;
-	const double SPEED = 2.0 / 2000;
-	const double r_offset = 0;
-	const double g_offset = 1;
-	const double b_offset = 2;
-
-
-	uint8_t LG_status = LG_Check();
-
-	if(LG_status & 1){
-		setStatus("LG 1", 2);
-	}else{
-		setStatus("LG 1", 0);
-	}
-
-	if(LG_status & 2){
-		setStatus("LG 2", 2);
-	}else{
-		setStatus("LG 2", 0);
-	}
-	LG_Configure();
-	HAL_Delay(3000);
-	HG2_Write_Register(0x1C, 0b10111111);
-	HAL_Delay(2);
-
-	HG2_Write_Register(0x1B, 0b01011000);
-	HG2_Write_Register(0x1B, 0b11011000);
-
-	Baro2_Configure();
-
-	double temperature = 275.15;
-	double sea_level_pressure = 101.7;
-
-	int index = 0;
-	double avg_tab[100];
-
-	for(int i = 0; i < 14; i++){
-		LED_Color_Data[i][0] = 0;
-		LED_Color_Data[i][1] = 255;
-		LED_Color_Data[i][2] = 0;
-
-	}
-	disarm(state);
-	setLEDs(LED_Color_Data);
-	setStatus("CAN", 1);
-	for(int i = 0; i < 100; i++){
-		avg_tab[i] = 0;
-	}
-	while (1) {
-		int32_t int_pressure = Baro2_Get_Pressure();
-		double float_pressure = (double)int_pressure / (40960.0 * 256.0);
-
-		avg_tab[index] = float_pressure;
-		index++;
-		if(index > 99){
-			index = 0;
-		}
-
-		double sum = 0;
-		for(int i = 0; i < 100; i++){
-			sum += avg_tab[i];
-		}
-
-		sum /= 100;
-		double altitude = (temperature/0.0065) *(1- pow((sum/sea_level_pressure), (1/5.256)));
-
-		char data_gyro[50];
-
-		double test = LG_Get_Acc_Z();
-		sprintf(data_gyro, "%f\n", test);
-		CDC_Transmit_HS(data_gyro, strlen(data_gyro));
-		HAL_Delay(20);
-		updateStatus();
-
-	}
-	float rotZ = 0;
-	uint32_t lastTime = 0;
-
-	float calOmegaX = 0;
-	float calOmegaY = 0;
-	float calOmegaZ = 0;
-	HAL_Delay(2000);
-	for (int i = 0; i < 500; i++) {
-		if (LG_Read_Register(0x1E) | (1 << 1)) {
-			calOmegaX += LG_Get_Gyro_X();
-			calOmegaY += LG_Get_Gyro_Y();
-			calOmegaZ += LG_Get_Gyro_Z();
-		}
-
-		//HAL_Delay(20);
-	}
-	calOmegaX /= 500;
-	calOmegaY /= 500;
-	calOmegaZ /= 500;
-
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
-	HAL_Delay(200);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 0);
-	HAL_Delay(200);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, 1);
-	HAL_Delay(200);
-
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
-
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-
-	setServo(1, 90);
-	setServo(2, 180);
-	setServo(3, 0);
-	setServo(4, 45);
-
-	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-
-	int connected = 0;
-	long last_packet = 0;
-	int ARMED = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	//HAL_ADC_Start_DMA(&hadc3, &read_Data, 1);
-	
-		while (1) {
-			float Gx;
-			float Gy;
-			float Gz;
-			if (LG_Read_Register(0x1E) & (1 << 1)) {
-				elapsedTime = (TIM13->CNT / 1000.0);
-				TIM13->CNT = 0;
-				Gx = LG_Get_Gyro_X();
-				Gy = LG_Get_Gyro_Y();
-				Gz = LG_Get_Gyro_Z();
-				rotQuaternion[1] = (Gx - calOmegaX) * (3.1415 / 360000)
-						* elapsedTime;
-				rotQuaternion[2] = (Gy - calOmegaY) * (3.1415 / 360000)
-						* elapsedTime;
-				rotQuaternion[3] = (Gz - calOmegaZ) * (3.1415 / 360000)
-						* elapsedTime;
-				rotQuaternion[0] = sqrt(
-						1 - (rotQuaternion[1] * rotQuaternion[1])
-								- (rotQuaternion[2] * rotQuaternion[2])
-								- (rotQuaternion[3] * rotQuaternion[3]));
-				counter++;
-				lastMeasure = HAL_GetTick();
-				multiplyQuat(rotQuaternion, x);
-				rotQuaternion[1] = -rotQuaternion[1];
-				rotQuaternion[2] = -rotQuaternion[2];
-				rotQuaternion[3] = -rotQuaternion[3];
-				multiplyQuat(x, rotQuaternion);
+	while (1) {
+		char LoRA_data[255];
 
-			}
-			if (counter > 50) {
-				counter = 0;
-				float pitch = 180 * (asin(x[3]) / 3.1415);
-				//float magnitude = sqrt((x[1]*x[1]) + (x[2]*x[2]) + x[3] * x[3]);
-				char data_gyro[50];
-				sprintf(data_gyro, "%f, %f, %f, %f\n", pitch, x[1], x[2], x[3]);
-				CDC_Transmit_HS(data_gyro, strlen(data_gyro));
-			}
-
+		if(recv_packet(LoRA_data, 255)){
+			char print_data[400];
+			sprintf(print_data, "\nRadio Packet received:\n%s\n----------------", LoRA_data);
+			CDC_Transmit_HS(print_data, strlen(print_data));
+		}
+		HAL_Delay(100);
 	}
-	char dummy[50];
-	disarm(dummy);
 
-
-	FR_Status = f_mount(&FatFs, SDPath, 1);
-
-	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, 1);
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, 1);
-
-	FR_Status = f_open(&Fil, "MyTextFile.txt", FA_CREATE_NEW);
-	f_close(&Fil);
-
-	LoRA_begin(868000000);
-	communicationHandler(
-			  rocketReliableReceiveHandle,
-			  rocketStreamReceiveHandle,
-			  rocketStreamSendHandle,
-			  rocketReliableSendHandle,
-			  RECEIVING_RELIABLE
-	  );
 
     /* USER CODE END WHILE */
 
@@ -497,9 +208,7 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
-                              |RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = 64;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
@@ -796,7 +505,6 @@ static void MX_I2C2_Init(void)
   /* USER CODE END I2C2_Init 2 */
 
 }
-
 
 /**
   * @brief SDMMC2 Initialization Function
@@ -1213,37 +921,6 @@ static void MX_TIM13_Init(void)
 }
 
 /**
-  * @brief TIM14 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM14_Init(void)
-{
-
-  /* USER CODE BEGIN TIM14_Init 0 */
-
-  /* USER CODE END TIM14_Init 0 */
-
-  /* USER CODE BEGIN TIM14_Init 1 */
-
-  /* USER CODE END TIM14_Init 1 */
-  htim14.Instance = TIM14;
-  htim14.Init.Prescaler = 99;
-  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim14.Init.Period = 65535;
-  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM14_Init 2 */
-
-  /* USER CODE END TIM14_Init 2 */
-
-}
-
-/**
   * @brief UART4 Initialization Function
   * @param None
   * @retval None
@@ -1388,7 +1065,6 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();

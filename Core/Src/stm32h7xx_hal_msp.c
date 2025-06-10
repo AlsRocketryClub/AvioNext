@@ -264,6 +264,9 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* hfdcan)
     GPIO_InitStruct.Alternate = GPIO_AF2_FDCAN3;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
+    /* FDCAN3 interrupt Init */
+    HAL_NVIC_SetPriority(FDCAN3_IT0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(FDCAN3_IT0_IRQn);
   /* USER CODE BEGIN FDCAN3_MspInit 1 */
 
   /* USER CODE END FDCAN3_MspInit 1 */
@@ -293,6 +296,8 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* hfdcan)
     */
     HAL_GPIO_DeInit(GPIOF, GPIO_PIN_6|GPIO_PIN_7);
 
+    /* FDCAN3 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(FDCAN3_IT0_IRQn);
   /* USER CODE BEGIN FDCAN3_MspDeInit 1 */
 
   /* USER CODE END FDCAN3_MspDeInit 1 */
@@ -378,61 +383,6 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
   /* USER CODE BEGIN I2C2_MspDeInit 1 */
 
   /* USER CODE END I2C2_MspDeInit 1 */
-  }
-
-}
-
-/**
-* @brief RNG MSP Initialization
-* This function configures the hardware resources used in this example
-* @param hrng: RNG handle pointer
-* @retval None
-*/
-void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
-{
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-  if(hrng->Instance==RNG)
-  {
-  /* USER CODE BEGIN RNG_MspInit 0 */
-
-  /* USER CODE END RNG_MspInit 0 */
-
-  /** Initializes the peripherals clock
-  */
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RNG;
-    PeriphClkInitStruct.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /* Peripheral clock enable */
-    __HAL_RCC_RNG_CLK_ENABLE();
-  /* USER CODE BEGIN RNG_MspInit 1 */
-
-  /* USER CODE END RNG_MspInit 1 */
-  }
-
-}
-
-/**
-* @brief RNG MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param hrng: RNG handle pointer
-* @retval None
-*/
-void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
-{
-  if(hrng->Instance==RNG)
-  {
-  /* USER CODE BEGIN RNG_MspDeInit 0 */
-
-  /* USER CODE END RNG_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_RNG_CLK_DISABLE();
-  /* USER CODE BEGIN RNG_MspDeInit 1 */
-
-  /* USER CODE END RNG_MspDeInit 1 */
   }
 
 }
@@ -899,17 +849,6 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
 
   /* USER CODE END TIM13_MspInit 1 */
   }
-  else if(htim_base->Instance==TIM14)
-  {
-  /* USER CODE BEGIN TIM14_MspInit 0 */
-
-  /* USER CODE END TIM14_MspInit 0 */
-    /* Peripheral clock enable */
-    __HAL_RCC_TIM14_CLK_ENABLE();
-  /* USER CODE BEGIN TIM14_MspInit 1 */
-
-  /* USER CODE END TIM14_MspInit 1 */
-  }
 
 }
 
@@ -1109,17 +1048,6 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE BEGIN TIM13_MspDeInit 1 */
 
   /* USER CODE END TIM13_MspDeInit 1 */
-  }
-  else if(htim_base->Instance==TIM14)
-  {
-  /* USER CODE BEGIN TIM14_MspDeInit 0 */
-
-  /* USER CODE END TIM14_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_TIM14_CLK_DISABLE();
-  /* USER CODE BEGIN TIM14_MspDeInit 1 */
-
-  /* USER CODE END TIM14_MspDeInit 1 */
   }
 
 }
